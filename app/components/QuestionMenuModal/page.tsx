@@ -12,7 +12,7 @@ interface ModalProps {
   subjectName: string;
   className: string;
   chapters: string[]; 
-  onAddQuestions: (questions: any[]) => void;
+  onAddQuestions: (questions: any[], config: any) => void;
 }
 
 export default function QuestionMenuModal({ 
@@ -29,9 +29,8 @@ export default function QuestionMenuModal({
   const [selectedType, setSelectedType] = useState('MCQs'); 
   const [selectedSource, setSelectedSource] = useState('Exercise Questions');
   const [requiredCount, setRequiredCount] = useState<number>(10);
-  
-  // --- 1. NEW STATE FOR MARKS ---
   const [defaultMarks, setDefaultMarks] = useState<number>(1);
+  const [attemptCount, setAttemptCount] = useState<number>(8);
   
   const [displayQuestions, setDisplayQuestions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -46,19 +45,25 @@ export default function QuestionMenuModal({
     }
   }, [isOpen]);
 
-  // --- 2. AUTO-SET MARKS BASED ON CATEGORY ---
+  // --- AUTO-SET MARKS AND CHOICE LOGIC ---
   useEffect(() => {
     const type = selectedType.toLowerCase();
-    if (type === 'mcqs') setDefaultMarks(1);
-    else if (type === 'shorts') setDefaultMarks(2);
-    else if (type === 'longs') setDefaultMarks(5);
-  }, [selectedType]);
+    if (type === 'mcqs') {
+        setDefaultMarks(1);
+        setAttemptCount(requiredCount);
+    } else if (type === 'shorts') {
+        setDefaultMarks(2);
+        setAttemptCount(8); 
+    } else if (type === 'longs') {
+        setDefaultMarks(5);
+        setAttemptCount(3);
+    }
+  }, [selectedType, requiredCount]);
 
   if (!isOpen) return null;
 
   const shuffle = (array: any[]) => array.sort(() => Math.random() - 0.5);
 
-  // --- CORE SEARCH LOGIC ---
   const handleSearchTrigger = async () => {
     setIsLoading(true);
     try {
@@ -78,6 +83,7 @@ export default function QuestionMenuModal({
             const categoryData = typeKey ? chapter[typeKey] : null;
 
             if (categoryData) {
+                // Logic to handle both Nested Source structure and Direct Array structure
                 if (Array.isArray(categoryData) && categoryData[0] && typeof categoryData[0] === 'object' && !categoryData[0].question) {
                     const sourceList = categoryData[0][selectedSource] || [];
                     allQuestions = [...allQuestions, ...sourceList];
@@ -88,11 +94,10 @@ export default function QuestionMenuModal({
             }
           });
 
-          // --- ADDING MARKS TO DATA OBJECTS ---
           const questionsWithTags = allQuestions.map((q, i) => ({ 
             ...q, 
             type: selectedType.toLowerCase(),
-            marks: defaultMarks, // <--- Saving the marks to the question object
+            marks: defaultMarks, 
             tempId: `${selectedType}-${q.id || i}-${Math.random().toString(36).substr(2, 9)}`
           }));
           
@@ -102,7 +107,6 @@ export default function QuestionMenuModal({
       }
     } catch (error) {
       console.error("Error fetching questions:", error);
-      alert("Error loading database. Check console.");
     } finally {
       setIsLoading(false);
     }
@@ -129,7 +133,7 @@ export default function QuestionMenuModal({
     : displayQuestions;
 
   return (
-    <div className="fixed inset-0 z-100 flex items-center justify-center bg-slate-900/80 backdrop-blur-md p-4 font-sans">
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-slate-900/80 backdrop-blur-md p-4 font-sans text-black">
       <div className="bg-[#fcfdfe] w-full max-w-6xl rounded-sm shadow-2xl overflow-hidden border border-white/20 animate-in zoom-in-95 duration-200">
         
         {/* Header */}
@@ -147,26 +151,25 @@ export default function QuestionMenuModal({
         </div>
 
         {viewMode === 'filters' ? (
-          /* --- FILTERS VIEW --- */
           <div className="p-10 space-y-10">
-            {/* --- 3. UPDATED GRID TO 4 COLUMNS --- */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {/* 5 columns consistent grid */}
+            <div className={`grid grid-cols-1 sm:grid-cols-2 ${selectedType.toLowerCase() === 'mcqs' ? 'md:grid-cols-4' : 'md:grid-cols-5'} gap-6`}>
               
               <div className="flex flex-col gap-2">
                 <label className="text-[11px] font-black text-slate-400 uppercase ml-1">Category</label>
                 <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)} 
-                        className="bg-white border-2 border-slate-100 rounded-xl p-4 font-bold outline-none focus:border-blue-600 text-slate-700 shadow-sm cursor-pointer">
+                        className="bg-white border-2 border-slate-100 rounded-xl p-4 font-bold outline-none focus:border-blue-600 text-slate-700 shadow-sm">
                   <option value="MCQs">MCQs (Objectives)</option>
                   <option value="shorts">Short Questions</option>
                   <option value="longs">Long Questions</option>
                 </select>
               </div>
 
+              {/* Source Material - Now ALWAYS enabled */}
               <div className="flex flex-col gap-2">
                 <label className="text-[11px] font-black text-slate-400 uppercase ml-1">Source Material</label>
                 <select value={selectedSource} onChange={(e) => setSelectedSource(e.target.value)}
-                        disabled={selectedType.toLowerCase() !== 'mcqs'} 
-                        className="bg-white border-2 border-slate-100 rounded-xl p-4 font-bold outline-none focus:border-blue-600 text-slate-700 shadow-sm disabled:opacity-50 cursor-pointer">
+                        className="bg-white border-2 border-slate-100 rounded-xl p-4 font-bold outline-none focus:border-blue-600 text-slate-700 shadow-sm cursor-pointer">
                   <option value="Exercise Questions">Exercise Questions</option>
                   <option value="Additional Questions">Additional Questions</option>
                   <option value="Pastpapers Questions">Past Board Papers</option>
@@ -174,20 +177,24 @@ export default function QuestionMenuModal({
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-[11px] font-black text-slate-400 uppercase ml-1">Total Questions</label>
+                <label className="text-[11px] font-black text-slate-400 uppercase ml-1">Total Qs</label>
                 <input type="number" value={requiredCount} onChange={(e) => setRequiredCount(Number(e.target.value))} 
                        className="bg-white border-2 border-slate-100 rounded-xl p-4 font-bold outline-none focus:border-blue-600 text-slate-700 shadow-sm" />
               </div>
 
-              {/* --- NEW MARKS INPUT --- */}
+              {/* Choice Input - Only for Shorts/Longs */}
+              {selectedType.toLowerCase() !== 'mcqs' && (
+                <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2">
+                  <label className="text-[11px] font-black text-blue-600 uppercase ml-1">To Attempt</label>
+                  <input type="number" value={attemptCount} onChange={(e) => setAttemptCount(Number(e.target.value))} 
+                         className="bg-blue-50 border-2 border-blue-100 rounded-xl p-4 font-bold outline-none focus:border-blue-600 text-blue-700 shadow-sm" />
+                </div>
+              )}
+
               <div className="flex flex-col gap-2">
-                <label className="text-[11px] font-black text-slate-400 uppercase ml-1">Marks per Q</label>
-                <input 
-                    type="number" 
-                    value={defaultMarks} 
-                    onChange={(e) => setDefaultMarks(Number(e.target.value))} 
-                    className="bg-white border-2 border-slate-100 rounded-xl p-4 font-bold outline-none focus:border-blue-600 text-slate-700 shadow-sm" 
-                />
+                <label className="text-[11px] font-black text-slate-400 uppercase ml-1">Marks/Q</label>
+                <input type="number" value={defaultMarks} onChange={(e) => setDefaultMarks(Number(e.target.value))} 
+                       className="bg-white border-2 border-slate-100 rounded-xl p-4 font-bold outline-none focus:border-blue-600 text-slate-700 shadow-sm" />
               </div>
 
             </div>
@@ -199,9 +206,9 @@ export default function QuestionMenuModal({
             </button>
           </div>
         ) : (
-          /* --- SELECTION VIEW (UNCHANGED) --- */
+          /* --- SELECTION VIEW --- */
           <div className="p-3">
-            <div className="flex justify-between items-center mb-3">
+            <div className="flex justify-between items-center mb-3 text-black">
               <button onClick={() => setViewMode('filters')} className="flex items-center gap-2 text-blue-600 font-black uppercase text-xs hover:underline">
                 <FaArrowLeft /> Edit Filters
               </button>
@@ -228,7 +235,6 @@ export default function QuestionMenuModal({
                          <p className="font-bold text-slate-800 text-sm leading-snug">
                              <span className="text-blue-600 mr-2">{idx + 1}.</span> {q.question || q.text}
                          </p>
-                         {/* Optional: Show marks badge */}
                          <span className="bg-slate-100 text-slate-500 text-[10px] font-black px-2 py-1 rounded ml-2 whitespace-nowrap">
                             {q.marks} Marks
                          </span>
@@ -237,8 +243,8 @@ export default function QuestionMenuModal({
                       {q.options && Object.keys(q.options).length > 0 && (
                         <div className="flex flex-wrap justify-between gap-3 mt-3 ml-2">
                           {Object.entries(q.options).map(([key, val]) => (
-                            <div key={key} className="flex items-center gap-2 bg-white  p-1.5 px-3 rounded-lg text-sm shadow-sm">
-                              <span className="text-slate-800  px-1 py-0.5 rounded font-black text-[10px] uppercase">({key})</span>
+                            <div key={key} className="flex items-center gap-2 bg-white p-1.5 px-3 rounded-lg text-sm shadow-sm">
+                              <span className="text-slate-800 px-1 py-0.5 rounded font-black text-[10px] uppercase">({key})</span>
                               <span className="text-slate-700 font-semibold text-[12px]">{String(val)}</span>
                             </div>
                           ))}
@@ -249,34 +255,19 @@ export default function QuestionMenuModal({
                 );
               }) : (
                 <div className="text-center py-20 text-slate-400 font-bold border-2 border-dashed border-slate-200 rounded-2xl">
-                    No Questions Found for this criteria.
+                    No Questions Found.
                 </div>
               )}
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-5 border-t-2 border-slate-50">
+              <button onClick={() => setFilterOnlySelected(false)} className={`flex items-center justify-center gap-2 py-4 rounded-xl font-black uppercase text-xs transition-all ${!filterOnlySelected ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-500'}`}><FaLayerGroup /> All</button>
+              <button onClick={() => setFilterOnlySelected(true)} className={`flex items-center justify-center gap-2 py-4 rounded-xl font-black uppercase text-xs transition-all ${filterOnlySelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500'}`}><FaListUl /> Selected</button>
+              <button onClick={handleRandomSelect} className="flex items-center justify-center gap-2 bg-purple-600 text-white py-4 rounded-xl font-black uppercase text-xs hover:bg-purple-700 transition-all shadow-lg"><FaRandom /> Random Pick</button>
               <button 
-                onClick={() => setFilterOnlySelected(false)} 
-                className={`flex items-center justify-center gap-2 py-4 rounded-xl font-black uppercase text-xs transition-all ${!filterOnlySelected ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}>
-                <FaLayerGroup /> All
-              </button>
-
-              <button 
-                onClick={() => setFilterOnlySelected(true)} 
-                className={`flex items-center justify-center gap-2 py-4 rounded-xl font-black uppercase text-xs transition-all ${filterOnlySelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}>
-                <FaListUl /> Selected
-              </button>
-
-              <button 
-                onClick={handleRandomSelect} 
-                className="flex items-center justify-center gap-2 bg-purple-600 text-white py-4 rounded-xl font-black uppercase text-xs hover:bg-purple-700 transition-all shadow-lg">
-                <FaRandom /> Random Pick
-              </button>
-
-              <button 
-                onClick={() => { onAddQuestions(tempSelected); onClose(); }} 
+                onClick={() => { onAddQuestions(tempSelected, { total: requiredCount, attempt: attemptCount, marks: defaultMarks, type: selectedType }); onClose(); }} 
                 disabled={tempSelected.length !== Number(requiredCount)}
-                className="flex items-center justify-center gap-2 bg-green-600 text-white py-4 rounded-xl font-black uppercase text-xs hover:bg-green-700 transition-all shadow-lg disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none">
+                className="flex items-center justify-center gap-2 bg-green-600 text-white py-4 rounded-xl font-black uppercase text-xs hover:bg-green-700 transition-all shadow-lg disabled:bg-slate-200 disabled:text-slate-400">
                 Add In Paper
               </button>
             </div>

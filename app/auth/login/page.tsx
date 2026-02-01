@@ -4,7 +4,7 @@ import Link from 'next/link';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import bcrypt from 'bcryptjs';
-import toast from 'react-hot-toast'; // Import toast
+import toast from 'react-hot-toast';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -17,47 +17,82 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // 1. JSON Server se user ko email ke zariye dhoondein
-      const response = await axios.get(`http://localhost:3001/users?email=${email}`);
-      const users = response.data;
+      // 1. Pehle "users" (Admins) table mein check karein
+      const userRes = await axios.get(`http://localhost:3001/users?email=${email}`);
+      const users = userRes.data;
 
       if (users.length > 0) {
         const user = users[0];
-
-        // 2. Bcrypt ke zariye password verify karein
+        // Bcrypt check for users (Admin)
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (isMatch) {
-          // 3. Token Generate karein (User info ko encode karke)
-          const tokenData = { id: user.id, email: user.email, name: user.username };
-          const token = btoa(JSON.stringify(tokenData));
-
-          // 4. COOKIE SET KAREIN (Ye middleware ke liye zaroori hai)
-          document.cookie = `auth_token=${token}; path=/; max-age=86400; SameSite=Lax`;
-
-          console.log(user.username);
-          
-          // Optional: UI ke liye local storage bhi use kar sakte hain
-          localStorage.setItem('user', JSON.stringify({ id: user.id, name: user.username,email: user.email,password: user.password,am:"waleeeeeeeeeeeeeed" }));
-  
-          toast.success("Login Successful! Welcome " + user.username);
-          
-          // 5. Dashboard par bhej dein
-          router.push('/dashboard'); 
-          // Refresh zaroori ho sakta hai agar middleware foran detect na kare
-          router.refresh(); 
-        } else {
-          toast.error("Invalid Password!");
+          loginSuccess(user, 'admin');
+          return;
         }
-      } else {
-          toast.error("User not found with this email!");
       }
+
+      // 2. Agar admin nahi mila, to "teachers" table mein check karein
+      const teacherRes = await axios.get(`http://localhost:3001/teachers?email=${email}`);
+      const teachers = teacherRes.data;
+
+      if (teachers.length > 0) {
+        const teacher = teachers[0];
+        
+        // Teachers table mein password plain text hai (e.g., 12345)
+        if (teacher.password === password) {
+          loginSuccess(teacher, 'teacher');
+          return;
+        }
+      }
+
+      // Agar dono mein nahi mila
+      toast.error("Invalid Email or Password!");
+
     } catch (error) {
       console.error("Login Error:", error);
-      toast.error("Server error. Make sure json-server is running on port 3001.");
+      toast.error("Server error. Check your connection.");
     } finally {
       setLoading(false);
     }
+  };
+
+  // Helper function for successful login
+  const loginSuccess = (userData: any, role: string) => {
+    // 1. Token Data create karein (Token mein role lazmi shamil karein)
+    const tokenData = { 
+      id: userData.id, 
+      email: userData.email, 
+      name: userData.name || userData.username,
+      role: role 
+    };
+    const token = btoa(JSON.stringify(tokenData));
+
+    // 2. Cookies Set Karein (Middleware ke liye)
+    // auth_token: security ke liye
+    document.cookie = `auth_token=${token}; path=/; max-age=86400; SameSite=Lax`;
+    // user_role: asan redirection control ke liye
+    document.cookie = `user_role=${role}; path=/; max-age=86400; SameSite=Lax`;
+
+    // 3. LocalStorage mein data save karein (Frontend UI ke liye)
+    localStorage.setItem('user', JSON.stringify({
+      id: userData.id,
+      name: userData.name || userData.username,
+      email: userData.email,
+      role: role,
+      classes: userData.classes || [], // Teacher assigned classes
+      subjects: userData.subjects || [] // Teacher assigned subjects
+    }));
+
+    toast.success(`Welcome ${userData.name || userData.username}!`);
+    
+    // 4. Redirect to Dashboard
+    router.push('/dashboard');
+    
+    // 5. Refresh taake middleware foran nayi cookies detect kare
+    setTimeout(() => {
+        router.refresh();
+    }, 100);
   };
 
   return (
@@ -121,13 +156,6 @@ export default function LoginPage() {
                   placeholder="••••••••" 
                   className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all bg-gray-50 text-sm"
                 />
-              </div>
-
-              <div className="flex items-center gap-2 py-1">
-                <input type="checkbox" id="remember" className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
-                <label htmlFor="remember" className="text-[11px] text-gray-500">
-                  Remember me for 30 days
-                </label>
               </div>
 
               <button 

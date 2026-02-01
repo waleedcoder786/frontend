@@ -14,14 +14,53 @@ export default function GeneratePaper() {
   
   const [classes, setClasses] = useState([]);
   const [fullData, setFullData] = useState<any>(null);
+  const [user, setUser] = useState<any>(null); // Logged in user state
+
+  console.log(user);
+  
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // LocalStorage se user nikalna
+        const loggedInUser = JSON.parse(localStorage.getItem('user') || '{}');
+        setUser(loggedInUser);
+
         const res = await axios.get('./db.json');
-        setClasses(res.data.classes);
-        setFullData(res.data.chaptersData);
-      } catch (error) { console.error("Error:", error); }
+        let allClasses = res.data.classes;
+        let allChapters = res.data.chaptersData;
+
+
+        
+        
+        // 🛡️ TEACHER FILTER LOGIC
+        if (loggedInUser.role === 'teacher') {
+          // 1. Sirf wo classes rakhein jo teacher ko mili hain (e.g. ["12th"])
+          allClasses = allClasses.filter((c: any) => 
+            loggedInUser.classes?.includes(c.title)
+        );
+        
+        console.log(allClasses);
+          // 2. ChaptersData mein se sirf wo subjects rakhein jo teacher ko milay hain
+          // Hum fullData ko filter karenge taake aglay step mein masla na ho
+          const filteredChaptersData: any = {};
+          Object.keys(allChapters).forEach(classKey => {
+            const classData = allChapters[classKey];
+            filteredChaptersData[classKey] = {
+              ...classData,
+              subjects: classData.subjects.filter((s: any) => 
+                loggedInUser.subjects?.includes(s.name)
+              )
+            };
+          });
+          allChapters = filteredChaptersData;
+        }
+
+        setClasses(allClasses);
+        setFullData(allChapters);
+      } catch (error) { 
+        console.error("Error:", error); 
+      }
     };
     fetchData();
   }, []);
@@ -40,7 +79,6 @@ export default function GeneratePaper() {
     );
   };
 
-  // Switch to Preview Component if showPreview is true
   if (showPreview) {
     return (
       <PaperPreview 
@@ -53,7 +91,7 @@ export default function GeneratePaper() {
   }
 
   return (
-    <div className="h-screen w-screen bg-[#f8fafc] flex overflow-hidden font-sans" suppressHydrationWarning>
+    <div className="h-screen w-screen bg-[#f8fafc] flex overflow-hidden font-sans">
       <Navbar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-10 z-10">
@@ -69,10 +107,11 @@ export default function GeneratePaper() {
           </div>
           
           <div className="flex items-center gap-4">
+            {/* Role Badge */}
+            <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${user?.role === 'teacher' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}`}>
+               {user?.role || 'User'}
+            </span>
             <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Step {selectedSubject ? "3" : selectedClassId ? "2" : "1"} of 3</span>
-            <div className="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-              <div className={`h-full bg-blue-600 transition-all duration-700 ${selectedSubject ? 'w-full' : selectedClassId ? 'w-2/3' : 'w-1/3'}`} />
-            </div>
           </div>
         </header>
 
@@ -81,24 +120,21 @@ export default function GeneratePaper() {
           {/* STEP 1: CLASS SELECTION */}
           {!selectedClassId && (
             <div className="max-w-7xl mx-auto animate-in fade-in duration-500">
-              <h2 className="text-3xl font-black text-slate-900 mb-10">Select Grade Level</h2>
+              <h2 className="text-3xl font-black text-slate-900 mb-10">
+                {user?.role === 'teacher' ? 'Your Assigned Classes' : 'Select Grade Level'}
+              </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {classes.map((item: any) => (
+                {classes.length > 0 ? classes.map((item: any) => (
                   <div 
                     key={item.id} 
                     onClick={() => { setSelectedClassId(item.id); setSelectedClassName(item.title); }} 
                     className="group relative bg-white rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer h-72"
                   >
-                    <img 
-                      src={item.img} 
-                      className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700 opacity-20 group-hover:opacity-40" 
-                      alt={item.title} 
-                    />
+                    <img src={item.img} className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700 opacity-20 group-hover:opacity-40" alt={item.title} />
                     <div className="absolute inset-0 bg-gradient-to-b from-white via-white/80 to-transparent group-hover:opacity-0 transition-opacity duration-500" />
-                    
                     <div className="relative p-8 h-full flex flex-col justify-between z-10">
                       <div>
-                        <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center text-white shadow-lg mb-4 group-hover:scale-110 transition-transform`}>
+                        <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center text-white shadow-lg mb-4`}>
                           <FaGraduationCap size={20} />
                         </div>
                         <h3 className="text-2xl font-black text-slate-800">{item.title}</h3>
@@ -109,7 +145,11 @@ export default function GeneratePaper() {
                       </div>
                     </div>
                   </div>
-                ))}
+                )) : (
+                    <div className="col-span-full text-center py-20 bg-white rounded-3xl border border-dashed text-slate-400 font-bold">
+                        No classes assigned to your profile.
+                    </div>
+                )}
               </div>
             </div>
           )}
@@ -118,18 +158,23 @@ export default function GeneratePaper() {
           {selectedClassId && !selectedSubject && (
             <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-in slide-in-from-right-10 duration-500">
               {currentSubjects.map((sub: any, i: number) => (
-                <div key={i} onClick={() => setSelectedSubject(sub)} className="group bg-white p-4 rounded-[1.5rem] border shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 cursor-pointer">
-                  <div className="relative h-48 rounded-[1rem] overflow-hidden mb-4">
+                <div key={i} onClick={() => setSelectedSubject(sub)} className="group bg-white p-4 rounded-xl border shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 cursor-pointer">
+                  <div className="relative h-28 rounded-xl overflow-hidden mb-4">
                     <img src={sub.image} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="" />
                     <div className={`absolute inset-0 ${sub.color} opacity-20 group-hover:opacity-10 transition-opacity`} />
                   </div>
                   <h3 className="text-xl font-black text-slate-800 px-2">{sub.name}</h3>
                 </div>
               ))}
+              {currentSubjects.length === 0 && (
+                  <div className="col-span-full text-center py-20 text-slate-400 font-bold">
+                      You don't have access to any subjects in this class.
+                  </div>
+              )}
             </div>
           )}
 
-          {/* STEP 3: CHAPTER SELECTION */}
+          {/* STEP 3: CHAPTER SELECTION (No change needed here) */}
           {selectedSubject && (
             <div className="max-w-4xl mx-auto animate-in slide-in-from-bottom-10 duration-500">
               <div className="flex justify-between items-end mb-10">
@@ -148,15 +193,9 @@ export default function GeneratePaper() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {selectedSubject.chapters.map((chapter: any, idx: number) => {
-                  // logic checks the 'name' property of the chapter object
                   const isSelected = selectedChapters.includes(chapter.name);
                   return (
-                    <div 
-                      key={idx} 
-                      onClick={() => toggleChapter(chapter.name)} 
-                      className={`p-6 rounded-xl border-2 transition-all cursor-pointer flex items-center justify-between ${isSelected ? 'border-blue-600 bg-blue-50/50' : 'bg-white border-slate-100 hover:border-blue-200'}`}
-                    >
-                      {/* FIX: Use chapter.name instead of the whole object */}
+                    <div key={idx} onClick={() => toggleChapter(chapter.name)} className={`p-6 rounded-xl border-2 transition-all cursor-pointer flex items-center justify-between ${isSelected ? 'border-blue-600 bg-blue-50/50' : 'bg-white border-slate-100 hover:border-blue-200'}`}>
                       <span className={`font-bold ${isSelected ? 'text-blue-900' : 'text-slate-700'}`}>
                         {idx + 1}. {chapter.name}
                       </span>

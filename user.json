@@ -9,10 +9,33 @@
     },
     {
       "id": "1769559899158",
-      "username": "muneeb",
+      "name": "muneeb",
       "email": "moon@gmail.com",
       "password": "$2b$10$xAw60wYV0o4NLDYOMV8s2u9KJU5gW4sMCw7OsKBT6cHtdX10k/LVS",
-      "createdAt": "2026-01-28T00:24:59.158Z"
+      "am": "waleeeeeeeeeeeeeed",
+      "profilePic": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSG55Nj1bMrY-HE5O8dWGAnkPKqRGQ2AnDmGA&s"
+    }
+  ],
+  "teachers": [
+    {
+      "name": "ali ahmad",
+      "email": "waleedcoder@gmail.com",
+      "phone": "03474116023",
+      "city": "LAHORE",
+      "institute": "FGDC",
+      "password": "12345",
+      "classes": [
+        "12th"
+      ],
+      "subjects": [
+        "Math",
+        "Computer",
+        "Physics",
+        "English"
+      ],
+      "userId": "1769559899158",
+      "updatedAt": "2026-02-01T17:54:30.025Z",
+      "id": "822f"
     }
   ],
   "papers": [
@@ -316,7 +339,7 @@
       }
     },
     {
-      "id": 1769394954021,
+      "id": "1769394954021",
       "userId": "1769390349009",
       "paperName": "secondpaper",
       "MCQs": [
@@ -602,6 +625,921 @@
         "class": "12th",
         "totalMarks": 71,
         "createdAt": "26/01/2026, 07:35:54"
+      }
+    },
+    {
+      "id": "1769913170506",
+      "userId": "1769559899158",
+      "paperName": "random",
+      "MCQs": [
+        {
+          "q_no": 1,
+          "question": "Primary purpose of the Software Development Life Cycle (SDLC) is to:",
+          "options": {
+            "A": "Design websites",
+            "B": "Deliver high-quality software within time and cost estimates",
+            "C": "Manage database systems",
+            "D": "Create hardware components"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-0-h0vpj0z0c"
+        },
+        {
+          "q_no": 35,
+          "question": "Performance testing checks:",
+          "options": {
+            "A": "Good color",
+            "B": "Works with other software",
+            "C": "Fast with many users",
+            "D": "User-friendly design"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-34-lpr20ratx"
+        },
+        {
+          "q_no": 43,
+          "question": "Compatibility testing is done to:",
+          "options": {
+            "A": "Find bugs in code",
+            "B": "Check use on various devices",
+            "C": "Improve loading speed",
+            "D": "Add new features"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-42-lnh7qwiv7"
+        },
+        {
+          "q_no": 23,
+          "question": "Which of these is not a functional requirement for an ATM system?",
+          "options": {
+            "A": "Print transaction receipts",
+            "B": "Authenticate PIN",
+            "C": "Maintain 99.9% uptime",
+            "D": "Withdraw cash"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-22-jpxzhp61y"
+        },
+        {
+          "q_no": 41,
+          "question": "Which phase includes functionality, performance, and compatibility testing?",
+          "options": {
+            "A": "Deployment",
+            "B": "Testing",
+            "C": "Design",
+            "D": "Development"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-40-6r3578hvz"
+        },
+        {
+          "q_no": 12,
+          "question": "A keyword is used to define a function in Python:",
+          "options": {
+            "A": "define",
+            "B": "function",
+            "C": "def",
+            "D": "func"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-11-gj9cype0u"
+        },
+        {
+          "q_no": 2,
+          "question": "A type of requirement specifies system performance:",
+          "options": {
+            "A": "Functional Requirements",
+            "B": "Non-Functional Requirements",
+            "C": "Technical Requirements",
+            "D": "Operational Requirements"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-1-2jopl3net"
+        },
+        {
+          "q_no": 42,
+          "question": "What is functionality testing mainly used for?",
+          "options": {
+            "A": "Checking user behavior",
+            "B": "Making software faster",
+            "C": "Making sure features work properly",
+            "D": "Installing the software"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-41-egbtwcrk2"
+        },
+        {
+          "q_no": 24,
+          "question": "Which of the following is a non-functional requirement?",
+          "options": {
+            "A": "System must allow fund transfer",
+            "B": "System should encrypt sensitive data",
+            "C": "User can change password",
+            "D": "Admin can add a user"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-23-yfvnaimyh"
+        },
+        {
+          "q_no": 47,
+          "question": "Which software model is best for projects with fixed and clear requirements?",
+          "options": {
+            "A": "Waterfall",
+            "B": "Scrum",
+            "C": "Agile",
+            "D": "DevOps"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-46-z3wquz17k"
+        }
+      ],
+      "Short": [],
+      "Long": [],
+      "sectionConfigs": {
+        "mcqs": {
+          "total": 10,
+          "attempt": 10,
+          "marks": 1,
+          "type": "MCQs"
+        }
+      },
+      "info": {
+        "subject": "Computer",
+        "class": "12th",
+        "totalMarks": 10,
+        "createdAt": "01/02/2026, 07:32:50"
+      },
+      "style": {
+        "fontFamily": "font-sans",
+        "lineHeight": "1.5",
+        "headingSize": "18",
+        "textSize": "14",
+        "textColor": "#000000",
+        "watermark": "CONFIDENTIAL",
+        "showWatermark": true,
+        "showBubbleSheet": false,
+        "showNote": false,
+        "noteText": "Note: Use black/blue ballpoint only. Lead pencil is not allowed.",
+        "logoUrl": "https://media.licdn.com/dms/image/v2/D4D0BAQGA4E56lsNThw/company-logo_200_200/company-logo_200_200/0/1695224355465?e=2147483647&v=beta&t=XDgZWCwvNAcrgv3Tfg2T64YBDnjbsyEV_jkbD5g8UxI",
+        "layoutType": "grid-table"
+      }
+    },
+    {
+      "id": "1769914169080",
+      "userId": "1769559899158",
+      "paperName": "ONE",
+      "MCQs": [
+        {
+          "q_no": 32,
+          "question": "The phase where the software is installed in the real environment is called:",
+          "options": {
+            "A": "Coding",
+            "B": "Implementation",
+            "C": "Testing",
+            "D": "Analysis"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-31-eysaqnryu"
+        },
+        {
+          "q_no": 6,
+          "question": "Factor does not influence the cost estimation of a software project:",
+          "options": {
+            "A": "Scope of the project",
+            "B": "Technology stack",
+            "C": "Number of meetings held",
+            "D": "Operational costs"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-5-wc0fpf1km"
+        },
+        {
+          "q_no": 36,
+          "question": "Why do we do compatibility testing?",
+          "options": {
+            "A": "Make software beautiful",
+            "B": "Works on all devices",
+            "C": "Learn new languages",
+            "D": "Add storage"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-35-zokbrmqqh"
+        },
+        {
+          "q_no": 34,
+          "question": "What is the primary risk of skipping the design phase in the SDLC?",
+          "options": {
+            "A": "Poor hardware support",
+            "B": "Unnecessary testing",
+            "C": "Lack of documentation",
+            "D": "Poor system structure and scalability"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-33-rek6cacy9"
+        },
+        {
+          "q_no": 35,
+          "question": "Performance testing checks:",
+          "options": {
+            "A": "Good color",
+            "B": "Works with other software",
+            "C": "Fast with many users",
+            "D": "User-friendly design"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-34-c0ne3vtgc"
+        },
+        {
+          "q_no": 43,
+          "question": "Compatibility testing is done to:",
+          "options": {
+            "A": "Find bugs in code",
+            "B": "Check use on various devices",
+            "C": "Improve loading speed",
+            "D": "Add new features"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-42-h8ozbpxar"
+        },
+        {
+          "q_no": 18,
+          "question": "The outcome of the requirement phase is:",
+          "options": {
+            "A": "Test plan",
+            "B": "Design diagrams",
+            "C": "Requirement Specification Document",
+            "D": "Source code"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-17-7asr3p92f"
+        },
+        {
+          "q_no": 38,
+          "question": "Which of the following is NOT a main activity in the design phase?",
+          "options": {
+            "A": "Create diagrams",
+            "B": "Plan architecture",
+            "C": "Write source code",
+            "D": "Develop models"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-37-6v0mgic14"
+        },
+        {
+          "q_no": 33,
+          "question": "Who mostly uses the system after implementation?",
+          "options": {
+            "A": "Developers",
+            "B": "Testers",
+            "C": "End Users",
+            "D": "Designers"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-32-vv1qcx6id"
+        },
+        {
+          "q_no": 24,
+          "question": "Which of the following is a non-functional requirement?",
+          "options": {
+            "A": "System must allow fund transfer",
+            "B": "System should encrypt sensitive data",
+            "C": "User can change password",
+            "D": "Admin can add a user"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-23-4shmk1t5f"
+        }
+      ],
+      "Short": [],
+      "Long": [],
+      "sectionConfigs": {
+        "mcqs": {
+          "total": 10,
+          "attempt": 10,
+          "marks": 1,
+          "type": "MCQs"
+        }
+      },
+      "info": {
+        "subject": "Computer",
+        "class": "12th",
+        "totalMarks": 10,
+        "createdAt": "01/02/2026, 07:49:29"
+      }
+    },
+    {
+      "id": "1769934510586",
+      "userId": "1769559899158",
+      "paperName": "all",
+      "MCQs": [
+        {
+          "q_no": 32,
+          "question": "The phase where the software is installed in the real environment is called:",
+          "options": {
+            "A": "Coding",
+            "B": "Implementation",
+            "C": "Testing",
+            "D": "Analysis"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-31-k5vt78sd2"
+        },
+        {
+          "q_no": 11,
+          "question": "A loop used to iterate over a collection such as lists is:",
+          "options": {
+            "A": "while",
+            "B": "for",
+            "C": "do-while",
+            "D": "repeat"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-10-7anva5ssf"
+        },
+        {
+          "q_no": 48,
+          "question": "Why is Agile better for fast-changing environment?",
+          "options": {
+            "A": "No testing",
+            "B": "Deliver all at once",
+            "C": "Short cycles, adapt",
+            "D": "No planning"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-47-ryjf4t5ee"
+        },
+        {
+          "q_no": 31,
+          "question": "Bug fixing is part of which SDLC phase?",
+          "options": {
+            "A": "Design",
+            "B": "Testing",
+            "C": "Requirement",
+            "D": "Planning"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-30-0bm232q8y"
+        },
+        {
+          "q_no": 3,
+          "question": "Role of a framework in the context of SDLC is to:",
+          "options": {
+            "A": "Write code from scratch",
+            "B": "Provide a structured foundation with predefined components and architectures",
+            "C": "Manage hardware",
+            "D": "Perform manual testing"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-2-8wy384fzx"
+        },
+        {
+          "q_no": 23,
+          "question": "Which of these is not a functional requirement for an ATM system?",
+          "options": {
+            "A": "Print transaction receipts",
+            "B": "Authenticate PIN",
+            "C": "Maintain 99.9% uptime",
+            "D": "Withdraw cash"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-22-38pdb46t4"
+        },
+        {
+          "q_no": 2,
+          "question": "A type of requirement specifies system performance:",
+          "options": {
+            "A": "Functional Requirements",
+            "B": "Non-Functional Requirements",
+            "C": "Technical Requirements",
+            "D": "Operational Requirements"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-1-e72gf0rfr"
+        },
+        {
+          "q_no": 7,
+          "question": "An action needed during Python installation to run from the command line more easily:",
+          "options": {
+            "A": "Uncheck \"Add Python to PATH\"",
+            "B": "Choose a different IDE",
+            "C": "Check \"Add Python to PATH\"",
+            "D": "Install only the IDE"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-6-040pg7pxr"
+        },
+        {
+          "q_no": 20,
+          "question": "Requirement Gathering is also known as:",
+          "options": {
+            "A": "Deployment",
+            "B": "Planning",
+            "C": "Analysis",
+            "D": "Debugging"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-19-6w9sh6xy1"
+        },
+        {
+          "q_no": 27,
+          "question": "What is the main output of the design phase?",
+          "options": {
+            "A": "Test Plan",
+            "B": "Design Documents",
+            "C": "Code Files",
+            "D": "Deployment Report"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-26-fah08ly0y"
+        }
+      ],
+      "Short": [
+        {
+          "id": 1,
+          "question": "Differentiate between direct and indirect input.",
+          "type": "shorts",
+          "marks": 2,
+          "tempId": "shorts-1-qcs8muepi"
+        },
+        {
+          "id": 2,
+          "question": "What are pointing devices?",
+          "type": "shorts",
+          "marks": 2,
+          "tempId": "shorts-2-sbveinl3a"
+        },
+        {
+          "id": 18,
+          "question": "What is port? Write some commonly used ports.",
+          "type": "shorts",
+          "marks": 2,
+          "tempId": "shorts-18-28w77sy8h"
+        },
+        {
+          "id": 10,
+          "question": "What are two characteristics of analog signals?",
+          "type": "shorts",
+          "marks": 2,
+          "tempId": "shorts-10-tzsdvktz1"
+        },
+        {
+          "id": 14,
+          "question": "Distinguish between Cut and Copy commands.",
+          "type": "shorts",
+          "marks": 2,
+          "tempId": "shorts-14-0t6dviwj7"
+        },
+        {
+          "id": 3,
+          "question": "What is the use of MICR?",
+          "type": "shorts",
+          "marks": 2,
+          "tempId": "shorts-3-j901kq138"
+        },
+        {
+          "id": 19,
+          "question": "What is the purpose of control bus?",
+          "type": "shorts",
+          "marks": 2,
+          "tempId": "shorts-19-8zrzwalp6"
+        },
+        {
+          "id": 5,
+          "question": "Define groupware.",
+          "type": "shorts",
+          "marks": 2,
+          "tempId": "shorts-5-f5az3efwh"
+        },
+        {
+          "id": 9,
+          "question": "What do you know about Unicode?",
+          "type": "shorts",
+          "marks": 2,
+          "tempId": "shorts-9-qkc8iz6kh"
+        },
+        {
+          "id": 13,
+          "question": "Define an event.",
+          "type": "shorts",
+          "marks": 2,
+          "tempId": "shorts-13-my4ks7azg"
+        }
+      ],
+      "Long": [
+        {
+          "id": 2,
+          "question": "Describe the various phases of the Software Development Life Cycle (SDLC).",
+          "type": "longs",
+          "marks": 5,
+          "tempId": "longs-2-qyzd5bwfi"
+        },
+        {
+          "id": 1,
+          "question": "Explain the different types of software maintenance.",
+          "type": "longs",
+          "marks": 5,
+          "tempId": "longs-1-ckh10bzd3"
+        },
+        {
+          "id": 7,
+          "question": "Discuss various techniques for estimating the cost of a software project.",
+          "type": "longs",
+          "marks": 5,
+          "tempId": "longs-7-jsu7vqf4k"
+        },
+        {
+          "id": 5,
+          "question": "Compare and contrast different software development models, such as Waterfall, Agile, and Spiral.",
+          "type": "longs",
+          "marks": 5,
+          "tempId": "longs-5-t6wh9j2a6"
+        }
+      ],
+      "sectionConfigs": {
+        "mcqs": {
+          "total": 10,
+          "attempt": 10,
+          "marks": 1,
+          "type": "MCQs"
+        },
+        "shorts": {
+          "total": 10,
+          "attempt": 8,
+          "marks": 2,
+          "type": "shorts"
+        },
+        "longs": {
+          "total": 4,
+          "attempt": 3,
+          "marks": 5,
+          "type": "longs"
+        }
+      },
+      "info": {
+        "subject": "Computer",
+        "class": "12th",
+        "totalMarks": 50,
+        "createdAt": "01/02/2026, 13:28:30"
+      },
+      "style": {
+        "fontFamily": "font-sans",
+        "lineHeight": "0.8",
+        "headingSize": "11",
+        "textSize": "11",
+        "textColor": "#000000",
+        "watermark": "CONFIDnjhihi",
+        "showWatermark": true,
+        "showBubbleSheet": false,
+        "showNote": true,
+        "noteText": "Note: Use black/blue ballpoint only. Lead pencil is not allowed.",
+        "logoUrl": "https://media.licdn.com/dms/image/v2/D4D0BAQGA4E56lsNThw/company-logo_200_200/company-logo_200_200/0/1695224355465?e=2147483647&v=beta&t=XDgZWCwvNAcrgv3Tfg2T64YBDnjbsyEV_jkbD5g8UxI",
+        "layoutType": "classic-school"
+      }
+    },
+    {
+      "id": 1769958836506,
+      "userId": "1769559899158",
+      "paperName": "paper12",
+      "MCQs": [
+        {
+          "q_no": 1,
+          "question": "Primary purpose of the Software Development Life Cycle (SDLC) is to:",
+          "options": {
+            "A": "Design websites",
+            "B": "Deliver high-quality software within time and cost estimates",
+            "C": "Manage database systems",
+            "D": "Create hardware components"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-0-w826orm32"
+        },
+        {
+          "q_no": 11,
+          "question": "A loop used to iterate over a collection such as lists is:",
+          "options": {
+            "A": "while",
+            "B": "for",
+            "C": "do-while",
+            "D": "repeat"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-60-hsia2s0vn"
+        },
+        {
+          "q_no": 9,
+          "question": "Output of the below code is: age = 25; print(\"Age:\", age)",
+          "options": {
+            "A": "Age: 25",
+            "B": "25",
+            "C": "Age",
+            "D": "age"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-8-xn30zt9om"
+        },
+        {
+          "q_no": 16,
+          "question": "Which of these best describes a software framework?",
+          "options": {
+            "A": "Set of instructions",
+            "B": "Set of languages",
+            "C": "Set of tools",
+            "D": "Translator"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-15-xh009hxm7"
+        },
+        {
+          "q_no": 47,
+          "question": "Which software model is best for projects with fixed and clear requirements?",
+          "options": {
+            "A": "Waterfall",
+            "B": "Scrum",
+            "C": "Agile",
+            "D": "DevOps"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-46-1ffsiu7br"
+        },
+        {
+          "q_no": 22,
+          "question": "Which tool is most commonly used to model and analyze functional requirements?",
+          "options": {
+            "A": "ER Diagrams",
+            "B": "Gantt Charts",
+            "C": "Use Case Diagrams",
+            "D": "Flowcharts"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-21-2holwqcqd"
+        },
+        {
+          "q_no": 45,
+          "question": "What happens during the configuration step of deployment?",
+          "options": {
+            "A": "Code compiled",
+            "B": "Software updated",
+            "C": "Setting adjusted",
+            "D": "Testing on devs’ PCs"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-94-enfsn7gx9"
+        },
+        {
+          "q_no": 44,
+          "question": "Which one is NOT part of the deployment phase?",
+          "options": {
+            "A": "Installation",
+            "B": "Configuration",
+            "C": "Code writing",
+            "D": "Real-world testing"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-43-ke78p8m3b"
+        },
+        {
+          "q_no": 32,
+          "question": "The phase where the software is installed in the real environment is called:",
+          "options": {
+            "A": "Coding",
+            "B": "Implementation",
+            "C": "Testing",
+            "D": "Analysis"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-81-vvjw913qx"
+        },
+        {
+          "q_no": 13,
+          "question": "The output of the following code is: temperature, humidity, wind_speed = 25, 60, 15 print(\"Hot and humid\" if temperature > 30 and humidity > 50 else \"Warm and breezy\" if temperature == 25 and wind_speed > 10 else \"Cool and dry\" if temperature < 20 and humidity < 30 else \"Moderate\")",
+          "options": {
+            "A": "Hot",
+            "B": "Warm and breezy",
+            "C": "Cool",
+            "D": "Nothing"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-62-3erk1kvho"
+        },
+        {
+          "q_no": 13,
+          "question": "The output of the following code is: temperature, humidity, wind_speed = 25, 60, 15 print(\"Hot and humid\" if temperature > 30 and humidity > 50 else \"Warm and breezy\" if temperature == 25 and wind_speed > 10 else \"Cool and dry\" if temperature < 20 and humidity < 30 else \"Moderate\")",
+          "options": {
+            "A": "Hot",
+            "B": "Warm and breezy",
+            "C": "Cool",
+            "D": "Nothing"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-12-259ywleov"
+        },
+        {
+          "q_no": 36,
+          "question": "Why do we do compatibility testing?",
+          "options": {
+            "A": "Make software beautiful",
+            "B": "Works on all devices",
+            "C": "Learn new languages",
+            "D": "Add storage"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-35-j24ga4ne6"
+        },
+        {
+          "q_no": 35,
+          "question": "Performance testing checks:",
+          "options": {
+            "A": "Good color",
+            "B": "Works with other software",
+            "C": "Fast with many users",
+            "D": "User-friendly design"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-84-7slfiu43w"
+        },
+        {
+          "q_no": 1,
+          "question": "Primary purpose of the Software Development Life Cycle (SDLC) is to:",
+          "options": {
+            "A": "Design websites",
+            "B": "Deliver high-quality software within time and cost estimates",
+            "C": "Manage database systems",
+            "D": "Create hardware components"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-50-jboalvvtg"
+        },
+        {
+          "q_no": 9,
+          "question": "Output of the below code is: age = 25; print(\"Age:\", age)",
+          "options": {
+            "A": "Age: 25",
+            "B": "25",
+            "C": "Age",
+            "D": "age"
+          },
+          "type": "mcqs",
+          "marks": 1,
+          "tempId": "MCQs-58-47l6gvuf3"
+        }
+      ],
+      "Short": [
+        {
+          "id": 9,
+          "question": "What do you know about Unicode?",
+          "type": "shorts",
+          "marks": 4,
+          "tempId": "shorts-9-v7yj3s0bg"
+        },
+        {
+          "id": 1,
+          "question": "Differentiate between direct and indirect input.",
+          "type": "shorts",
+          "marks": 4,
+          "tempId": "shorts-1-f3wxesgtv"
+        },
+        {
+          "id": 8,
+          "question": "Define a signal and list down its types.",
+          "type": "shorts",
+          "marks": 4,
+          "tempId": "shorts-8-de4btt0hy"
+        },
+        {
+          "id": 5,
+          "question": "Define groupware.",
+          "type": "shorts",
+          "marks": 4,
+          "tempId": "shorts-5-0grnm5vcp"
+        },
+        {
+          "id": 10,
+          "question": "What are two characteristics of analog signals?",
+          "type": "shorts",
+          "marks": 4,
+          "tempId": "shorts-10-oeyimtkux"
+        },
+        {
+          "id": 11,
+          "question": "Define MODEM and list down its types.",
+          "type": "shorts",
+          "marks": 4,
+          "tempId": "shorts-11-rgabcehli"
+        },
+        {
+          "id": 13,
+          "question": "Define an event.",
+          "type": "shorts",
+          "marks": 4,
+          "tempId": "shorts-13-dj0faa3xw"
+        }
+      ],
+      "Long": [
+        {
+          "id": 1,
+          "question": "Explain the different types of software maintenance.",
+          "type": "longs",
+          "marks": 5,
+          "tempId": "longs-1-syim0pe9l"
+        },
+        {
+          "id": 6,
+          "question": "Describe the key components of a comprehensive project plan for a software development project.",
+          "type": "longs",
+          "marks": 5,
+          "tempId": "longs-6-mq0kscmsf"
+        },
+        {
+          "id": 4,
+          "question": "Explain the concept of software frameworks and their role in application development.",
+          "type": "longs",
+          "marks": 5,
+          "tempId": "longs-4-h0o1bu20j"
+        },
+        {
+          "id": 2,
+          "question": "Describe the various phases of the Software Development Life Cycle (SDLC).",
+          "type": "longs",
+          "marks": 5,
+          "tempId": "longs-2-jtmvaej3i"
+        },
+        {
+          "id": 3,
+          "question": "Discuss the importance of requirement gathering and analysis in software development.",
+          "type": "longs",
+          "marks": 5,
+          "tempId": "longs-3-5wswxzld3"
+        }
+      ],
+      "sectionConfigs": {
+        "mcqs": {
+          "total": 15,
+          "attempt": 15,
+          "marks": 1,
+          "type": "MCQs"
+        },
+        "shorts": {
+          "total": 8,
+          "attempt": 6,
+          "marks": 4,
+          "type": "shorts"
+        },
+        "longs": {
+          "total": 5,
+          "attempt": 3,
+          "marks": 5,
+          "type": "longs"
+        }
+      },
+      "info": {
+        "subject": "Computer",
+        "class": "12th",
+        "totalMarks": 68,
+        "createdAt": "01/02/2026, 20:13:56"
       }
     }
   ]

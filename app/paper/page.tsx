@@ -1,10 +1,9 @@
 'use client';
-import React, { useState, useRef,useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { FaBars, FaPrint, FaTrash, FaEdit, FaCheck, FaCloudUploadAlt } from "react-icons/fa";
 import axios from 'axios';
 import Navbar from '../components/navbar/page';
 import QuestionMenuModal from '../components/QuestionMenuModal/page';
-import { u } from 'framer-motion/client';
 import toast from 'react-hot-toast';
 
 interface PaperPreviewProps {
@@ -22,28 +21,35 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
     const [isLoading, setIsLoading] = useState(false);
     const [user, setUser] = useState<any>(null);
 
-      // 🔹 SAVE MODAL STATES (added)
+    // 🔹 Naya state: Har section ki settings (total, attempt etc) save karne ke liye
+    const [sectionConfigs, setSectionConfigs] = useState<{ [key: string]: any }>({});
+
     const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
     const [paperName, setPaperName] = useState("");
 
-
-     useEffect(() => {
-            const storedUser = localStorage.getItem('user');
-            if (storedUser) {
-                setUser(JSON.parse(storedUser));
-            }
-        }, []);
-
-        // console.log(user.id);
-        
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+    }, []);
 
     // --- Add Questions Logic ---
-    const handleAddQuestions = (newQs: any[]) => {
+    const handleAddQuestions = (newQs: any[], config: any) => {
         const sanitizedQs = newQs.map(q => ({
             ...q,
             marks: Number(q.marks) || (q.type === 'mcqs' ? 1 : q.type === 'shorts' ? 2 : 5),
             tempId: q.tempId || `${q.id || Math.random()}-${Date.now()}`
         }));
+
+        // Agar Modal se config aayi hai to use save karein
+        if (config && config.type) {
+            setSectionConfigs(prev => ({
+                ...prev,
+                [config.type.toLowerCase()]: config
+            }));
+        }
+
         setSelectedQuestions(prev => [...prev, ...sanitizedQs]);
         setIsMenuOpen(false);
     };
@@ -53,9 +59,9 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
     };
 
     // --- Calculations ---
-    const mcqs = selectedQuestions.filter(q => q.options && Object.keys(q.options).length > 0);
-    const longs = selectedQuestions.filter(q => !q.options && q.type?.toLowerCase() === 'longs');
-    const shorts = selectedQuestions.filter(q => !q.options && q.type?.toLowerCase() !== 'longs');
+    const mcqs = selectedQuestions.filter(q => q.type?.toLowerCase() === 'mcqs');
+    const shorts = selectedQuestions.filter(q => q.type?.toLowerCase() === 'shorts');
+    const longs = selectedQuestions.filter(q => q.type?.toLowerCase() === 'longs');
 
     const calculateTotal = (questions: any[]) => questions.reduce((sum, q) => sum + (Number(q.marks) || 0), 0);
     const totalMcqMarks = calculateTotal(mcqs);
@@ -63,8 +69,8 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
     const totalLongMarks = calculateTotal(longs);
     const grandTotalMarks = totalMcqMarks + totalShortMarks + totalLongMarks;
 
-    // --- Save to DB Logic (Categorized Object Structure) ---
- const handleSavePaper = async (paperName: string) => {
+    // --- Save to DB Logic ---
+    const handleSavePaper = async (paperName: string) => {
         if (!selectedQuestions.length) {
             toast.error("Please add some questions before saving.");
             return;
@@ -83,10 +89,11 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
             const payload = {
                 id: Date.now(),
                 userId: currentUser.id,
-                paperName, // 👈 added
+                paperName,
                 MCQs: mcqs,
                 Short: shorts,
                 Long: longs,
+                sectionConfigs, // Config bhi save kar rahe hain taake baad mein load ho sake
                 info: {
                     subject: subject?.name,
                     class: className,
@@ -95,10 +102,7 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
                 }
             };
 
-            const response = await axios.post(
-                "http://localhost:3001/papers",
-                payload
-            );
+            const response = await axios.post("http://localhost:3001/papers", payload);
 
             if (response.status === 201) {
                 toast.success("Paper saved successfully!");
@@ -114,13 +118,11 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
     };
 
     const handleModal = () => {
-
-        if(!selectedQuestions.length){
+        if (!selectedQuestions.length) {
             toast.error("Please add some questions before saving.");
             return;
-        }else{
-            setIsSaveModalOpen(true);
         }
+        setIsSaveModalOpen(true);
     }
 
     return (
@@ -136,9 +138,9 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
                 onAddQuestions={handleAddQuestions}
             />
 
-            {/* POPUP */}
+            {/* SAVE MODAL */}
             {isSaveModalOpen && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-100">
                     <div className="bg-white rounded-lg p-6 shadow-xl w-96">
                         <h2 className="text-xl font-bold mb-4 text-black">Save Paper</h2>
                         <input
@@ -149,17 +151,9 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
                             className="w-full border border-gray-300 rounded px-3 py-2 mb-4 text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         <div className="flex gap-2 justify-end">
+                            <button onClick={() => setIsSaveModalOpen(false)} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 font-bold">Cancel</button>
                             <button
-                                onClick={() => setIsSaveModalOpen(false)}
-                                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 font-bold"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={() => {
-                                    handleSavePaper(paperName);
-                                    setIsSaveModalOpen(false);
-                                }}
+                                onClick={() => { handleSavePaper(paperName); setIsSaveModalOpen(false); }}
                                 disabled={!paperName.trim() || isLoading}
                                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500 font-bold disabled:opacity-50"
                             >
@@ -171,7 +165,6 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
             )}
 
             <div className="flex-1 flex flex-col overflow-hidden">
-
                 {/* --- TOOLBAR --- */}
                 <div className="bg-[#0f172a] text-white h-16 flex items-center justify-between px-6 border-b border-white/10 z-50 shrink-0 print:hidden shadow-2xl">
                     <div className="flex items-center gap-3">
@@ -190,18 +183,14 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
                             <FaPrint className="text-[10px]" /> PRINT
                         </button>
 
-                        <button 
-                            onClick={handleModal} 
-                            disabled={isLoading}
-                            className="bg-slate-800 hover:bg-slate-700 text-[12px] px-5 py-2.5 rounded-lg font-bold flex items-center gap-2 transition-all text-green-400 border border-slate-700 disabled:opacity-50"
-                        >
-                            {isLoading ? <div className="w-4 h-4 border-2 border-green-400 border-t-transparent animate-spin rounded-full" /> : <FaCloudUploadAlt />} 
+                        <button onClick={handleModal} disabled={isLoading} className="bg-slate-800 hover:bg-slate-700 text-[12px] px-5 py-2.5 rounded-lg font-bold flex items-center gap-2 transition-all text-green-400 border border-slate-700 disabled:opacity-50">
+                            {isLoading ? <div className="w-4 h-4 border-2 border-green-400 border-t-transparent animate-spin rounded-full" /> : <FaCloudUploadAlt />}
                             {isLoading ? "SAVING..." : "SAVE TO DB"}
                         </button>
                     </div>
 
                     <div className="flex items-center bg-slate-900/50 backdrop-blur-md border border-white/5 rounded-2xl px-2 py-1.5 gap-2">
-                        <span className="text-[10px] font-bold px-3 text-slate-400">Marks: {grandTotalMarks}</span>
+                        <span className="text-[10px] font-bold px-3 text-slate-400">Total Marks: {grandTotalMarks}</span>
                     </div>
 
                     <button onClick={onClose} className="hover:bg-red-500/10 text-red-400 border border-red-500/20 px-5 py-2.5 rounded-lg text-[12px] font-bold transition-all flex items-center gap-2 group">
@@ -213,13 +202,11 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
                 <div className="flex-1 overflow-y-auto p-10 bg-slate-400/20 print:p-0 print:bg-white custom-scrollbar">
                     <div
                         ref={paperRef}
-                        contentEditable={isEditMode}
-                        suppressContentEditableWarning={true}
                         className={`bg-white mx-auto w-[850px] min-h-[1100px] shadow-2xl relative p-16 print:shadow-none print:w-full print:p-12 text-black transition-all ${isEditMode ? 'ring-4 ring-amber-400 outline-none' : ''}`}
                     >
                         {/* Paper Header */}
                         <div className="border-b-4 border-black pb-4 text-center mb-10">
-                            <h1 className="text-3xl font-black uppercase tracking-tight tracking-tighter">Standardized Examination</h1>
+                            <h1 className="text-3xl font-black uppercase tracking-tighter">Standardized Examination</h1>
                             <div className="flex justify-between mt-8 text-[15px] font-bold">
                                 <span>Class: {className}</span>
                                 <span className="text-xl underline decoration-double underline-offset-4">Subject: {subject?.name}</span>
@@ -227,11 +214,11 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
                             </div>
                         </div>
 
-                        {/* Rendering Section A */}
+                        {/* Section A - MCQs */}
                         {mcqs.length > 0 && (
-                            <div className="mb-8">
-                                <div className="flex justify-between border-b-2 border-black mb-4 font-black italic">
-                                    <span>Section-A (MCQs)</span>
+                            <div className="mb-8" contentEditable={isEditMode} suppressContentEditableWarning={true}>
+                                <div className="flex justify-between border-b-2 border-black mb-2 font-black italic">
+                                    <span>Section-A (Objective)</span>
                                     <span>Marks: {totalMcqMarks}</span>
                                 </div>
                                 <div className="space-y-4">
@@ -254,17 +241,25 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
                             </div>
                         )}
 
-                        {/* Rendering Section B */}
+                        {/* Section B - Short Questions */}
                         {shorts.length > 0 && (
-                            <div className="mb-8">
-                                <div className="flex justify-between border-b-2 border-black mb-4 font-black italic">
-                                    <span>Section-B (Short)</span>
+                            <div className="mb-8" contentEditable={isEditMode} suppressContentEditableWarning={true}>
+                                <div className="flex justify-between border-b-2 border-black mb-1 font-black italic">
+                                    <span>Section-B (Short Questions)</span>
                                     <span>Marks: {totalShortMarks}</span>
                                 </div>
+                                
+                                {/* 🔹 Choice logic for Shorts */}
+                                {sectionConfigs['shorts']?.attempt < sectionConfigs['shorts']?.total && (
+                                    <p className="text-[13px] font-bold mb-3 italic">
+                                        Note: Attempt any {sectionConfigs['shorts'].attempt} questions out of {sectionConfigs['shorts'].total}.
+                                    </p>
+                                )}
+
                                 <div className="space-y-3">
                                     {shorts.map((q, idx) => (
                                         <div key={q.tempId} className="group relative flex gap-2 text-[14px]">
-                                             {!isEditMode && (
+                                            {!isEditMode && (
                                                 <button onClick={() => removeQuestion(q.tempId)} className="absolute -left-10 text-red-500 opacity-0 group-hover:opacity-100 print:hidden"><FaTrash size={10} /></button>
                                             )}
                                             <span className="font-bold">({idx + 1})</span>
@@ -275,17 +270,25 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
                             </div>
                         )}
 
-                        {/* Rendering Section C */}
+                        {/* Section C - Long Questions */}
                         {longs.length > 0 && (
-                            <div className="mb-8">
-                                <div className="flex justify-between border-b-2 border-black mb-4 font-black italic">
-                                    <span>Section-C (Long)</span>
+                            <div className="mb-8" contentEditable={isEditMode} suppressContentEditableWarning={true}>
+                                <div className="flex justify-between border-b-2 border-black mb-1 font-black italic">
+                                    <span>Section-C (Detailed Questions)</span>
                                     <span>Marks: {totalLongMarks}</span>
                                 </div>
+
+                                {/* 🔹 Choice logic for Longs */}
+                                {sectionConfigs['longs']?.attempt < sectionConfigs['longs']?.total && (
+                                    <p className="text-[13px] font-bold mb-3 italic">
+                                        Note: Attempt any {sectionConfigs['longs'].attempt} questions out of {sectionConfigs['longs'].total}.
+                                    </p>
+                                )}
+
                                 <div className="space-y-6">
                                     {longs.map((q, idx) => (
                                         <div key={q.tempId} className="group relative flex gap-2 text-[15px]">
-                                             {!isEditMode && (
+                                            {!isEditMode && (
                                                 <button onClick={() => removeQuestion(q.tempId)} className="absolute -left-10 text-red-500 opacity-0 group-hover:opacity-100 print:hidden"><FaTrash size={10} /></button>
                                             )}
                                             <span className="font-black">Q.{idx + 1}</span>

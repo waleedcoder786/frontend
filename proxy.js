@@ -2,21 +2,28 @@ import { NextResponse } from 'next/server';
 
 export function proxy(request) {
   const token = request.cookies.get('auth_token')?.value;
+  const role = request.cookies.get('user_role')?.value; // Seedha role mil gaya
   const { pathname } = request.nextUrl;
 
-  // Optimized Check: Routes ko array mein rakhne ke bajaye seedha matcher par depend karein
   const isAuthPage = pathname.startsWith('/auth/login') || pathname.startsWith('/auth/signup');
-  const isProtectedPage = !isAuthPage && pathname !== '/'; // Base logic
 
-  // Case 1: Token nahi hai aur Protected Page par hai
-  if (!token && !isAuthPage) {
-    // URL redirect mein original destination save karein taaki login ke baad wahi wapis le jaye
-    const loginUrl = new URL('/auth/login', request.url);
-    loginUrl.searchParams.set('from', pathname); 
-    return NextResponse.redirect(loginUrl);
+  // 1. Agar login nahi hai
+  if (!token && !isAuthPage && pathname !== '/') {
+    return NextResponse.redirect(new URL('/auth/login', request.url));
   }
 
-  // Case 2: Token hai aur Auth (Login/Signup) pages par jane ki koshish
+  // 2. Role based Protection
+  if (token && role === 'teacher') {
+    const adminOnlyPaths = ['/teachers', '/saved-papers'];
+    const isTryingToAccessAdmin = adminOnlyPaths.some(path => pathname.startsWith(path));
+
+    if (isTryingToAccessAdmin) {
+      // Teacher ko wapis dashboard bhej do
+      return NextResponse.redirect(new URL('/dashboard', request.url));
+    }
+  }
+
+  // 3. Agar already login hai aur login page par jana chahay
   if (token && isAuthPage) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
@@ -27,8 +34,9 @@ export function proxy(request) {
 export const config = {
   matcher: [
     '/dashboard/:path*', 
-    '/paper-preview/:path*', 
-    '/create-test/:path*',
-    '/auth/:path*' // Ab ye sare auth routes cover karega
+    '/generate-paper/:path*',
+    '/teachers/:path*',
+    '/saved-papers/:path*',
+    '/auth/:path*'
   ],
 };
