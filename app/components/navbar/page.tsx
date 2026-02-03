@@ -9,6 +9,7 @@ import {
   FaSave, 
   FaHistory, 
   FaCog, 
+  FaUsers ,
   FaSignOutAlt,
   FaChalkboardTeacher // Teacher icon add kiya
 } from "react-icons/fa";
@@ -36,18 +37,35 @@ function Sidebar() {
     { name: 'Saved Paper', icon: <FaSave />, path: '/saved-papers' },
     { name: 'Teachers', icon: <FaChalkboardTeacher />, path: '/teachers' }, // New
     { name: 'Past Papers', icon: <FaHistory />, path: '/past-papers' },
+    { name: 'Users', icon: <FaUsers  />, path: '/users' },
     { name: 'Settings', icon: <FaCog />, path: '/settings' },
   ];
 
   // ✅ Filter Menu Items based on Role
+// ✅ Filter Menu Items based on Role (Super Admin, Sub Admin, Teacher)
   const menuItems = allMenuItems.filter(item => {
+    // 1. Agar Role 'teacher' hai
     if (userRole === 'teacher') {
-      // Teacher ke liye Saved Paper aur Teachers list hide kar dein
-      return item.name !== 'Saved Paper' && item.name !== 'Teachers';
+      const teacherRestricted = ['Saved Paper', 'Teachers', 'Users', 'Settings'];
+      return !teacherRestricted.includes(item.name);
     }
-    return true; // Admin sab dekh sakta hai
-  });
 
+    // 2. Agar Role 'subadmin' hai (Admin table se aane wale users)
+    if (userRole === 'admin') {
+      // Sub-admin ko 'Users' ka page nahi dikhna chahiye (unke liye 'Teachers' hai)
+      return item.name !== 'Users';
+    }
+
+    // 3. Agar Role 'superadmin' hai
+    if (userRole === 'superadmin') {
+      return true; // Super admin ko sab nazar aayega (including 'Users')
+    }
+
+    // Default: Security ke liye jab tak role load na ho, Users hide rakhein
+    if (item.name === 'Users') return false;
+    
+    return true; 
+  });
   const handleCardClick = (path: string) => {
     router.push(path);
   };
@@ -62,7 +80,7 @@ function Sidebar() {
 
   return (
     <aside 
-      className={`relative bg-slate-900 text-white flex flex-col transition-all duration-500 ease-in-out border-r border-slate-800 shadow-2xl z-100 ${
+      className={`relative bg-slate-900 text-white flex flex-col transition-all  ease-in-out border-r border-slate-800 shadow-2xl z-100 ${
         isOpen ? 'w-64' : 'w-20'
       }`}
     >

@@ -107,10 +107,7 @@ export default function GeneratePaper() {
           </div>
           
           <div className="flex items-center gap-4">
-            {/* Role Badge */}
-            <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${user?.role === 'teacher' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}`}>
-               {user?.role || 'User'}
-            </span>
+
             <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Step {selectedSubject ? "3" : selectedClassId ? "2" : "1"} of 3</span>
           </div>
         </header>
@@ -185,9 +182,9 @@ export default function GeneratePaper() {
                 <button 
                   onClick={() => setShowPreview(true)}
                   disabled={selectedChapters.length === 0}
-                  className={`px-10 py-5 rounded-2xl font-black shadow-xl transition-all ${selectedChapters.length > 0 ? 'bg-blue-600 text-white hover:scale-105 shadow-blue-500/30' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
+                  className={`px-10 py-5 rounded-md font-black shadow-xl transition-all ${selectedChapters.length > 0 ? 'bg-blue-600 text-white hover:scale-105 shadow-blue-500/30' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
                 >
-                  Generate Paper Preview
+                  Generate Paper 
                 </button>
               </div>
 
@@ -195,7 +192,7 @@ export default function GeneratePaper() {
                 {selectedSubject.chapters.map((chapter: any, idx: number) => {
                   const isSelected = selectedChapters.includes(chapter.name);
                   return (
-                    <div key={idx} onClick={() => toggleChapter(chapter.name)} className={`p-6 rounded-xl border-2 transition-all cursor-pointer flex items-center justify-between ${isSelected ? 'border-blue-600 bg-blue-50/50' : 'bg-white border-slate-100 hover:border-blue-200'}`}>
+                    <div key={idx} onClick={() => toggleChapter(chapter.name)} className={`p-6 rounded-md border-2 transition-all cursor-pointer flex items-center justify-between ${isSelected ? 'border-blue-600 bg-blue-50/50' : 'bg-white border-slate-100 hover:border-blue-200'}`}>
                       <span className={`font-bold ${isSelected ? 'text-blue-900' : 'text-slate-700'}`}>
                         {idx + 1}. {chapter.name}
                       </span>

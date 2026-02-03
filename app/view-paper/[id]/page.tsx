@@ -3,7 +3,6 @@ import React, { useState, useEffect, use } from "react";
 import { HiOutlineChevronLeft, HiOutlineInformationCircle } from "react-icons/hi";
 import Link from "next/link";
 import axios from "axios";
-// 1. PaperHeader کو امپورٹ کریں
 import { PaperHeader } from "../../components/headers"; 
 
 export default function ViewPaperPage({ params }: { params: Promise<{ id: string }> }) {
@@ -86,7 +85,6 @@ export default function ViewPaperPage({ params }: { params: Promise<{ id: string
           {paperData && (
             <div className="relative z-10 h-auto">
               
-              {/* 2. یہاں PaperHeader کمپوننٹ استعمال کیا ہے */}
               <PaperHeader 
                 type={styles.layoutType} 
                 info={paperData.info} 

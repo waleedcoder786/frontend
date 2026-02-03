@@ -9,8 +9,12 @@ import {
   HiOutlinePrinter,
   HiOutlineInformationCircle,
   HiOutlineChevronDown,
-  HiOutlineDocumentText
+  HiOutlineDocumentText,
+  HiOutlineCalendar,
+  HiOutlineClock,
+  HiOutlinePencil
 } from "react-icons/hi";
+
 import Link from "next/link";
 import axios from "axios";
 import { PaperHeader } from "../../components/headers"; 
@@ -25,14 +29,14 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
   const [showToast, setShowToast] = useState(false);
   
   // UI Controls State
-  const [openSection, setOpenSection] = useState<string>("layouts");
+  const [openSection, setOpenSection] = useState<string>("info");
 
   // --- STYLING STATES ---
   const [styles, setStyles] = useState({
-    fontFamily: "font-sans", // Default set to font-sans
+    fontFamily: "font-sans",
     lineHeight: "1.5",
-    headingSize: "18", // Changed to string number only (no 'px' here to fix input issue)
-    textSize: "14",    // Changed to string number only
+    headingSize: "18", 
+    textSize: "14",    
     textColor: "#000000",
     watermark: "CONFIDENTIAL",
     showWatermark: true,
@@ -48,12 +52,15 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
       try {
         const res = await axios.get(`http://localhost:3001/papers?id=${id}`);
         if (res.data.length > 0) {
-          setPaperData(res.data[0]);
-          if (res.data[0].style) {
+          const data = res.data[0];
+          setPaperData(data);
+          
+          // Load saved styles if they exist
+          if (data.style) {
             setStyles((prev) => ({ 
                 ...prev, 
-                ...res.data[0].style,
-                logoUrl: res.data[0].style.logoUrl || prev.logoUrl
+                ...data.style,
+                logoUrl: data.style.logoUrl || prev.logoUrl
             }));
           }
         }
@@ -92,7 +99,7 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
 
   const layouts = [
     { id: 'default', name: 'Layout 01' },
-    { id: 'academy-pro', name: 'Layout  02' },
+    { id: 'academy-pro', name: 'Layout 02' },
     { id: 'modern-bar', name: 'Layout 03' },
     { id: 'grid-table', name: 'Layout 04' },
     { id: 'formal-double', name: 'Layout 05' },
@@ -113,7 +120,7 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
       )}
 
       {/* --- SIDEBAR --- */}
-      <aside className="w-60 bg-white border-r flex flex-col shadow-xl z-20 print:hidden">
+      <aside className="w-64 bg-white border-r flex flex-col shadow-xl z-20 print:hidden">
         <div className="p-5 border-b bg-slate-50">
           <Link href="/saved-papers" className="flex items-center gap-1 text-slate-400 hover:text-blue-600 text-[10px] font-bold uppercase tracking-widest mb-2 transition-all">
             <HiOutlineChevronLeft size={14} /> Back
@@ -125,7 +132,43 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
 
         <div className="flex-1 overflow-y-auto custom-scrollbar">
           
-          {/* 1. Layouts Section */}
+          {/* 1. Paper Details Section (Date & Time) */}
+          <div className="border-b">
+            <button onClick={() => toggleSection("info")} className="w-full px-5 py-4 flex items-center justify-between bg-white hover:bg-slate-50 transition-colors">
+               <div className="flex items-center gap-2 text-xs font-black uppercase text-slate-700 tracking-wider">
+                 <HiOutlineCalendar size={16} className="text-blue-600"/> Paper Info
+               </div>
+               <HiOutlineChevronDown className={`text-slate-400 transition-transform duration-300 ${openSection === "info" ? "rotate-180" : ""}`} />
+            </button>
+            {openSection === "info" && (
+              <div className="px-5 pb-5 pt-1 bg-slate-50/50 space-y-4 animate-in slide-in-from-top-2">
+                <div className="space-y-1">
+                  <label className="text-[9px] font-bold text-slate-400 uppercase">Examination Date</label>
+                  <input 
+                    type="date" 
+                    value={paperData?.paperDate || ""} 
+                    onChange={(e) => setPaperData({...paperData, paperDate: e.target.value})}
+                    className="w-full p-2 border rounded text-xs text-gray-600 outline-none focus:border-blue-500" 
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[9px] font-bold text-slate-400 uppercase">Time Allowed</label>
+                  <div className="flex items-center gap-2 bg-white border rounded px-2">
+                    <HiOutlineClock className="text-slate-400" />
+                    <input 
+                      type="text" 
+                      placeholder="e.g. 2 Hours"
+                      value={paperData?.paperTime || ""} 
+                      onChange={(e) => setPaperData({...paperData, paperTime: e.target.value})}
+                      className="w-full p-2 text-xs text-gray-600 outline-none" 
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 2. Layouts Section */}
           <div className="border-b">
             <button onClick={() => toggleSection("layouts")} className="w-full px-5 py-4 flex items-center justify-between bg-white hover:bg-slate-50 transition-colors">
                <div className="flex items-center gap-2 text-xs font-black uppercase text-slate-700 tracking-wider">
@@ -152,11 +195,11 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
             )}
           </div>
 
-          {/* 2. Formatting Section */}
+          {/* 3. Formatting Section */}
           <div className="border-b">
             <button onClick={() => toggleSection("formatting")} className="w-full px-5 py-4 flex items-center justify-between bg-white hover:bg-slate-50 transition-colors">
                <div className="flex items-center gap-2 text-xs font-black uppercase text-slate-700 tracking-wider">
-                 Text Formatting
+                 <HiOutlinePencil size={16} className="text-blue-600"/>  Text Formatting
                </div>
                <HiOutlineChevronDown className={`text-slate-400 transition-transform duration-300 ${openSection === "formatting" ? "rotate-180" : ""}`} />
             </button>
@@ -166,7 +209,7 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                     <label className="text-[9px] font-bold text-slate-400 uppercase">Font Style</label>
                     <div className="flex rounded-md shadow-sm">
                       <button onClick={()=>setStyles({...styles, fontFamily: "font-sans"})} className={`flex-1 py-1 text-[10px] text-gray-600 border rounded-md ${styles.fontFamily==='font-sans' ? 'bg-blue-600 text-white' : 'bg-white'}`}>Sans</button>
-                      <button onClick={()=>setStyles({...styles, fontFamily: "font-serif"})} className={`flex-1 py-1 text-[10px] text-gray-600 border  rounded-md ${styles.fontFamily==='font-serif' ? 'bg-blue-600 text-white' : 'bg-white'}`}>Serif</button>
+                      <button onClick={()=>setStyles({...styles, fontFamily: "font-serif"})} className={`flex-1 py-1 text-[10px] text-gray-600 border rounded-md ${styles.fontFamily==='font-serif' ? 'bg-blue-600 text-white' : 'bg-white'}`}>Serif</button>
                       <button onClick={()=>setStyles({...styles, fontFamily: "font-mono"})} className={`flex-1 py-1 text-[10px] text-gray-600 border rounded-md ${styles.fontFamily==='font-mono' ? 'bg-blue-600 text-white' : 'bg-white'}`}>Mono</button>
                     </div>
                  </div>
@@ -176,7 +219,7 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                        <input type="number" value={styles.headingSize} onChange={(e)=>setStyles({...styles, headingSize: e.target.value})} className="w-full p-1.5 border rounded text-gray-600 text-xs outline-none focus:border-blue-500" />
                     </div>
                     <div className="space-y-1">
-                       <label className="text-[9px] font-bold text-slate-400 uppercase   ">Text Size</label>
+                       <label className="text-[9px] font-bold text-slate-400 uppercase">Text Size</label>
                        <input type="number" value={styles.textSize} onChange={(e)=>setStyles({...styles, textSize: e.target.value})} className="w-full p-1.5 border rounded text-xs text-gray-600 outline-none focus:border-blue-500" />
                     </div>
                     <div className="space-y-1">
@@ -194,7 +237,7 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
             )}
           </div>
 
-          {/* 3. Elements Section */}
+          {/* 4. Elements Section */}
           <div className="border-b">
             <button onClick={() => toggleSection("elements")} className="w-full px-5 py-4 flex items-center justify-between bg-white hover:bg-slate-50 transition-colors">
                <div className="flex items-center gap-2 text-xs font-black uppercase text-slate-700 tracking-wider">
@@ -215,13 +258,12 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                     </div>
                     <input type="text" disabled={!styles.showWatermark} value={styles.watermark} onChange={(e)=>setStyles({...styles, watermark: e.target.value})} className="w-full p-2 border text-gray-500 rounded text-xs disabled:bg-slate-100" placeholder="e.g. Confidential" />
                  </div>
-                    <div className="space-y-2 bg-white p-2 rounded border">
-                     <div className="flex items-center justify-between">                         
-                      <span className="text-[10px] font-bold text-gray-400">Exam Note</span>                         
+                 <div className="space-y-2 bg-white p-2 rounded border">
+                    <div className="flex items-center justify-between">                        
+                      <span className="text-[10px] font-bold text-gray-400">Exam Note</span>                        
                       <input type="checkbox" checked={styles.showNote} onChange={(e)=>setStyles({...styles, showNote: e.target.checked})} className="accent-blue-600" />
-                     </div>
-
-                     {styles.showNote && (
+                    </div>
+                    {styles.showNote && (
                         <textarea 
                            value={styles.noteText} 
                            onChange={(e)=>setStyles({...styles, noteText: e.target.value})}
@@ -253,13 +295,13 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
       {/* --- MAIN PAPER AREA --- */}
       <main className="flex-1 overflow-y-auto p-8 flex justify-center custom-scrollbar bg-slate-200 print:p-0 print:bg-white print:overflow-visible">
         <div 
-          className={`bg-white w-[850px] min-h-[500px] h-fit shadow-2xl relative p-12 transition-all duration-300 print:shadow-none print:w-full print:p-4 ${styles.fontFamily}`}
+          className={`bg-white w-[850px] min-h-[1100px] h-fit shadow-2xl relative p-12 transition-all duration-300 print:shadow-none print:w-full print:p-4 ${styles.fontFamily}`}
           style={{ color: styles.textColor, lineHeight: styles.lineHeight }}
         >
           {/* Watermark */}
           {styles.showWatermark && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden z-0">
-              <h1 style={{ transform: 'rotate(-45deg)', fontSize: '120px' }} className="font-black text-slate-400 opacity-[0.6] whitespace-nowrap uppercase select-none">
+              <h1 style={{ transform: 'rotate(-45deg)', fontSize: '120px' }} className="font-black text-slate-400 opacity-[0.2] whitespace-nowrap uppercase select-none">
                 {styles.watermark}
               </h1>
             </div>
@@ -267,13 +309,21 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
 
           {paperData && (
             <div className="relative z-10">
-              <PaperHeader type={styles.layoutType} info={paperData.info} styles={styles} onChangeLogo={()=>{}} />
+              {/* Passing date and time specifically into the header info */}
+              <PaperHeader 
+                type={styles.layoutType} 
+                info={{
+                  ...paperData.info, 
+                  paperDate: paperData.paperDate, 
+                  paperTime: paperData.paperTime 
+                }} 
+                styles={styles} 
+                onChangeLogo={()=>{}} 
+              />
 
-                
                 {/* --- BUBBLE SHEET --- */}
                 {styles.showBubbleSheet && paperData.MCQs?.length > 0 && (
-                  <div className="break-inside-avoid  border  border-slate-300 p-2 rounded-xl bg-slate-50/50 print:bg-transparent print:border-black">
-                      {/* <p className="text-center font-black uppercase text-xs mb-4 tracking-[0.2em]">Answer Sheet</p> */}
+                  <div className="break-inside-avoid border border-slate-300 p-2 rounded-xl bg-slate-50/50 print:bg-transparent print:border-black mt-4">
                       <div className="grid grid-cols-4 gap-4">
                         {paperData.MCQs.map((_:any, i:number) => (
                            <div key={i} className="flex items-center gap-2 justify-center">
@@ -290,7 +340,7 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                 )}
 
 
-              {/* Editable Content */}
+              {/* Editable Content Area */}
               <div 
                 contentEditable={true}
                 suppressContentEditableWarning={true} 
@@ -299,7 +349,7 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
               >
 
                 {styles.showNote && (
-                <div className="rounded-lg flex items-start gap-3 mb-3  print:bg-transparent">
+                <div className="rounded-lg flex items-start gap-3 mb-3 print:bg-transparent">
                     <HiOutlineInformationCircle className="text-slate-600 mt-0.5 shrink-0 print:hidden" size={18} />
                     <p className="text-[11px] font-bold italic text-slate-700 leading-relaxed">
                         {styles.noteText}
@@ -309,7 +359,7 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                 
                 {/* --- Section A: MCQs --- */}
                 {paperData.MCQs?.length > 0 && (
-                  <div className="mb-8">
+                  <div className="mb-8 mt-4">
                     <div className="flex justify-between items-end border-b-2 border-black pb-1 mb-6">
                         <h3 className="font-bold uppercase italic text-sm">Section-A: Multiple Choice Questions</h3>
                         <span className="font-bold text-xs">Marks: {paperData.MCQs.length}</span>
@@ -340,7 +390,7 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                 {paperData.Short?.length > 0 && (
                     <div className="mt-8">
                       <div className="flex justify-between items-end border-b-2 border-black pb-1 mb-6">
-                        <h3 className="font-bold uppercase italic font text-sm">Section-B: Short Questions</h3>
+                        <h3 className="font-bold uppercase italic text-sm">Section-B: Short Questions</h3>
                         <span className="font-bold text-xs">Marks: {paperData.Short.length * 2}</span>
                       </div>
                       <div className="space-y-6">
@@ -348,7 +398,6 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                             <div key={i} className="break-inside-avoid">
                                <p className="font-bold flex gap-2">
                                   <span className="shrink-0">Q{i+1}.</span>
-                                  {/* HERE: headingSize applied to Short Questions */}
                                   <span style={{ fontSize: styles.headingSize + "px" }}>{q.question || q.text}</span>
                                </p>
                             </div>
@@ -369,7 +418,6 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                             <div key={i} className="break-inside-avoid">
                                <p className="font-bold flex gap-2 mb-2">
                                   <span className="shrink-0">Q{i+1}.</span>
-                                  {/* HERE: headingSize applied to Long Questions */}
                                   <span style={{ fontSize: styles.headingSize + "px" }}>{q.question || q.text}</span>
                                </p>
                             </div>
@@ -377,7 +425,6 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                       </div>
                     </div>
                 )}
-
               </div>
               
               {/* Footer */}

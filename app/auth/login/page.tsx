@@ -6,6 +6,9 @@ import { useRouter } from 'next/navigation';
 import bcrypt from 'bcryptjs';
 import toast from 'react-hot-toast';
 
+// --- CONFIGURATION ---
+const SUPER_ADMIN_EMAIL = "waleed@gmail.com"; // Is email ko Super Admin mana jayega
+
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -17,36 +20,40 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // 1. Pehle "users" (Admins) table mein check karein
+      // 1. Pehle "users" table check karein (Admins & Sub-Admins)
       const userRes = await axios.get(`http://localhost:3001/users?email=${email}`);
       const users = userRes.data;
 
       if (users.length > 0) {
         const user = users[0];
-        // Bcrypt check for users (Admin)
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (isMatch) {
-          loginSuccess(user, 'admin');
+          // Email check for Super Admin
+          const role = user.email.toLowerCase() === SUPER_ADMIN_EMAIL.toLowerCase() 
+                       ? 'superadmin' 
+                       : 'admin';
+          
+          loginSuccess(user, role);
           return;
         }
       }
 
-      // 2. Agar admin nahi mila, to "teachers" table mein check karein
+      // 2. Agar admin nahi mila, to "teachers" table check karein
       const teacherRes = await axios.get(`http://localhost:3001/teachers?email=${email}`);
       const teachers = teacherRes.data;
 
       if (teachers.length > 0) {
         const teacher = teachers[0];
         
-        // Teachers table mein password plain text hai (e.g., 12345)
+        // Teachers table plain text check (as per your current setup)
         if (teacher.password === password) {
           loginSuccess(teacher, 'teacher');
           return;
         }
       }
 
-      // Agar dono mein nahi mila
+      // 3. Agar kahin bhi match nahi hua
       toast.error("Invalid Email or Password!");
 
     } catch (error) {
@@ -57,39 +64,34 @@ export default function LoginPage() {
     }
   };
 
-  // Helper function for successful login
   const loginSuccess = (userData: any, role: string) => {
-    // 1. Token Data create karein (Token mein role lazmi shamil karein)
+    // Role based token data
     const tokenData = { 
       id: userData.id, 
       email: userData.email, 
       name: userData.name || userData.username,
       role: role 
     };
+    
+    // Base64 encoding (Temporary protection)
     const token = btoa(JSON.stringify(tokenData));
 
-    // 2. Cookies Set Karein (Middleware ke liye)
-    // auth_token: security ke liye
+    // Cookies Set Karein (Middleware/Server components ke liye)
     document.cookie = `auth_token=${token}; path=/; max-age=86400; SameSite=Lax`;
-    // user_role: asan redirection control ke liye
     document.cookie = `user_role=${role}; path=/; max-age=86400; SameSite=Lax`;
 
-    // 3. LocalStorage mein data save karein (Frontend UI ke liye)
+    // LocalStorage (Frontend UI components ke liye)
     localStorage.setItem('user', JSON.stringify({
-      id: userData.id,
-      name: userData.name || userData.username,
-      email: userData.email,
-      role: role,
-      classes: userData.classes || [], // Teacher assigned classes
-      subjects: userData.subjects || [] // Teacher assigned subjects
+      ...tokenData,
+      classes: userData.classes || [],
+      subjects: userData.subjects || []
     }));
 
-    toast.success(`Welcome ${userData.name || userData.username}!`);
+    toast.success(`Welcome ${tokenData.name}! (${role.toUpperCase()})`);
     
-    // 4. Redirect to Dashboard
+    // Redirect logic
     router.push('/dashboard');
     
-    // 5. Refresh taake middleware foran nayi cookies detect kare
     setTimeout(() => {
         router.refresh();
     }, 100);
@@ -110,7 +112,7 @@ export default function LoginPage() {
                 Welcome back, <br /> Educator.
               </h2>
               <p className="text-blue-100 text-sm lg:text-base max-w-xs">
-                Pick up right where you left off and continue creating impactful assessments.
+                Pick up right where you left off and manage your assessments.
               </p>
             </div>
           </div>
@@ -125,7 +127,7 @@ export default function LoginPage() {
           <div className="max-w-sm mx-auto w-full">
             <div className="mb-8">
               <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">Log In</h1>
-              <p className="text-gray-500 text-sm mt-1">Enter your details to access your tests.</p>
+              <p className="text-gray-500 text-sm mt-1">Access your dashboard with your credentials.</p>
             </div>
 
             <form className="space-y-5" onSubmit={handleLogin}>
@@ -145,7 +147,7 @@ export default function LoginPage() {
                 <div className="flex justify-between items-center mb-1">
                   <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide">Password</label>
                   <Link href="/forgot-password" className="text-[11px] text-blue-600 font-medium hover:underline">
-                    Forget?
+                    Forgot?
                   </Link>
                 </div>
                 <input 

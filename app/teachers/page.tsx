@@ -12,27 +12,33 @@ import {
   HiOutlinePhone,
   HiOutlineTrash,
   HiOutlineInbox,
-  HiOutlineLockClosed
+  HiOutlineLockClosed,
+  HiChevronLeft,
+  HiChevronRight
 } from 'react-icons/hi';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 function Page() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [teachers, setTeachers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [openMenuId, setOpenMenuId] = useState(null);
-  const menuRef = useRef<HTMLDivElement>(null); // Menu ko track karne ke liye
+  const menuRef = useRef<HTMLDivElement>(null);
   
   const [editingTeacherId, setEditingTeacherId] = useState<string | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [teacherToDelete, setTeacherToDelete] = useState<any | null>(null);
+
+  // --- Pagination States ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const teachersPerPage = 4;
 
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     city: '',
-    institute: '',
     password: '',
     confirmPassword: ''
   });
@@ -43,7 +49,6 @@ function Page() {
   const classesList = ["1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th"];
   const subjectsList = ["Physics","Chemistry","Math","Computer","English","Urdu","Islamiat","Stats"];
 
-  // 🖱️ Click anywhere to close menu logic
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -65,13 +70,25 @@ function Page() {
   const fetchTeachers = async (userId: string) => {
     try {
       const res = await axios.get(`http://localhost:3001/teachers?userId=${userId}`);
-      setTeachers(res.data);
+      // Sorting by date (Newest first)
+      const sortedData = res.data.sort((a: any, b: any) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      setTeachers(sortedData);
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
     }
   };
+
+  // --- Pagination Logic ---
+  const indexOfLastTeacher = currentPage * teachersPerPage;
+  const indexOfFirstTeacher = indexOfLastTeacher - teachersPerPage;
+  const currentTeachers = teachers.slice(indexOfFirstTeacher, indexOfLastTeacher);
+  const totalPages = Math.ceil(teachers.length / teachersPerPage);
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   const toggleClass = (item: string) => {
     setSelectedClasses(prev => prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]);
@@ -88,8 +105,7 @@ function Page() {
       email: teacher.email,
       phone: teacher.phone,
       city: teacher.city,
-      institute: teacher.institute,
-      password: '', // Security ke liye khali
+      password: '',
       confirmPassword: ''
     });
     setSelectedClasses(teacher.classes || []);
@@ -100,16 +116,14 @@ function Page() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Password Match Validation
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+      toast.error("Passwords do not match!")
       return;
     }
 
     const storedUser = localStorage.getItem('user');
     const user = storedUser ? JSON.parse(storedUser) : null;
-    const { confirmPassword, ...dataToSave } = formData; // confirmPassword api mein nahi bhejni
+    const { confirmPassword, ...dataToSave } = formData;
 
     const payload = {
       ...dataToSave,
@@ -121,11 +135,18 @@ function Page() {
 
     try {
       if (editingTeacherId) {
-        const res = await axios.put(`http://localhost:3001/teachers/${editingTeacherId}`, payload);
+        const res = await axios.put(`http://localhost:3001/teachers/${editingTeacherId}`, {
+            ...payload,
+            createdAt: teachers.find(t => t.id === editingTeacherId).createdAt // Preserve original date
+        });
         setTeachers(prev => prev.map(t => t.id === editingTeacherId ? res.data : t));
       } else {
-        const res = await axios.post("http://localhost:3001/teachers", { ...payload, createdAt: new Date().toISOString() });
-        setTeachers(prev => [...prev, res.data]);
+        const res = await axios.post("http://localhost:3001/teachers", { 
+            ...payload, 
+            createdAt: new Date().toISOString(),
+            role: 'teacher' // Role added for login
+        });
+        setTeachers(prev => [res.data, ...prev]);
       }
       closeForm();
     } catch {
@@ -136,7 +157,7 @@ function Page() {
   const closeForm = () => {
     setIsFormOpen(false);
     setEditingTeacherId(null);
-    setFormData({ name:'', email:'', phone:'', city:'', institute:'', password:'', confirmPassword:'' });
+    setFormData({ name:'', email:'', phone:'', city:'',  password:'', confirmPassword:'' });
     setSelectedClasses([]);
     setSelectedSubjects([]);
   };
@@ -165,7 +186,7 @@ function Page() {
         <Header />
 
         <div className="flex-1 p-10 overflow-y-auto">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-6xl mx-auto pb-20">
             <div className="flex justify-between items-center mb-8">
               <div>
                 <h2 className="text-2xl font-black text-slate-800">Teachers Faculty</h2>
@@ -191,31 +212,47 @@ function Page() {
                 <table className="w-full">
                   <thead className="bg-slate-50 border-b border-slate-200">
                     <tr className="text-slate-500 uppercase text-[10px] tracking-widest">
-                      <th className="px-6 py-4 text-left font-bold">Name & Institute</th>
-                      <th className="px-6 py-4 text-left font-bold">Contact</th>
+                      <th className="px-6 py-4 text-left font-bold">Name & City</th>
+                      <th className="px-6 py-4 text-left font-bold">Contact & Date</th>
                       <th className="px-6 py-4 text-left font-bold">Classes</th>
+                      <th className="px-6 py-4 text-left font-bold">Subjects</th>
                       <th className="px-6 py-4 text-right font-bold">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {teachers.map(t => (
+                    {currentTeachers.map(t => (
                       <tr key={t.id} className="hover:bg-slate-50/50 transition-colors">
                         <td className="px-6 py-4 text-sm">
-                          <div className="font-bold text-slate-800">{t.name}</div>
-                          <div className="text-xs text-slate-400">{t.institute}</div>
+                          <div className="font-bold text-slate-800 capitalize">{t.name}</div>
+                          <div className="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5"><HiOutlineLocationMarker /> {t.city || 'N/A'}</div>
                         </td>
-                        <td className="px-6 py-4 text-sm text-slate-600">{t.email}</td>
+                        <td className="px-6 py-4 text-sm text-slate-600">
+                            <div className="font-medium">{t.email}</div>
+                            {/* 📅 Date Added Display */}
+                            <div className="text-[10px] text-blue-500 font-bold mt-1">
+                                Added: {t.createdAt ? new Date(t.createdAt).toLocaleDateString('en-GB') : 'N/A'}
+                            </div>
+                        </td>
                         <td className="px-6 py-4">
-                           <div className="flex gap-1 flex-wrap max-w-[200px]">
-                            {t.classes?.map((c: string) => (
-                              <span key={c} className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[10px] font-bold">{c}</span>
-                            ))}
-                           </div>
+                            <div className="flex gap-1 flex-wrap max-w-[200px]">
+                             {t.classes?.map((c: string) => (
+                               <span key={c} className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[10px] font-bold">{c}</span>
+                             ))}
+                            </div>
                         </td>
+
+                               <td className="px-6 py-4">
+                            <div className="flex gap-1 flex-wrap max-w-[200px]">
+                             {t.subjects?.map((c: string) => (
+                               <span key={c} className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[10px] font-bold">{c}</span>
+                             ))}
+                            </div>
+                        </td>
+
                         <td className="px-6 py-4 text-right relative">
                           <button
                             onClick={(e) => {
-                                e.stopPropagation(); // Click listener ko table row par trigger hone se rokta hai
+                                e.stopPropagation();
                                 setOpenMenuId(openMenuId === t.id ? null : t.id);
                             }}
                             className="p-2 rounded-lg hover:bg-slate-200 text-slate-500 transition-colors"
@@ -226,7 +263,7 @@ function Page() {
                           {openMenuId === t.id && (
                             <div 
                               ref={menuRef}
-                              className="absolute right-6 mt-2 w-40 bg-white border border-slate-100 shadow-2xl rounded-xl z-50 py-1"
+                              className="absolute right-6 mt-2 w-48 bg-white border border-slate-100 shadow-2xl rounded-xl z-50 py-1"
                             >
                               <button 
                                 onClick={() => handleEditClick(t)}
@@ -247,6 +284,38 @@ function Page() {
                     ))}
                   </tbody>
                 </table>
+
+                {/* --- Pagination Controls --- */}
+                <div className="p-4 border-t border-slate-100 flex items-center justify-between">
+                    <p className="text-xs text-slate-500">
+                        Showing <span className="font-bold">{indexOfFirstTeacher + 1}</span> to <span className="font-bold">{Math.min(indexOfLastTeacher, teachers.length)}</span> of <span className="font-bold">{teachers.length}</span> teachers
+                    </p>
+                    <div className="flex gap-2">
+                        <button 
+                            disabled={currentPage === 1}
+                            onClick={() => paginate(currentPage - 1)}
+                            className="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-30 transition-all"
+                        >
+                            <HiChevronLeft />
+                        </button>
+                        {[...Array(totalPages)].map((_, i) => (
+                            <button
+                                key={i}
+                                onClick={() => paginate(i + 1)}
+                                className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${currentPage === i + 1 ? 'bg-blue-600 text-white shadow-md' : 'border border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+                            >
+                                {i + 1}
+                            </button>
+                        ))}
+                        <button 
+                            disabled={currentPage === totalPages}
+                            onClick={() => paginate(currentPage + 1)}
+                            className="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-30 transition-all"
+                        >
+                            <HiChevronRight />
+                        </button>
+                    </div>
+                </div>
               </div>
             )}
           </div>
@@ -277,7 +346,6 @@ function Page() {
                                 </div>
                             </div>
                             
-                            {/* 🔑 Password Fields */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="relative">
                                     <HiOutlineLockClosed className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -288,8 +356,6 @@ function Page() {
                                     <input required={!editingTeacherId} value={formData.confirmPassword} onChange={(e)=>setFormData({...formData, confirmPassword: e.target.value})} type="password" placeholder="Confirm Password" className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-md outline-none text-sm  text-slate-700" />
                                 </div>
                             </div>
-                            <input value={formData.institute} onChange={(e)=>setFormData({...formData, institute: e.target.value})} type="text" placeholder="Institute Name" className="w-full px-4 py-2 bg-slate-50 border border-slate-100 rounded-md outline-none text-sm  text-slate-700" />
-
 
                             <div className="space-y-4">
                                 <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Assign Classes</label>

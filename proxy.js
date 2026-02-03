@@ -14,7 +14,7 @@ export function proxy(request) {
 
   // 2. Role based Protection
   if (token && role === 'teacher') {
-    const adminOnlyPaths = ['/teachers', '/saved-papers'];
+    const adminOnlyPaths = ['/teachers', ];
     const isTryingToAccessAdmin = adminOnlyPaths.some(path => pathname.startsWith(path));
 
     if (isTryingToAccessAdmin) {

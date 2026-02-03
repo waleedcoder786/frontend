@@ -103,7 +103,7 @@ function SavedPapersPage() {
   };
 
   return (
-    <div className="relative flex h-screen w-screen bg-[#F8FAFC] font-sans overflow-hidden">
+    <div className="relative flex h-screen w-screen bg-[#F8FAFC] font-sans ">
       <Navbar />
 
       {isModalOpen && (
@@ -125,9 +125,8 @@ function SavedPapersPage() {
 
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <Header />
-
         <div className="flex-1 overflow-y-auto p-6 lg:p-10">
-          <div className="max-w-5xl mx-auto space-y-8 pb-20"> {/* Added padding bottom */}
+          <div className="max-w-5xl mx-auto space-y-8 pb-20">
 
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
               <div>
@@ -146,7 +145,6 @@ function SavedPapersPage() {
               </div>
             </div>
 
-            {/* Changed overflow-hidden to overflow-visible to allow dropdowns to pop out */}
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col overflow-visible">
               {loading ? (
                 <div className="p-20 text-center text-slate-400 animate-pulse">Fetching your papers...</div>
@@ -156,7 +154,7 @@ function SavedPapersPage() {
                 </div>
               ) : (
                 <>
-                  <div className="overflow-x-auto overflow-y-visible"> {/* Inner wrapper for horizontal scroll but vertical visibility */}
+                  <div className="">
                     <table className="w-full text-left border-spacing-0">
                       <thead className="bg-slate-50/50 border-b border-slate-100">
                         <tr>
@@ -181,25 +179,23 @@ function SavedPapersPage() {
                               <span className="px-3 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-black uppercase">{paper?.info?.subject || "General"}</span>
                             </td>
                             <td className="px-6 py-5 text-slate-500 text-sm">{paper.info?.createdAt ? new Date(paper.info.createdAt).toLocaleDateString("en-GB") : "---"}</td>
-                            
                             <td className="px-10 py-4 text-right relative">
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   setOpenMenuId(openMenuId === paper.id ? null : paper.id);
                                 }}
-                                className="p-2 hover:bg-slate-200 rounded-lg text-gray-500"
-                              >
+                                className="p-2 hover:bg-slate-200 rounded-lg text-gray-500">
                                 <HiOutlineDotsVertical />
                               </button>
 
                               {openMenuId === paper.id && (
-                                <div className={`absolute right-8 w-48 bg-white border border-slate-200 rounded-xl shadow-2xl z-[110] animate-in fade-in zoom-in-95 duration-150 origin-top-right
+                                <div className={`absolute right-8 w-48 bg-white border border-slate-200 rounded-xl shadow-2xl z-11110 animate-in fade-in zoom-in-95 duration-150 origin-top-right
                                   ${index >= paginatedPapers.length - 2 ? 'bottom-full mb-2 origin-bottom-right' : 'mt-2 origin-top-right'} 
                                 `}>
-                                  <Link href={`/view-paper/${paper.id}`} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-slate-700 font-bold text-sm"><HiOutlineEye className="text-blue-600" size={18} /> View</Link>
-                                  <Link href={`/editpaper/${paper.id}`} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-slate-700 font-bold text-sm"><HiOutlinePencil className="text-emerald-600" size={18} /> Edit</Link>
-                                    <Link href={``} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-slate-700 font-bold text-sm transition-colors">
+                                  <Link href={`/view-paper/${paper.id}`} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-slate-700 font-bold text-sm"><HiOutlineEye className="text-blue-600" size={18} />View</Link>
+                                  <Link href={`/editpaper/${paper.id}`} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-slate-700 font-bold text-sm"><HiOutlinePencil className="text-emerald-600" size={18} />Edit</Link>
+                                  <Link href={``} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-slate-700 font-bold text-sm transition-colors">
                                   <HiOutlineDownload className="text-emerald-600" size={18} /> Download
                                 </Link>
                                   <button onClick={() => confirmDelete(paper.id)} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-600 font-bold text-sm border-t border-slate-50"><HiOutlineTrash size={18} /> Delete</button>
@@ -216,7 +212,7 @@ function SavedPapersPage() {
                     <p className="text-sm text-slate-500 font-medium">
                       Showing <span className="text-slate-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="text-slate-900">{Math.min(currentPage * itemsPerPage, filteredPapers.length)}</span>
                     </p>
- <div className="flex gap-2">
+                    <div className="flex gap-2">
                       <button
                         onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                         disabled={currentPage === 1}
@@ -230,8 +226,7 @@ function SavedPapersPage() {
                       <button
                         onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                         disabled={currentPage === totalPages || totalPages === 0}
-                        className="p-2 border border-gray-300 text-gray-400 rounded-lg hover:bg-white disabled:opacity-80 disabled:cursor-not-allowed transition-all"
-                      >
+                        className="p-2 border border-gray-300 text-gray-400 rounded-lg hover:bg-white disabled:opacity-80 disabled:cursor-not-allowed transition-all">
                         <HiOutlineChevronRight size={20} />
                       </button>
                     </div>
