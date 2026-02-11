@@ -1,5 +1,4 @@
-// components/PaperHeaders.tsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 interface HeaderProps {
   type: string;
@@ -9,10 +8,28 @@ interface HeaderProps {
 }
 
 export const PaperHeader = ({ type, info, styles, onChangeLogo }: HeaderProps) => {
-  
+  const [userData, setUserData] = useState<any>(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        setUserData(JSON.parse(storedUser));
+      } catch (error) {
+        console.error("Error parsing user data", error);
+      }
+    }
+  }, []);
+
+  // Priority: 1. Login User Data, 2. Paper Info, 3. Default
+  // Note: Added .institute because your admin object uses 'institute' key
+  const displaySchoolName = userData?.institute || userData?.schoolName || info?.schoolName || "INSTITUTION NAME";
+  const displaySchoolLogo = userData?.logo || info?.logo || styles?.logoUrl || "";
+  const displaySchoolAddress = userData?.address || info?.address || "Address Detail, Punjab Ph: 000-0000000";
+
   const Logo = () => (
     <div onClick={onChangeLogo} className="cursor-pointer group relative print:opacity-100 shrink-0">
-      <img src={styles.logoUrl} alt="logo" className="w-20 h-20 object-contain" />
+      <img src={displaySchoolLogo} alt="logo" className="w-20 h-20 object-contain" />
       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded text-[8px] text-white transition-opacity font-bold print:hidden">
         CHANGE
       </div>
@@ -30,15 +47,10 @@ export const PaperHeader = ({ type, info, styles, onChangeLogo }: HeaderProps) =
           <div className="flex items-center gap-4 mb-2">
             <Logo />
             <div className="flex-1 text-center">
-              <h1 className="text-3xl font-black uppercase tracking-tight leading-none">
-                {info?.schoolName || "INSTITUTION NAME"}
-              </h1>
-              <p className="text-[10px] font-bold mt-1">
-                {info?.address || "Address Detail, Punjab Ph: 000-0000000"}
-              </p>
+              <h1 className="text-3xl font-black uppercase tracking-tight leading-none">{displaySchoolName}</h1>
+              <p className="text-[10px] font-bold mt-1">{displaySchoolAddress}</p>
             </div>
           </div>
-
           <table className="w-full border-collapse border-2 border-black text-[11px]">
             <tbody>
               <tr>
@@ -74,8 +86,8 @@ export const PaperHeader = ({ type, info, styles, onChangeLogo }: HeaderProps) =
           <div className="flex justify-between items-center mb-4">
             <Logo />
             <div className="text-center flex-1">
-              <h1 className="text-3xl font-black uppercase tracking-tight">{info?.schoolName || "Modern College"}</h1>
-              <p className="text-[11px] font-medium tracking-widest uppercase">The Leader in Quality Education</p>
+              <h1 className="text-3xl font-black uppercase tracking-tight">{displaySchoolName}</h1>
+              <p className="text-[11px] font-medium tracking-widest uppercase">{displaySchoolAddress}</p>
             </div>
             <div className="text-right text-[10px] font-bold space-y-1">
                 <p>Date: {displayDate}</p>
@@ -99,7 +111,8 @@ export const PaperHeader = ({ type, info, styles, onChangeLogo }: HeaderProps) =
         <div className="w-full mb-6">
           <div className="text-center mb-4">
             <div className="flex justify-center mb-2"><Logo /></div>
-            <h1 className="text-2xl font-bold uppercase">{info?.schoolName || "Monthly Assessment"}</h1>
+            <h1 className="text-2xl font-bold uppercase">{displaySchoolName}</h1>
+            <p className="text-[10px] font-bold">{displaySchoolAddress}</p>
           </div>
           <table className="w-full border-collapse border border-black text-[12px]">
             <tbody>
@@ -136,8 +149,9 @@ export const PaperHeader = ({ type, info, styles, onChangeLogo }: HeaderProps) =
              </div>
              <div className="text-center">
                 <Logo />
-                <h1 className="text-xl font-black uppercase mt-1">Examination Unit</h1>
-                <p className="text-[10px] font-bold">Time: {displayTime}</p>
+                <h1 className="text-xl font-black uppercase mt-1">{displaySchoolName}</h1>
+                <p className="text-[10px] font-bold">{displaySchoolAddress}</p>
+                <p className="text-[10px] font-bold mt-1">Time: {displayTime}</p>
              </div>
              <div className="text-right space-y-3 text-[11px]">
                 <p><b>CLASS:</b> {info?.class}</p>
@@ -157,8 +171,9 @@ export const PaperHeader = ({ type, info, styles, onChangeLogo }: HeaderProps) =
           <div className="flex justify-between items-start border-b-2 border-black pb-2 mb-4">
              <Logo />
              <div className="text-center">
-                <h1 className="text-2xl font-black uppercase">{info?.schoolName || "SYSTEM NAME"}</h1>
-                <p className="text-sm italic underline">Class: {info?.class} | Subject: {info?.subject}</p>
+                <h1 className="text-2xl font-black uppercase">{displaySchoolName}</h1>
+                <p className="text-[10px] font-bold">{displaySchoolAddress}</p>
+                <p className="text-sm italic underline mt-1">Class: {info?.class} | Subject: {info?.subject}</p>
              </div>
              <div className="text-right text-[10px] font-bold leading-relaxed">
                 <p>Date: {displayDate}</p>
@@ -188,8 +203,8 @@ export const PaperHeader = ({ type, info, styles, onChangeLogo }: HeaderProps) =
               <div className="flex items-center gap-4">
                 <Logo />
                 <div>
-                   <h1 className="text-2xl font-black uppercase leading-none">{info?.schoolName || "Global College"}</h1>
-                   <p className="text-xs font-bold text-slate-500">Excellence in Education</p>
+                   <h1 className="text-2xl font-black uppercase leading-none">{displaySchoolName}</h1>
+                   <p className="text-xs font-bold text-slate-500">{displaySchoolAddress}</p>
                 </div>
               </div>
               <div className="text-right text-xs font-bold">
@@ -199,10 +214,10 @@ export const PaperHeader = ({ type, info, styles, onChangeLogo }: HeaderProps) =
               </div>
             </div>
             <div className="flex justify-between text-[11px] font-bold uppercase">
-               <span>Name: _________________</span>
-               <span>Roll #: _________</span>
-               <span>Class: {info?.class}</span>
-               <span>Subject: {info?.subject}</span>
+                <span>Name: _________________</span>
+                <span>Roll #: _________</span>
+                <span>Class: {info?.class}</span>
+                <span>Subject: {info?.subject}</span>
             </div>
           </div>
         );
@@ -211,14 +226,15 @@ export const PaperHeader = ({ type, info, styles, onChangeLogo }: HeaderProps) =
         return (
           <div className="w-full mb-10 text-center font-serif">
             <div className="flex justify-center mb-2"><Logo /></div>
-            <h1 className="text-3xl font-medium tracking-tight mb-1">{info?.schoolName || "Department of Sciences"}</h1>
+            <h1 className="text-3xl font-medium tracking-tight mb-1">{displaySchoolName}</h1>
+            <p className="text-xs uppercase tracking-[0.2em] mb-1">{displaySchoolAddress}</p>
             <p className="text-sm uppercase tracking-[0.2em] mb-4">Session 2024 - 2026</p>
             <div className="h-0.5 bg-black w-full mb-4"></div>
             <div className="flex justify-between text-xs font-bold px-4">
-               <span>Date: {displayDate}</span>
-               <span>Subject: {info?.subject}</span>
-               <span>Time: {displayTime}</span>
-               <span>Marks: {info?.totalMarks}</span>
+                <span>Date: {displayDate}</span>
+                <span>Subject: {info?.subject}</span>
+                <span>Time: {displayTime}</span>
+                <span>Marks: {info?.totalMarks}</span>
             </div>
           </div>
         );
@@ -228,13 +244,14 @@ export const PaperHeader = ({ type, info, styles, onChangeLogo }: HeaderProps) =
           <div className="w-full mb-8 flex border-b border-black pb-4">
              <div className="w-1/3 border-r border-black pr-4 space-y-2 text-[11px]">
                 <Logo />
-                <p><b>STUDENT:</b> ________________</p>
+                <p className="font-bold text-[10px]">{displaySchoolAddress}</p>
+                <p className="pt-2"><b>STUDENT:</b> ________________</p>
                 <p><b>ROLL NO:</b> ________________</p>
                 <p><b>DATE:</b> {displayDate}</p>
                 <p><b>TIME:</b> {displayTime}</p>
              </div>
              <div className="w-2/3 pl-4 flex flex-col justify-center">
-                <h1 className="text-3xl font-black text-right uppercase">{info?.schoolName || "Annual Assessment"}</h1>
+                <h1 className="text-3xl font-black text-right uppercase">{displaySchoolName}</h1>
                 <div className="mt-4 flex justify-end gap-6 text-sm font-bold">
                    <p className="bg-black text-white px-2">CLASS: {info?.class}</p>
                    <p className="border-2 border-black px-2">SUBJECT: {info?.subject}</p>
@@ -249,7 +266,8 @@ export const PaperHeader = ({ type, info, styles, onChangeLogo }: HeaderProps) =
           <div className="w-full mb-6">
              <div className="border-2 border-black p-1">
                 <div className="border border-black p-4 flex flex-col items-center">
-                   <h1 className="text-2xl font-bold uppercase underline decoration-double underline-offset-4">{info?.schoolName || "Public High School"}</h1>
+                   <h1 className="text-2xl font-bold uppercase underline decoration-double underline-offset-4">{displaySchoolName}</h1>
+                   <p className="text-[10px] font-bold mt-1 uppercase">{displaySchoolAddress}</p>
                    <div className="flex gap-10 mt-4 text-[12px] font-bold">
                       <p>CLASS: {info?.class}</p>
                       <p>SUBJECT: {info?.subject}</p>
@@ -268,29 +286,20 @@ export const PaperHeader = ({ type, info, styles, onChangeLogo }: HeaderProps) =
 
     default:
       return (
-        <div className="w-full mb-8 border-b-2 border-black pb-4">
-          <div className="text-center mb-6">
-            <h1 className="text-4xl font-black uppercase tracking-widest leading-none mb-2">
-              {info?.schoolName || "STANDARDIZED EXAMINATION"}
-            </h1>
+        <div className="w-full mb-8 border-b-2 border-black pb-4 text-center">
+          <div className="mb-6">
+            <div className="flex justify-center mb-2"><Logo /></div>
+            <h1 className="text-4xl font-black uppercase tracking-widest leading-none mb-1">{displaySchoolName}</h1>
+            <p className="text-[10px] font-bold mb-4 uppercase">{displaySchoolAddress}</p>
             <div className="flex justify-center gap-10 text-xs font-bold">
                 <span>DATE: {displayDate}</span>
                 <span>TIME: {displayTime}</span>
             </div>
           </div>
-          <div className="flex justify-between items-end font-bold text-sm uppercase">
-            <div className="flex gap-2">
-              <span>CLASS:</span>
-              <span className="border-b border-black min-w-[80px] text-center">{info?.class}</span>
-            </div>
-            <div className="flex gap-2 underline decoration-double underline-offset-4 decoration-2">
-              <span>SUBJECT:</span>
-              <span>{info?.subject}</span>
-            </div>
-            <div className="flex gap-2">
-              <span>TOTAL MARKS:</span>
-              <span className="border-b border-black min-w-[50px] text-center">{info?.totalMarks}</span>
-            </div>
+          <div className="flex justify-between items-end font-bold text-sm uppercase px-2">
+            <div className="flex gap-2"><span>CLASS:</span><span className="border-b border-black min-w-[80px] text-center">{info?.class}</span></div>
+            <div className="flex gap-2 underline decoration-double underline-offset-4 decoration-2"><span>SUBJECT:</span><span>{info?.subject}</span></div>
+            <div className="flex gap-2"><span>TOTAL MARKS:</span><span className="border-b border-black min-w-[50px] text-center">{info?.totalMarks}</span></div>
           </div>
         </div>
       );

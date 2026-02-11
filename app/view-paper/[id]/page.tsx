@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, use } from "react";
-import { HiOutlineChevronLeft, HiOutlineInformationCircle } from "react-icons/hi";
+import { HiOutlineChevronLeft, HiOutlinePrinter } from "react-icons/hi";
 import Link from "next/link";
 import axios from "axios";
 import { PaperHeader } from "../../components/headers"; 
@@ -12,20 +12,19 @@ export default function ViewPaperPage({ params }: { params: Promise<{ id: string
   const [paperData, setPaperData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Default styles wese hi rakhein jese Edit page me thay
   const [styles, setStyles] = useState({
     fontFamily: "font-sans",
     lineHeight: "1.5",
-    headingSize: "18", // Default numeric string
+    headingSize: "18", 
     textSize: "14",
     textColor: "#000000",
     watermark: "CONFIDENTIAL",
     showWatermark: true,
     showNote: false,
     noteText: "",
-    layoutType: "default", // Default layout
-    logoUrl: "", // Logo URL state
-    showBubbleSheet: false // Added specifically for view
+    layoutType: "default", 
+    logoUrl: "", 
+    showBubbleSheet: false 
   });
 
   useEffect(() => {
@@ -34,15 +33,35 @@ export default function ViewPaperPage({ params }: { params: Promise<{ id: string
         const res = await axios.get(`http://localhost:3001/papers?id=${id}`);
         if (res.data.length > 0) {
           const data = res.data[0];
-          setPaperData(data);
           
-          // Agar database me style saved hai to usay apply karein
+          // --- SAFE DATA PROCESSING ---
+          const processedData = {
+            ...data,
+            // Agar batches maujood hain to wo use karein
+            mcqBatches: data.batches?.filter((b: any) => b.type === "mcqs") || [],
+            shortBatches: data.batches?.filter((b: any) => b.type === "shorts") || [],
+            longBatches: data.batches?.filter((b: any) => b.type === "longs") || [],
+            
+            // Fallback for old data structure
+            legacyMCQs: data.MCQs || [],
+            legacyShort: data.Short || [],
+            legacyLong: data.Long || [],
+
+            headerInfo: {
+              ...data.info,
+              paperName: data.paperName,
+              paperTime: data.paperTime,
+              paperDate: data.paperDate,
+              paperType: data.paperType
+            }
+          };
+
+          setPaperData(processedData);
+          
           if (data.style) {
             setStyles((prev) => ({ 
                 ...prev, 
                 ...data.style,
-                // Ensure layoutType is correctly set from saved data
-                layoutType: data.style.layoutType || "default"
             }));
           }
         }
@@ -55,28 +74,32 @@ export default function ViewPaperPage({ params }: { params: Promise<{ id: string
     if (id) fetchPaper();
   }, [id]);
 
-  if (loading) return <div className="h-screen flex items-center justify-center font-bold">Loading Paper...</div>;
+  if (loading) return <div className="h-screen flex items-center justify-center font-bold text-slate-600 animate-pulse text-black">Loading Paper...</div>;
 
   return (
-    <div className={`relative flex h-screen w-screen bg-slate-200 overflow-hidden ${styles.fontFamily}`}>
-      <Link href="/saved-papers">
-        <button className="absolute z-50 flex items-center gap-2 mt-5 ml-8 text-slate-700 hover:text-blue-600 font-bold text-sm print:hidden">
-          <HiOutlineChevronLeft /> Back
+    <div className={`relative flex h-screen w-screen bg-slate-200 overflow-hidden text-black ${styles.fontFamily}`}>
+      
+      {/* TOP ACTION BAR */}
+      <div className="absolute top-0 left-0 right-0 h-16 bg-white border-b border-slate-300 z-[100] flex items-center justify-between px-10 print:hidden shadow-sm">
+        <Link href="/saved-papers">
+          <button className="flex items-center gap-2 text-slate-600 hover:text-blue-600 font-bold transition-colors">
+            <HiOutlineChevronLeft size={20} /> Back
+          </button>
+        </Link>
+        <button onClick={() => window.print()} className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg transition-all active:scale-95">
+          <HiOutlinePrinter size={18} /> Print Paper
         </button>
-      </Link>
+      </div>
 
-      <main className="flex-1 overflow-y-auto p-12 flex justify-center custom-scrollbar print:p-0 print:overflow-visible">
+      <main className="flex-1 overflow-y-auto pt-24 pb-20 flex justify-center custom-scrollbar print:p-0 print:pt-0 print:overflow-visible">
         <div 
-          className="bg-white w-[850px] h-fit min-h-[1100px] shadow-2xl relative p-16 mb-20 print:mb-0 print:p-10 print:shadow-none print:w-full"
-          style={{ 
-            color: styles.textColor, 
-            lineHeight: styles.lineHeight,
-          }}
+          className="bg-white w-[850px] h-fit min-h-[1100px] shadow-2xl relative p-16 print:p-8 print:shadow-none print:w-full"
+          style={{ color: styles.textColor, lineHeight: styles.lineHeight }}
         >
-          {/* --- WATERMARK --- */}
+          {/* WATERMARK */}
           {styles.showWatermark && (
              <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden z-0">
-               <h1 style={{ transform: 'rotate(-45deg)', fontSize: '120px' }} className="font-black text-slate-400 opacity-[0.6] whitespace-nowrap uppercase select-none">
+               <h1 style={{ transform: 'rotate(-45deg)', fontSize: '120px', color: styles.textColor }} className="font-black opacity-[0.08] whitespace-nowrap uppercase select-none">
                  {styles.watermark}
                </h1>
              </div>
@@ -84,127 +107,102 @@ export default function ViewPaperPage({ params }: { params: Promise<{ id: string
 
           {paperData && (
             <div className="relative z-10 h-auto">
-              
-              <PaperHeader 
-                type={styles.layoutType} 
-                info={paperData.info} 
-                styles={styles} 
-                onChangeLogo={() => {}} // View mode me logo change nahi hoga
-              />
+              <PaperHeader type={styles.layoutType} info={paperData.headerInfo} styles={styles} onChangeLogo={() => {}} />
 
-                {/* --- BUBBLE SHEET (View Mode) --- */}
-                {styles.showBubbleSheet && paperData.MCQs?.length > 0 && (
-                  <div className="break-inside-avoid border border-slate-300 p-2 rounded-xl bg-slate-50/50 print:bg-transparent print:border-black mb-6 mt-4">
-                      <div className="grid grid-cols-4 gap-4">
-                        {paperData.MCQs.map((_:any, i:number) => (
-                           <div key={i} className="flex items-center gap-2 justify-center">
-                              <span className="text-[10px] font-bold w-4 text-right">{i+1}.</span>
-                              <div className="flex gap-1">
-                                {['A','B','C','D'].map((opt) => (
-                                   <div key={opt} className="w-4 h-4 rounded-full border border-black flex items-center justify-center text-[8px]">{opt}</div>
-                                ))}
-                              </div>
-                           </div>
+              {/* QUESTIONS CONTENT */}
+              <div style={{ fontSize: styles.textSize + "px" }} className="mt-8">
+                
+                {/* --- SECTION A: MCQs --- */}
+                {(paperData.mcqBatches.length > 0 ? paperData.mcqBatches : [{questions: paperData.legacyMCQs, config: {marks: 1, total: paperData.legacyMCQs.length}}]).map((batch: any, bIdx: number) => (
+                  batch.questions?.length > 0 && (
+                    <div key={bIdx} className="mb-10">
+                      <div className="flex justify-between items-end border-b-2 pb-1 mb-6" style={{ borderColor: styles.textColor }}>
+                          <h3 className="font-black uppercase italic text-sm">Section-A: Objective Type</h3>
+                          <span className="font-bold text-xs">Marks: {batch.config?.total * batch.config?.marks || batch.questions.length}</span>
+                      </div>
+                      <div className="space-y-6">
+                        {batch.questions.map((q: any, i: number) => (
+                          <div key={i} className="break-inside-avoid">
+                            <div className="flex gap-3">
+                               <span className="font-bold shrink-0">{i + 1}.</span>
+                               <p className="font-bold" style={{ fontSize: styles.headingSize + "px" }}>{q.question}</p>
+                            </div>
+                            <div className="grid grid-cols-4 gap-3 ml-8 mt-3">
+                              {q.options && Object.entries(q.options).map(([k, v]: any) => (
+                                <div key={k} className="flex items-center gap-2">
+                                    <span className="w-5 h-5 border rounded-full text-[10px] flex items-center justify-center font-black uppercase shrink-0" style={{ borderColor: styles.textColor }}>{k}</span>
+                                    <span>{v as string}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
                         ))}
                       </div>
-                  </div>
-                )}
-
-              {/* --- SAVED NOTE SECTION --- */}
-              {styles.showNote && styles.noteText && (
-                 <div className="rounded-lg flex items-start gap-3 mb-6 print:bg-transparent mt-4">
-                    <HiOutlineInformationCircle className="text-slate-600 mt-0.5 shrink-0 print:hidden" size={18} />
-                    <p className="text-[11px] font-bold italic text-slate-700 leading-relaxed">
-                        {styles.noteText}
-                    </p>
-                </div>
-              )}
-
-              <div style={{ fontSize: styles.textSize + "px" }}>
-                
-                {/* Section A (MCQs) */}
-                {paperData.MCQs?.length > 0 && (
-                  <div className="mb-8">
-                    <div className="flex justify-between items-end border-b-2 border-black pb-1 mb-6">
-                        <h3 className="font-bold uppercase italic text-sm">Section-A: Multiple Choice Questions</h3>
-                        <span className="font-bold text-xs">Marks: {paperData.MCQs.length}</span>
                     </div>
-                    <div className="space-y-4">
-                      {paperData.MCQs.map((q: any, i: number) => (
-                        <div key={i} className="break-inside-avoid">
-                          <div className="flex gap-2">
-                             <span className="font-bold shrink-0">{i + 1}.</span>
-                             {/* Applying Heading Size logic here too */}
-                             <p className="font-bold" style={{ fontSize: styles.headingSize + "px" }}>{q.question || q.text}</p>
+                  )
+                ))}
+
+                {/* --- SECTION B: SHORT QUESTIONS --- */}
+                {(paperData.shortBatches.length > 0 ? paperData.shortBatches : [{questions: paperData.legacyShort, config: {attempt: paperData.legacyShort.length, total: paperData.legacyShort.length, marks: 2}}]).map((batch: any, bIdx: number) => (
+                  batch.questions?.length > 0 && (
+                    <div key={bIdx} className="mb-10">
+                      {bIdx === 0 && <h3 className="font-black uppercase italic text-sm border-b-2 pb-1 mb-4" style={{ borderColor: styles.textColor }}>Section-B: Short Questions</h3>}
+                      <div className="flex justify-between items-center bg-slate-50 p-2 mb-4 border-l-4 print:bg-transparent" style={{ borderLeftColor: styles.textColor }}>
+                        <span className="text-[11px] font-black uppercase">
+                           Q. No {bIdx + 2}: Attempt any {batch.config?.attempt} out of {batch.config?.total} questions.
+                        </span>
+                        <span className="text-[11px] font-bold">({batch.config?.attempt} x {batch.config?.marks} = {batch.config?.attempt * batch.config?.marks})</span>
+                      </div>
+                      <div className="space-y-5 ml-4">
+                        {batch.questions.map((q: any, i: number) => (
+                          <div key={i} className="flex gap-3 break-inside-avoid">
+                            <span className="font-bold shrink-0">({i + 1})</span>
+                            <p className="font-bold" style={{ fontSize: styles.headingSize + "px" }}>{q.question}</p>
                           </div>
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 ml-6 mt-2">
-                            {q.options && Object.entries(q.options).map(([k, v]: any) => (
-                              <div key={k} className="flex items-center gap-1">
-                                  <span className="w-5 h-5 border border-black rounded-full text-[10px] flex items-center justify-center font-bold uppercase shrink-0">{k}</span>
-                                  <span>{v}</span>
-                              </div>
-                            ))}
+                        ))}
+                      </div>
+                    </div>
+                  )
+                ))}
+
+                {/* --- SECTION C: LONG QUESTIONS --- */}
+                {(paperData.longBatches.length > 0 ? paperData.longBatches : [{questions: paperData.legacyLong, config: {attempt: paperData.legacyLong.length, total: paperData.legacyLong.length, marks: 5}}]).map((batch: any, bIdx: number) => (
+                  batch.questions?.length > 0 && (
+                    <div key={bIdx} className="mb-10">
+                      {bIdx === 0 && <h3 className="font-black uppercase italic text-sm border-b-2 pb-1 mb-4" style={{ borderColor: styles.textColor }}>Section-C: Long Questions</h3>}
+                      <div className="flex justify-between items-center bg-slate-50 p-2 mb-4 border-l-4 print:bg-transparent" style={{ borderLeftColor: styles.textColor }}>
+                        <span className="text-[11px] font-black uppercase">
+                           Attempt any {batch.config?.attempt} out of {batch.config?.total} questions.
+                        </span>
+                        <span className="text-[11px] font-bold">({batch.config?.attempt} x {batch.config?.marks} = {batch.config?.attempt * batch.config?.marks})</span>
+                      </div>
+                      <div className="space-y-8 ml-4">
+                        {batch.questions.map((q: any, i: number) => (
+                          <div key={i} className="flex gap-3 break-inside-avoid">
+                            <span className="font-bold shrink-0">Q.{i + 1}</span>
+                            <p className="font-bold" style={{ fontSize: styles.headingSize + "px" }}>{q.question}</p>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
-
-                {/* Section B (Short) */}
-                {paperData.Short?.length > 0 && (
-                  <div className="mb-8">
-                    <div className="flex justify-between items-end border-b-2 border-black pb-1 mb-6">
-                        <h3 className="font-bold uppercase italic font text-sm">Section-B: Short Questions</h3>
-                        <span className="font-bold text-xs">Marks: {paperData.Short.length * 2}</span>
-                    </div>
-                    <div className="space-y-6">
-                      {paperData.Short.map((q: any, i: number) => (
-                        <div key={i} className="flex gap-2 break-inside-avoid">
-                          <span className="font-bold shrink-0">Q.{i + 1}</span>
-                          <p className="font-bold" style={{ fontSize: styles.headingSize + "px" }}>{q.question || q.text}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Section C (Long) */}
-                {paperData.Long?.length > 0 && (
-                  <div className="mb-8">
-                    <div className="flex justify-between items-end border-b-2 border-black pb-1 mb-6">
-                        <h3 className="font-bold uppercase italic text-sm">Section-C: Detailed Questions</h3>
-                        <span className="font-bold text-xs">Marks: {paperData.Long.length * 5}</span>
-                    </div>
-                    <div className="space-y-6">
-                      {paperData.Long.map((q: any, i: number) => (
-                        <div key={i} className="flex gap-2 break-inside-avoid">
-                          <span className="font-bold shrink-0">Q.{i + 1}</span>
-                          <p className="font-bold" style={{ fontSize: styles.headingSize + "px" }}>{q.question || q.text}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
+                  )
+                ))}
               </div>
 
-              {/* Footer */}
-              <div className="mt-12 pt-4 border-t border-slate-900 flex justify-between text-[9px] uppercase font-bold tracking-widest text-slate-500">
-                  <span>Generated by Exam System</span>
-                  <span>Property of {paperData.info?.schoolName || 'Institute'}</span>
+              <div className="mt-24 pt-4 border-t flex justify-between text-[9px] uppercase font-black opacity-60" style={{ borderColor: styles.textColor }}>
+                  <span>Generated via AI Exam Suite</span>
+                  <span>{paperData.info?.schoolName || 'Institute Copy'}</span>
               </div>
             </div>
           )}
-        </div>.,x.
+        </div>
       </main>
 
       <style jsx global>{`
         @media print {
           .custom-scrollbar { overflow: visible !important; }
           body { background: white !important; }
-          .print\:p-0 { padding: 0 !important; }
-          .break-inside-avoid { page-break-inside: avoid; }
+          @page { size: A4; margin: 15mm; }
         }
       `}</style>
     </div>

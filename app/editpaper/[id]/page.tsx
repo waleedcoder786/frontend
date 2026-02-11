@@ -38,7 +38,7 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
     headingSize: "18", 
     textSize: "14",    
     textColor: "#000000",
-    watermark: "CONFIDENTIAL",
+    watermark: "CONFIDENTIAL", 
     showWatermark: true,
     showBubbleSheet: false,
     showNote: false, 
@@ -48,19 +48,42 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
   });
 
   useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        const userData = JSON.parse(storedUser);
+        if (userData.watermark) {
+          setStyles(prev => ({ ...prev, watermark: userData.watermark }));
+        }
+      } catch (e) {
+        console.error("Error loading user data", e);
+      }
+    }
+
     const fetchPaper = async () => {
       try {
+        // Fetching by query param ?id=...
         const res = await axios.get(`http://localhost:3001/papers?id=${id}`);
         if (res.data.length > 0) {
           const data = res.data[0];
-          setPaperData(data);
           
-          // Load saved styles if they exist
+          const processedData = {
+            ...data,
+            // Ensure we use the exact ID from the database object
+            db_id: data.id, 
+            mcqBatches: data.batches?.filter((b: any) => b.type === "mcqs") || [],
+            shortBatches: data.batches?.filter((b: any) => b.type === "shorts") || [],
+            longBatches: data.batches?.filter((b: any) => b.type === "longs") || [],
+          };
+
+          setPaperData(processedData);
+          
           if (data.style) {
             setStyles((prev) => ({ 
                 ...prev, 
                 ...data.style,
-                logoUrl: data.style.logoUrl || prev.logoUrl
+                logoUrl: data.style.logoUrl || prev.logoUrl,
+                watermark: prev.watermark !== "CONFIDENTIAL" ? prev.watermark : (data.style.watermark || prev.watermark)
             }));
           }
         }
@@ -74,16 +97,27 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
   }, [id]);
 
   const handleSave = async () => {
+    // Agar paperData load nahi hua ya ID nahi hai
+    if (!paperData || (!paperData.id && !paperData.db_id)) {
+      alert("Error: Paper ID not found in data.");
+      return;
+    }
+
+    const targetId = paperData.db_id || paperData.id;
     setIsSaving(true);
+
     try {
-      await axios.put(`http://localhost:3001/papers/${paperData.id}`, {
+      // PUT request specific ID par hoti hai: papers/1
+      await axios.put(`http://localhost:3001/papers/${targetId}`, {
         ...paperData,
         style: styles,
       });
+
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
-    } catch (error) {
-      alert("Save failed!");
+    } catch (error: any) {
+      console.error("Server Error details:", error.response?.status, error.response?.data);
+      alert(`Save Failed (Error ${error.response?.status || 'Network'}): Sahi endpoint nahi mila.`);
     } finally {
       setIsSaving(false);
     }
@@ -111,7 +145,7 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
   ];
 
   return (
-    <div className="relative flex h-screen w-screen bg-slate-100 overflow-hidden font-sans">
+    <div className="relative flex h-screen w-screen bg-slate-100 overflow-hidden font-sans text-black">
       {/* Toast Notification */}
       {showToast && (
         <div className="fixed top-6 right-6 bg-emerald-600 text-white px-6 py-3 rounded-xl shadow-2xl z-50 flex items-center gap-2 animate-bounce">
@@ -120,7 +154,7 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
       )}
 
       {/* --- SIDEBAR --- */}
-      <aside className="w-64 bg-white border-r flex flex-col shadow-xl z-20 print:hidden">
+      <aside className="w-64 bg-white border-r flex flex-col shadow-xl z-20 print:hidden text-black">
         <div className="p-5 border-b bg-slate-50">
           <Link href="/saved-papers" className="flex items-center gap-1 text-slate-400 hover:text-blue-600 text-[10px] font-bold uppercase tracking-widest mb-2 transition-all">
             <HiOutlineChevronLeft size={14} /> Back
@@ -131,8 +165,7 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
         </div>
 
         <div className="flex-1 overflow-y-auto custom-scrollbar">
-          
-          {/* 1. Paper Details Section (Date & Time) */}
+          {/* 1. Paper Info */}
           <div className="border-b">
             <button onClick={() => toggleSection("info")} className="w-full px-5 py-4 flex items-center justify-between bg-white hover:bg-slate-50 transition-colors">
                <div className="flex items-center gap-2 text-xs font-black uppercase text-slate-700 tracking-wider">
@@ -144,31 +177,20 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
               <div className="px-5 pb-5 pt-1 bg-slate-50/50 space-y-4 animate-in slide-in-from-top-2">
                 <div className="space-y-1">
                   <label className="text-[9px] font-bold text-slate-400 uppercase">Examination Date</label>
-                  <input 
-                    type="date" 
-                    value={paperData?.paperDate || ""} 
-                    onChange={(e) => setPaperData({...paperData, paperDate: e.target.value})}
-                    className="w-full p-2 border rounded text-xs text-gray-600 outline-none focus:border-blue-500" 
-                  />
+                  <input type="date" value={paperData?.paperDate || ""} onChange={(e) => setPaperData({...paperData, paperDate: e.target.value})} className="w-full p-2 border rounded text-xs text-gray-600 outline-none focus:border-blue-500" />
                 </div>
                 <div className="space-y-1">
                   <label className="text-[9px] font-bold text-slate-400 uppercase">Time Allowed</label>
                   <div className="flex items-center gap-2 bg-white border rounded px-2">
                     <HiOutlineClock className="text-slate-400" />
-                    <input 
-                      type="text" 
-                      placeholder="e.g. 2 Hours"
-                      value={paperData?.paperTime || ""} 
-                      onChange={(e) => setPaperData({...paperData, paperTime: e.target.value})}
-                      className="w-full p-2 text-xs text-gray-600 outline-none" 
-                    />
+                    <input type="text" placeholder="e.g. 2 Hours" value={paperData?.paperTime || ""} onChange={(e) => setPaperData({...paperData, paperTime: e.target.value})} className="w-full p-2 text-xs text-gray-600 outline-none" />
                   </div>
                 </div>
               </div>
             )}
           </div>
 
-          {/* 2. Layouts Section */}
+          {/* 2. Layouts */}
           <div className="border-b">
             <button onClick={() => toggleSection("layouts")} className="w-full px-5 py-4 flex items-center justify-between bg-white hover:bg-slate-50 transition-colors">
                <div className="flex items-center gap-2 text-xs font-black uppercase text-slate-700 tracking-wider">
@@ -179,15 +201,7 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
             {openSection === "layouts" && (
               <div className="px-5 pb-5 pt-1 bg-slate-50/50 grid grid-cols-2 gap-2 animate-in slide-in-from-top-2">
                 {layouts.map((layout) => (
-                  <button 
-                    key={layout.id}
-                    onClick={() => setStyles({...styles, layoutType: layout.id})}
-                    className={`py-2 px-3 text-[10px] font-bold uppercase border rounded-lg transition-all ${
-                      styles.layoutType === layout.id 
-                      ? 'border-blue-600 bg-blue-600 text-white shadow-md transform scale-105' 
-                      : 'border-slate-200 bg-white text-slate-500 hover:border-blue-300'
-                    }`}
-                  >
+                  <button key={layout.id} onClick={() => setStyles({...styles, layoutType: layout.id})} className={`py-2 px-3 text-[10px] font-bold uppercase border rounded-lg transition-all ${styles.layoutType === layout.id ? 'border-blue-600 bg-blue-600 text-white shadow-md transform scale-105' : 'border-slate-200 bg-white text-slate-500 hover:border-blue-300'}`}>
                     {layout.name}
                   </button>
                 ))}
@@ -195,11 +209,11 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
             )}
           </div>
 
-          {/* 3. Formatting Section */}
+          {/* 3. Text Formatting */}
           <div className="border-b">
             <button onClick={() => toggleSection("formatting")} className="w-full px-5 py-4 flex items-center justify-between bg-white hover:bg-slate-50 transition-colors">
                <div className="flex items-center gap-2 text-xs font-black uppercase text-slate-700 tracking-wider">
-                 <HiOutlinePencil size={16} className="text-blue-600"/>  Text Formatting
+                 <HiOutlinePencil size={16} className="text-blue-600"/> Text Formatting
                </div>
                <HiOutlineChevronDown className={`text-slate-400 transition-transform duration-300 ${openSection === "formatting" ? "rotate-180" : ""}`} />
             </button>
@@ -210,9 +224,9 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                     <div className="flex rounded-md shadow-sm">
                       <button onClick={()=>setStyles({...styles, fontFamily: "font-sans"})} className={`flex-1 py-1 text-[10px] text-gray-600 border rounded-md ${styles.fontFamily==='font-sans' ? 'bg-blue-600 text-white' : 'bg-white'}`}>Sans</button>
                       <button onClick={()=>setStyles({...styles, fontFamily: "font-serif"})} className={`flex-1 py-1 text-[10px] text-gray-600 border rounded-md ${styles.fontFamily==='font-serif' ? 'bg-blue-600 text-white' : 'bg-white'}`}>Serif</button>
-                      <button onClick={()=>setStyles({...styles, fontFamily: "font-mono"})} className={`flex-1 py-1 text-[10px] text-gray-600 border rounded-md ${styles.fontFamily==='font-mono' ? 'bg-blue-600 text-white' : 'bg-white'}`}>Mono</button>
                     </div>
                  </div>
+                 
                  <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1">
                        <label className="text-[9px] font-bold text-slate-400 uppercase">Ques Size</label>
@@ -222,22 +236,26 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                        <label className="text-[9px] font-bold text-slate-400 uppercase">Text Size</label>
                        <input type="number" value={styles.textSize} onChange={(e)=>setStyles({...styles, textSize: e.target.value})} className="w-full p-1.5 border rounded text-xs text-gray-600 outline-none focus:border-blue-500" />
                     </div>
+                 </div>
+
+                 <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1">
-                       <label className="text-[9px] font-bold text-slate-400 uppercase">Line Height</label>
-                       <input type="number" step="0.1" value={styles.lineHeight} onChange={(e)=>setStyles({...styles, lineHeight: e.target.value})} className="w-full p-1.5 border rounded text-gray-600 text-xs outline-none focus:border-blue-500" />
+                       <label className="text-[9px] font-bold text-slate-400 uppercase">Text Color</label>
+                       <div className="flex items-center gap-2 border rounded p-1 bg-white">
+                          <input type="color" value={styles.textColor} onChange={(e)=>setStyles({...styles, textColor: e.target.value})} className="w-6 h-6 border-none bg-transparent cursor-pointer" />
+                          <span className="text-[9px] font-mono uppercase">{styles.textColor}</span>
+                       </div>
                     </div>
                     <div className="space-y-1">
-                       <label className="text-[9px] font-bold text-slate-400 uppercase">Color</label>
-                       <div className="flex items-center gap-2 border rounded p-1 bg-white">
-                         <input type="color" value={styles.textColor} onChange={(e)=>setStyles({...styles, textColor: e.target.value})} className="w-6 h-6 border-none p-0 cursor-pointer rounded-full overflow-hidden" />
-                       </div>
+                       <label className="text-[9px] font-bold text-slate-400 uppercase">Line Height</label>
+                       <input type="number" step="0.1" value={styles.lineHeight} onChange={(e)=>setStyles({...styles, lineHeight: e.target.value})} className="w-full p-1.5 border rounded text-xs text-gray-600 outline-none focus:border-blue-500" />
                     </div>
                  </div>
               </div>
             )}
           </div>
 
-          {/* 4. Elements Section */}
+          {/* 4. Page Elements */}
           <div className="border-b">
             <button onClick={() => toggleSection("elements")} className="w-full px-5 py-4 flex items-center justify-between bg-white hover:bg-slate-50 transition-colors">
                <div className="flex items-center gap-2 text-xs font-black uppercase text-slate-700 tracking-wider">
@@ -251,42 +269,38 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                     <span className="text-[10px] font-bold text-slate-700">Add Bubble Sheet</span>
                     <input type="checkbox" checked={styles.showBubbleSheet} onChange={(e)=>setStyles({...styles, showBubbleSheet: e.target.checked})} className="w-4 h-4 accent-blue-600" />
                  </div>
-                 <div className="space-y-2">
+                 
+                 <div className="flex flex-col gap-2 bg-white p-2.5 rounded-lg border shadow-sm">
                     <div className="flex items-center justify-between">
-                       <label className="text-[9px] font-bold text-slate-500 uppercase">Watermark</label>
-                       <input type="checkbox" checked={styles.showWatermark} onChange={(e)=>setStyles({...styles, showWatermark: e.target.checked})} className="w-3 h-3  accent-blue-600" />
+                       <span className="text-[10px] font-bold text-slate-700">Watermark</span>
+                       <input type="checkbox" checked={styles.showWatermark} onChange={(e)=>setStyles({...styles, showWatermark: e.target.checked})} className="w-4 h-4 accent-blue-600" />
                     </div>
-                    <input type="text" disabled={!styles.showWatermark} value={styles.watermark} onChange={(e)=>setStyles({...styles, watermark: e.target.value})} className="w-full p-2 border text-gray-500 rounded text-xs disabled:bg-slate-100" placeholder="e.g. Confidential" />
+                    <p className="text-[8px] text-blue-600 font-bold uppercase truncate">Current: {styles.watermark}</p>
                  </div>
+
                  <div className="space-y-2 bg-white p-2 rounded border">
                     <div className="flex items-center justify-between">                        
                       <span className="text-[10px] font-bold text-gray-400">Exam Note</span>                        
                       <input type="checkbox" checked={styles.showNote} onChange={(e)=>setStyles({...styles, showNote: e.target.checked})} className="accent-blue-600" />
                     </div>
                     {styles.showNote && (
-                        <textarea 
-                           value={styles.noteText} 
-                           onChange={(e)=>setStyles({...styles, noteText: e.target.value})}
-                           className="w-full text-[10px] p-1 text-gray-400 border rounded h-12 focus:border-blue-500 outline-none"
-                           placeholder="Type instructions..."
-                       />
+                        <textarea value={styles.noteText} onChange={(e)=>setStyles({...styles, noteText: e.target.value})} className="w-full text-[10px] p-1 text-gray-400 border rounded h-12 outline-none" />
                     )}
                  </div>
                  <div className="space-y-1">
                     <label className="text-[9px] font-bold text-slate-400 uppercase">Logo URL</label>
-                    <input type="text" value={styles.logoUrl} onChange={(e)=>setStyles({...styles, logoUrl: e.target.value})} className="w-full p-2 border rounded text-[10px] text-blue-600 underline" />
+                    <input type="text" value={styles.logoUrl} onChange={(e)=>setStyles({...styles, logoUrl: e.target.value})} className="w-full p-2 border rounded text-[10px] text-blue-600" />
                  </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="p-4 bg-white border-t space-y-2">
           <button onClick={() => window.print()} className="w-full py-2.5 bg-slate-800 hover:bg-black text-white rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-lg transition-all">
             <HiOutlinePrinter size={16} /> PRINT PAPER
           </button>
-          <button onClick={handleSave} disabled={isSaving} className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-blue-100 transition-all active:scale-95">
+          <button onClick={handleSave} disabled={isSaving} className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-lg transition-all">
             <HiOutlineSave size={16} /> {isSaving ? "SAVING..." : "SAVE SETTINGS"}
           </button>
         </div>
@@ -295,13 +309,13 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
       {/* --- MAIN PAPER AREA --- */}
       <main className="flex-1 overflow-y-auto p-8 flex justify-center custom-scrollbar bg-slate-200 print:p-0 print:bg-white print:overflow-visible">
         <div 
-          className={`bg-white w-[850px] min-h-[1100px] h-fit shadow-2xl relative p-12 transition-all duration-300 print:shadow-none print:w-full print:p-4 ${styles.fontFamily}`}
+          className={`bg-white w-[850px] min-h-[1100px] h-fit shadow-2xl relative p-12 print:shadow-none print:w-full print:p-4 ${styles.fontFamily}`}
           style={{ color: styles.textColor, lineHeight: styles.lineHeight }}
         >
           {/* Watermark */}
           {styles.showWatermark && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden z-0">
-              <h1 style={{ transform: 'rotate(-45deg)', fontSize: '120px' }} className="font-black text-slate-400 opacity-[0.2] whitespace-nowrap uppercase select-none">
+              <h1 style={{ transform: 'rotate(-45deg)', fontSize: '120px', color: styles.textColor }} className="font-black opacity-[0.15] whitespace-nowrap uppercase select-none">
                 {styles.watermark}
               </h1>
             </div>
@@ -309,74 +323,56 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
 
           {paperData && (
             <div className="relative z-10">
-              {/* Passing date and time specifically into the header info */}
               <PaperHeader 
                 type={styles.layoutType} 
-                info={{
-                  ...paperData.info, 
-                  paperDate: paperData.paperDate, 
-                  paperTime: paperData.paperTime 
-                }} 
+                info={{ ...paperData.info, paperDate: paperData.paperDate, paperTime: paperData.paperTime }} 
                 styles={styles} 
                 onChangeLogo={()=>{}} 
               />
 
-                {/* --- BUBBLE SHEET --- */}
-                {styles.showBubbleSheet && paperData.MCQs?.length > 0 && (
-                  <div className="break-inside-avoid border border-slate-300 p-2 rounded-xl bg-slate-50/50 print:bg-transparent print:border-black mt-4">
-                      <div className="grid grid-cols-4 gap-4">
-                        {paperData.MCQs.map((_:any, i:number) => (
-                           <div key={i} className="flex items-center gap-2 justify-center">
-                              <span className="text-[10px] font-bold w-4 text-right">{i+1}.</span>
-                              <div className="flex gap-1">
-                                {['A','B','C','D'].map((opt) => (
-                                   <div key={opt} className="w-4 h-4 rounded-full border border-black flex items-center justify-center text-[8px]">{opt}</div>
-                                ))}
-                              </div>
-                           </div>
-                        ))}
-                      </div>
-                  </div>
-                )}
-
-
-              {/* Editable Content Area */}
-              <div 
-                contentEditable={true}
-                suppressContentEditableWarning={true} 
-                style={{ fontSize: styles.textSize + "px" }} 
-                className="mt-6 outline-none focus:ring-2 focus:ring-blue-200 focus:ring-offset-4 rounded-sm p-2 transition-all"
-              >
-
-                {styles.showNote && (
-                <div className="rounded-lg flex items-start gap-3 mb-3 print:bg-transparent">
-                    <HiOutlineInformationCircle className="text-slate-600 mt-0.5 shrink-0 print:hidden" size={18} />
-                    <p className="text-[11px] font-bold italic text-slate-700 leading-relaxed">
-                        {styles.noteText}
-                    </p>
+              {styles.showBubbleSheet && paperData.mcqBatches?.length > 0 && (
+                <div className="break-inside-avoid border border-slate-300 p-2 rounded-xl bg-slate-50/50 print:bg-transparent print:border-black mt-4">
+                    <div className="grid grid-cols-4 gap-4">
+                      {paperData.mcqBatches[0].questions.map((_:any, i:number) => (
+                         <div key={i} className="flex items-center gap-2 justify-center">
+                            <span className="text-[10px] font-bold w-4 text-right" style={{ color: styles.textColor }}>{i+1}.</span>
+                            <div className="flex gap-1">
+                              {['A','B','C','D'].map((opt) => (
+                                 <div key={opt} className="w-4 h-4 rounded-full border flex items-center justify-center text-[8px]" style={{ borderColor: styles.textColor, color: styles.textColor }}>{opt}</div>
+                              ))}
+                            </div>
+                         </div>
+                      ))}
+                    </div>
                 </div>
               )}
+
+              <div contentEditable={true} suppressContentEditableWarning={true} style={{ fontSize: styles.textSize + "px" }} className="mt-6 outline-none p-2">
+                {styles.showNote && (
+                  <div className="rounded-lg flex items-start gap-3 mb-3">
+                      <p className="text-[11px] font-bold italic opacity-80">{styles.noteText}</p>
+                  </div>
+                )}
                 
-                {/* --- Section A: MCQs --- */}
-                {paperData.MCQs?.length > 0 && (
-                  <div className="mb-8 mt-4">
-                    <div className="flex justify-between items-end border-b-2 border-black pb-1 mb-6">
-                        <h3 className="font-bold uppercase italic text-sm">Section-A: Multiple Choice Questions</h3>
-                        <span className="font-bold text-xs">Marks: {paperData.MCQs.length}</span>
+                {/* Sections Rendered Here (Shorts/Longs plural logic is in useEffect) */}
+                {paperData.mcqBatches?.map((batch: any, bIdx: number) => (
+                  <div key={bIdx} className="mb-8 mt-4">
+                    <div className="flex justify-between items-end border-b-2 pb-1 mb-6" style={{ borderColor: styles.textColor }}>
+                        <h3 className="font-bold uppercase italic text-sm">Section-A: Objective Type</h3>
+                        <span className="font-bold text-xs">Marks: {batch.config.total * batch.config.marks}</span>
                     </div>
-                    
                     <div className="space-y-4">
-                      {paperData.MCQs.map((q: any, i: number) => (
+                      {batch.questions.map((q: any, i: number) => (
                         <div key={i} className="break-inside-avoid">
                           <div className="flex gap-2">
                              <span className="font-bold shrink-0">{i+1}.</span>
-                             <p className="font-bold" style={{ fontSize: styles.headingSize + "px" }}>{q.question || q.text}</p>
+                             <p className="font-bold" style={{ fontSize: styles.headingSize + "px" }}>{q.question}</p>
                           </div>
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2 ml-6">
+                          <div className="grid grid-cols-4 gap-4 mt-2 ml-6">
                             {q.options && Object.entries(q.options).map(([k, v]: any) => (
                               <div key={k} className="flex items-center gap-2">
-                                <span className="w-5 h-5 border border-black rounded-full text-[10px] flex items-center justify-center font-bold uppercase shrink-0">{k}</span>
-                                <span>{v}</span>
+                                <span className="w-5 h-5 border rounded-full text-[10px] flex items-center justify-center font-bold uppercase shrink-0" style={{ borderColor: styles.textColor }}>{k}</span>
+                                <span>{v as string}</span>
                               </div>
                             ))}
                           </div>
@@ -384,53 +380,55 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                       ))}
                     </div>
                   </div>
+                ))}
+
+                {paperData.shortBatches?.length > 0 && (
+                  <div className="mt-8">
+                    <h3 className="font-bold uppercase italic text-sm border-b-2 pb-1 mb-4" style={{ borderColor: styles.textColor }}>Section-B: Short Questions</h3>
+                    {paperData.shortBatches.map((batch: any, bIdx: number) => (
+                      <div key={bIdx} className="mb-6">
+                        <div className="flex justify-between items-center bg-slate-50 p-1 mb-3 px-3 border-l-4 print:bg-transparent" style={{ borderLeftColor: styles.textColor }}>
+                          <span className="text-[11px] font-black uppercase">
+                             Q. No {bIdx + 2}: Attempt any {batch.config.attempt} out of {batch.config.total} questions.
+                          </span>
+                          <span className="text-[11px] font-bold">({batch.config.attempt} x {batch.config.marks} = {batch.config.attempt * batch.config.marks})</span>
+                        </div>
+                        <div className="grid grid-cols-1 gap-y-4 ml-4">
+                           {batch.questions.map((q: any, i: number) => (
+                              <div key={i} className="break-inside-avoid flex gap-2">
+                                 <span className="font-bold shrink-0">({i+1})</span>
+                                 <p className="font-bold" style={{ fontSize: styles.headingSize + "px" }}>{q.question}</p>
+                              </div>
+                           ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 )}
 
-                {/* --- Section B: Short Questions --- */}
-                {paperData.Short?.length > 0 && (
-                    <div className="mt-8">
-                      <div className="flex justify-between items-end border-b-2 border-black pb-1 mb-6">
-                        <h3 className="font-bold uppercase italic text-sm">Section-B: Short Questions</h3>
-                        <span className="font-bold text-xs">Marks: {paperData.Short.length * 2}</span>
+                {paperData.longBatches?.length > 0 && (
+                  <div className="mt-10">
+                    <h3 className="font-bold uppercase italic text-sm border-b-2 pb-1 mb-4" style={{ borderColor: styles.textColor }}>Section-C: Detailed Questions</h3>
+                    {paperData.longBatches.map((batch: any, bIdx: number) => (
+                      <div key={bIdx} className="mb-6">
+                        <div className="flex justify-between items-center bg-slate-50 p-1 mb-3 px-3 border-l-4 print:bg-transparent" style={{ borderLeftColor: styles.textColor }}>
+                          <span className="text-[11px] font-black uppercase">
+                             Attempt any {batch.config.attempt} out of {batch.config.total} questions.
+                          </span>
+                          <span className="text-[11px] font-bold">({batch.config.attempt} x {batch.config.marks} = {batch.config.attempt * batch.config.marks})</span>
+                        </div>
+                        <div className="space-y-6 ml-4">
+                           {batch.questions.map((q: any, i: number) => (
+                              <div key={i} className="break-inside-avoid flex gap-2">
+                                 <span className="font-bold shrink-0">Q.{i+1}</span>
+                                 <p className="font-bold" style={{ fontSize: styles.headingSize + "px" }}>{q.question}</p>
+                              </div>
+                           ))}
+                        </div>
                       </div>
-                      <div className="space-y-6">
-                         {paperData.Short.map((q: any, i: number) => (
-                            <div key={i} className="break-inside-avoid">
-                               <p className="font-bold flex gap-2">
-                                  <span className="shrink-0">Q{i+1}.</span>
-                                  <span style={{ fontSize: styles.headingSize + "px" }}>{q.question || q.text}</span>
-                               </p>
-                            </div>
-                         ))}
-                      </div>
-                    </div>
+                    ))}
+                  </div>
                 )}
-
-                {/* --- Section C: Long Questions --- */}
-                {paperData.Long?.length > 0 && (
-                    <div className="mt-10">
-                      <div className="flex justify-between items-end border-b-2 border-black pb-1 mb-6">
-                        <h3 className="font-bold uppercase italic text-sm">Section-C: Detailed Questions</h3>
-                        <span className="font-bold text-xs">Marks: {paperData.Long.length * 5}</span>
-                      </div>
-                      <div className="space-y-8">
-                         {paperData.Long.map((q: any, i: number) => (
-                            <div key={i} className="break-inside-avoid">
-                               <p className="font-bold flex gap-2 mb-2">
-                                  <span className="shrink-0">Q{i+1}.</span>
-                                  <span style={{ fontSize: styles.headingSize + "px" }}>{q.question || q.text}</span>
-                               </p>
-                            </div>
-                         ))}
-                      </div>
-                    </div>
-                )}
-              </div>
-              
-              {/* Footer */}
-              <div className="mt-12 pt-4 border-t border-slate-900 flex justify-between text-[9px] uppercase font-bold tracking-widest text-slate-500">
-                  <span>Generated by Exam System</span>
-                  <span>Property of {paperData.info?.schoolName || 'Institute'}</span>
               </div>
             </div>
           )}

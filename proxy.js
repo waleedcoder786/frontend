@@ -23,6 +23,16 @@ export function proxy(request) {
     }
   }
 
+  //  if (token && role === 'superadmin') {
+  //   const adminOnlyPaths = ['/teachers', ];
+  //   const isTryingToAccessAdmin = adminOnlyPaths.some(path => pathname.startsWith(path));
+
+  //   if (isTryingToAccessAdmin) {
+  //     // Teacher ko wapis dashboard bhej do 
+  //     return NextResponse.redirect(new URL('/dashboard', request.url));
+  //   }
+  // }
+
   // 3. Agar already login hai aur login page par jana chahay
   if (token && isAuthPage) {
     return NextResponse.redirect(new URL('/dashboard', request.url));

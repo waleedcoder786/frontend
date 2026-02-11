@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useMemo } from "react"; // useMemo add kiya
+import React, { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
   FaFileAlt,
@@ -9,18 +9,23 @@ import {
   FaChalkboardTeacher,
   FaArrowRight,
   FaPlus,
+  FaUsers
 } from "react-icons/fa";
 import Navbar from "../components/navbar/page";
 import Header from "../components/topbar/page";
 import axios from "axios";
+import toast from "react-hot-toast";
+import { PlusCircle } from "lucide-react";
 
 export default function DashboardPage() {
   const router = useRouter();
 
   const [savedPapers, setSavedPapers] = useState([]);
   const [savedTec, setSavedTec] = useState([]);
-  const [loggedUser, setLoggedUser] = useState<any>(null); // Type any rakha taake properties access ho sakein
+  const [allUsers, setAllUsers] = useState([]);
+  const [loggedUser, setLoggedUser] = useState<any>(null);
 
+  // 1. Initial User Load & Papers Fetch
   useEffect(() => {
     const storedUserString = localStorage.getItem('user');
     const storedUser = storedUserString ? JSON.parse(storedUserString) : null;
@@ -35,7 +40,6 @@ export default function DashboardPage() {
           });
           setSavedPapers(res.data);
 
-          // Sirf tab fetch karein jab user admin ho (optional optimization)
           if (storedUser.role !== 'teacher') {
             const resTec = await axios.get(`http://localhost:3001/teachers?userId=${userid}`);
             setSavedTec(resTec.data);
@@ -48,25 +52,50 @@ export default function DashboardPage() {
     }
   }, []);
 
-  // Filtered Stats Logic
+  // 2. Superadmin Data Fetch (FIXED: Moved outside the if statement)
+  useEffect(() => {
+    // Condition is now INSIDE the hook
+    if (loggedUser?.role === 'superadmin') {
+      const fetchData = async () => {
+        try {
+          const userRes = await axios.get('http://localhost:3001/users');
+          setAllUsers(userRes.data);
+        } catch (error) {
+          toast.error("Failed to load data");
+        }
+      };
+      fetchData();
+    }
+  }, [loggedUser]); // Runs when loggedUser updates
+
+  // 3. Filtered Stats Logic
   const filteredStats = useMemo(() => {
     const allStats = [
-      { label: 'Generate Paper', value: savedPapers.length + 1, color: 'bg-blue-500', lightColor: 'bg-blue-100/50', shadow: 'shadow-blue-200', icon: <FaPlus />, path: '/generate-paper' },
+      { label: 'Generate Paper', value: savedPapers.length, color: 'bg-blue-500', lightColor: 'bg-blue-100/50', shadow: 'shadow-blue-200', icon: <FaPlus />, path: '/generate-paper' },
       { label: 'Saved Papers', value: savedPapers.length, color: 'bg-emerald-500', lightColor: 'bg-emerald-100/50', shadow: 'shadow-emerald-200', icon: <FaSave />, path: '/saved-papers' },
       { label: 'Past Papers', value: 'Punjab Boards', color: 'bg-purple-500', lightColor: 'bg-purple-100/50', shadow: 'shadow-purple-200', icon: <FaHistory />, path: '/past-papers' },
-      // Is card ko identify karne ke liye hum label check karenge
       { label: 'Total Teachers', value: savedTec.length, color: 'bg-indigo-500', lightColor: 'bg-indigo-100/50', shadow: 'shadow-indigo-200', icon: <FaChalkboardTeacher />, path: '/teachers' },
       { label: 'Paper History', value: '0', color: 'bg-cyan-500', lightColor: 'bg-cyan-100/50', shadow: 'shadow-cyan-200', icon: <FaFileAlt />, path: '/paper-history' },
       { label: 'Login History', value: '0', color: 'bg-slate-700', lightColor: 'bg-slate-200/50', shadow: 'shadow-slate-300', icon: <FaSignOutAlt />, path: '/login-history' },
+      { label: 'users', value: allUsers.length, color: 'bg-slate-700', lightColor: 'bg-slate-200/50', shadow: 'shadow-slate-300', icon: <FaUsers />, path: '/users' },
+      { label: 'Add Data', value: "00", color: 'bg-slate-700', lightColor: 'bg-slate-200/50', shadow: 'shadow-slate-300', icon: <PlusCircle />, path: '/add-data' },
+      { label: 'status', value: "Good", color: 'bg-slate-700', lightColor: 'bg-slate-200/50', shadow: 'shadow-slate-300', icon: <PlusCircle />, path: '/add-users' },
     ];
 
-    // ✅ Agar user teacher hai, to 'Total Teachers' wala card nikal do
     if (loggedUser?.role === 'teacher') {
-      return allStats.filter(stat => stat.label !== 'Total Teachers' && stat.label !== 'Login History' );
+      return allStats.filter(stat => stat.label !== 'Total Teachers' && stat.label !== 'Login History' && stat.label !== 'users' && stat.label !== 'status'&& stat.label !== 'Add Data');
+    }
+
+    if (loggedUser?.role === 'superadmin') {
+      return allStats.filter(stat => stat.label !== 'Total Teachers' && stat.label !== 'Login History'
+        && stat.label !== 'Generate Paper' && stat.label !== 'Saved Papers' && stat.label !== 'Past Papers' && stat.label !== 'Paper History');
+    }
+    if (loggedUser?.role === 'admin') {
+      return allStats.filter(stat => stat.label !== 'users' && stat.label !== 'Login History'&& stat.label !== 'Add Data'&& stat.label !== 'status');
     }
 
     return allStats;
-  }, [savedPapers, savedTec, loggedUser]);
+  }, [savedPapers, savedTec, loggedUser, allUsers]); // added allUsers to dependency
 
   const handleCardClick = (path: string) => {
     router.push(path);

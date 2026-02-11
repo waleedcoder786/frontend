@@ -1,6 +1,5 @@
 {
 
- "users": [],
 
   "classes": [
     {
@@ -8,88 +7,8 @@
       "title": "12th",
       "sub": "2nd Year",
       "color": "from-blue-600 to-blue-400",
-      "img": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=400"
-    },
-    {
-      "id": "11",
-      "title": "11th",
-      "sub": "1st Year",
-      "color": "from-indigo-600 to-indigo-400",
-      "img": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400"
-    },
-    {
-      "id": "10",
-      "title": "10th",
-      "sub": "Matric",
-      "color": "from-cyan-600 to-cyan-400",
-      "img": "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400"
-    },
-    {
-      "id": "9",
-      "title": "9th",
-      "sub": "Matric",
-      "color": "from-emerald-600 to-emerald-400",
-      "img": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400"
-    },
-    {
-      "id": "8",
-      "title": "8th",
-      "sub": "Middle",
-      "color": "from-amber-600 to-amber-400",
-      "img": "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400"
-    },
-    {
-      "id": "7",
-      "title": "7th",
-      "sub": "Middle",
-      "color": "from-green-600 to-green-400",
-      "img": "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=400"
-    },
-    {
-      "id": "6",
-      "title": "6th",
-      "sub": "Middle",
-      "color": "from-red-600 to-red-400",
-      "img": "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=400"
-    },
-    {
-      "id": "5",
-      "title": "5th",
-      "sub": "Primary",
-      "color": "from-slate-800 to-slate-600",
-      "img": "https://images.unsplash.com/photo-1543269865-cbf427effbad?w=400"
-    },
-    {
-      "id": "4",
-      "title": "4th",
-      "sub": "Primary",
-      "color": "from-orange-500 to-orange-300",
-      "img": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400"
-    },
-    {
-      "id": "3",
-      "title": "3rd",
-      "sub": "Primary",
-      "color": "from-amber-500 to-amber-300",
-      "img": "https://images.unsplash.com/photo-1491153059943-412f4b00ca1a?w=400"
-    },
-    {
-      "id": "2",
-      "title": "2nd",
-      "sub": "Primary",
-      "color": "from-yellow-500 to-yellow-300",
-      "img": "https://images.unsplash.com/photo-1516627145497-ae6968895b74?w=400"
-    },
-    {
-      "id": "1",
-      "title": "1st",
-      "sub": "Primary",
-      "color": "from-lime-500 to-lime-300",
-      "img": "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400"
-    }
-  ],
-  "chaptersData": {
-    "12": {
+      "img": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=400",
+    
       "subjects": [
         {
           "name": "Physics",
@@ -12365,8 +12284,21 @@
           ]
         }
       ]
+    
     },
-    "10": {
+    {
+      "id": "11",
+      "title": "11th",
+      "sub": "1st Year",
+      "color": "from-indigo-600 to-indigo-400",
+      "img": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400"
+    },
+    {
+      "id": "10",
+      "title": "10th",
+      "sub": "Matric",
+      "color": "from-cyan-600 to-cyan-400",
+      "img": "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400",
       "subjects": [
         {
           "name": "Chemistry",
@@ -12397,8 +12329,71 @@
           "chapters": ["Quran-o-Hadis", "Faith", "Seerat-un-Nabi"]
         }
       ]
+    
     },
-    "1": {
+    {
+      "id": "9",
+      "title": "9th",
+      "sub": "Matric",
+      "color": "from-emerald-600 to-emerald-400",
+      "img": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400"
+    },
+    {
+      "id": "8",
+      "title": "8th",
+      "sub": "Middle",
+      "color": "from-amber-600 to-amber-400",
+      "img": "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400"
+    },
+    {
+      "id": "7",
+      "title": "7th",
+      "sub": "Middle",
+      "color": "from-green-600 to-green-400",
+      "img": "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=400"
+    },
+    {
+      "id": "6",
+      "title": "6th",
+      "sub": "Middle",
+      "color": "from-red-600 to-red-400",
+      "img": "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=400"
+    },
+    {
+      "id": "5",
+      "title": "5th",
+      "sub": "Primary",
+      "color": "from-slate-800 to-slate-600",
+      "img": "https://images.unsplash.com/photo-1543269865-cbf427effbad?w=400"
+    },
+    {
+      "id": "4",
+      "title": "4th",
+      "sub": "Primary",
+      "color": "from-orange-500 to-orange-300",
+      "img": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400"
+    },
+    {
+      "id": "3",
+      "title": "3rd",
+      "sub": "Primary",
+      "color": "from-amber-500 to-amber-300",
+      "img": "https://images.unsplash.com/photo-1491153059943-412f4b00ca1a?w=400"
+    },
+    {
+      "id": "2",
+      "title": "2nd",
+      "sub": "Primary",
+      "color": "from-yellow-500 to-yellow-300",
+      "img": "https://images.unsplash.com/photo-1516627145497-ae6968895b74?w=400"
+    },
+    {
+      "id": "1",
+      "title": "1st",
+      "sub": "Primary",
+      "color": "from-lime-500 to-lime-300",
+      "img": "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400",
+
       "subjects": [
         {
           "name": "English",
@@ -12414,6 +12409,5 @@
         }
       ]
     }
-  }
-
+  ]
 }
