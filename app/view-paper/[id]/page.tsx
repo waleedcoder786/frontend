@@ -5,6 +5,9 @@ import Link from "next/link";
 import axios from "axios";
 import { PaperHeader } from "../../components/headers"; 
 
+// Backend Base URL
+const API_BASE = "http://localhost:5000/api";
+
 export default function ViewPaperPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const id = resolvedParams.id;
@@ -30,9 +33,10 @@ export default function ViewPaperPage({ params }: { params: Promise<{ id: string
   useEffect(() => {
     const fetchPaper = async () => {
       try {
-        const res = await axios.get(`http://localhost:3001/papers?id=${id}`);
-        if (res.data.length > 0) {
-          const data = res.data[0];
+        // Updated to hit your specific backend endpoint
+        const res = await axios.get(`${API_BASE}/papers/${id}`);
+        if (res.data) {
+          const data = res.data;
           
           // --- SAFE DATA PROCESSING ---
           const processedData = {

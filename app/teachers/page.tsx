@@ -19,6 +19,9 @@ import {
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
+// Update to your backend port
+const API_BASE_URL = "http://localhost:5000/api/teachers";
+
 function Page() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [teachers, setTeachers] = useState<any[]>([]);
@@ -48,7 +51,7 @@ function Page() {
   const classesList = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th"];
   const subjectsList = ["Physics", "Chemistry", "Math", "Computer", "English", "Urdu", "Islamiat", "Stats"];
 
-  /* ---------- outside click ---------- */
+  /* ---------- Outside Click Logic ---------- */
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -59,30 +62,32 @@ function Page() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  /* ---------- load teachers ---------- */
+  /* ---------- Load Teachers from Backend ---------- */
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (!storedUser) return;
 
     const admin = JSON.parse(storedUser);
-    if (admin?.id) fetchTeachers(admin.id);
+    // Use admin.id or admin._id depending on your login response
+    const adminId = admin.id || admin._id;
+    if (adminId) fetchTeachers(adminId);
   }, []);
 
   const fetchTeachers = async (adminId: string) => {
+    setLoading(true);
     try {
-      const res = await axios.get(`http://localhost:3001/teachers?userId=${adminId}`);
-      const sorted = res.data.sort(
-        (a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
-      setTeachers(sorted);
+      const res = await axios.get(`${API_BASE_URL}?userId=${adminId}`);
+      // The backend returns an array of teachers
+      setTeachers(res.data);
     } catch (err) {
-      console.error(err);
+      console.error("Fetch error:", err);
+      toast.error("Failed to load teachers from server");
     } finally {
       setLoading(false);
     }
   };
 
-  /* ---------- pagination ---------- */
+  /* ---------- Pagination ---------- */
   const indexOfLastTeacher = currentPage * teachersPerPage;
   const indexOfFirstTeacher = indexOfLastTeacher - teachersPerPage;
   const currentTeachers = teachers.slice(indexOfFirstTeacher, indexOfLastTeacher);
@@ -100,9 +105,7 @@ function Page() {
     );
   };
 
-  const paginate = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-  };
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   const handleEditClick = (teacher: any) => {
     setEditingTeacherId(teacher.id);
@@ -111,7 +114,7 @@ function Page() {
       email: teacher.email,
       phone: teacher.phone,
       city: teacher.city,
-      password: '',
+      password: '', // Keep empty unless changing
       confirmPassword: ''
     });
     setSelectedClasses(teacher.classes || []);
@@ -126,59 +129,53 @@ function Page() {
     setOpenMenuId(null);
   };
 
-  /* ---------- SAVE / UPDATE ---------- */
+  /* ---------- SAVE / UPDATE (BACKEND STORE) ---------- */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Password check only for new registrations
     if (!editingTeacherId && formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match");
       return;
     }
 
     const storedUser = localStorage.getItem("user");
-    if (!storedUser) return;
+    if (!storedUser) {
+      toast.error("Admin session not found");
+      return;
+    }
 
     const admin = JSON.parse(storedUser);
     const { confirmPassword, ...data } = formData;
 
-    console.log(admin);
-    
-
-    // Yahan Admin ka data payload mein merge ho raha hai
     const payload = {
       ...data,
       classes: selectedClasses,
       subjects: selectedSubjects,
-      userId: admin.id,
-      institute: admin.institute, // Admin's college name
-      watermark: admin.watermark, // Admin's watermark
-      address: admin.address,     // Admin's Walton Lahore address
-      logo: admin.logo,           // Admin's logo URL
-      role: "teacher",
-      updatedAt: new Date().toISOString()
+      userId: admin.id || admin._id,
+      institute: admin.schoolName || admin.institute || "", 
+      watermark: admin.watermark || "", 
+      address: admin.address || "",    
+      logo: admin.logo || "",          
+      role: "teacher"
     };
 
     try {
       if (editingTeacherId) {
-        const old = teachers.find(t => t.id === editingTeacherId);
-        const res = await axios.put(
-          `http://localhost:3001/teachers/${editingTeacherId}`,
-          { ...payload, createdAt: old?.createdAt }
-        );
+        // Update existing teacher in MongoDB
+        const res = await axios.put(`${API_BASE_URL}/${editingTeacherId}`, payload);
         setTeachers(prev => prev.map(t => (t.id === editingTeacherId ? res.data : t)));
-        toast.success("Profile updated!");
+        toast.success("Profile updated successfully!");
       } else {
-        const res = await axios.post(
-          "http://localhost:3001/teachers",
-          { ...payload, createdAt: new Date().toISOString() }
-        );
+        // Create new teacher in MongoDB
+        const res = await axios.post(API_BASE_URL, payload);
         setTeachers(prev => [res.data, ...prev]);
-        toast.success("Teacher registered!");
+        toast.success("Teacher registered in database!");
       }
       closeForm();
-    } catch (err) {
-      console.error(err);
-      toast.error("Error saving teacher");
+    } catch (err: any) {
+      console.error("Submit error:", err);
+      toast.error(err.response?.data?.error || "Error saving teacher");
     }
   };
 
@@ -196,10 +193,10 @@ function Page() {
   const handleDelete = async () => {
     if (!teacherToDelete) return;
     try {
-      await axios.delete(`http://localhost:3001/teachers/${teacherToDelete.id}`);
+      await axios.delete(`${API_BASE_URL}/${teacherToDelete.id}`);
       setTeachers(prev => prev.filter(t => t.id !== teacherToDelete.id));
       setShowDeleteModal(false);
-      toast.success("Deleted");
+      toast.success("Deleted from database");
     } catch {
       toast.error("Error deleting teacher");
     }
@@ -226,7 +223,7 @@ function Page() {
             </div>
 
             {loading ? (
-              <div className="text-center py-20 animate-pulse text-slate-400">Loading data...</div>
+              <div className="text-center py-20 animate-pulse text-slate-400 font-medium italic">Connecting to Database...</div>
             ) : teachers.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border border-dashed border-slate-200">
                 <HiOutlineInbox className="text-5xl text-slate-200 mb-2" />
@@ -253,7 +250,7 @@ function Page() {
                               {t.logo ? (
                                 <img src={t.logo} alt="admin-logo" className="w-full h-full object-cover" />
                               ) : (
-                                <div className="w-full h-full flex items-center justify-center text-slate-400 font-black">{t.name.charAt(0)}</div>
+                                <div className="w-full h-full flex items-center justify-center text-slate-400 font-black">{t.name?.charAt(0)}</div>
                               )}
                             </div>
                             <div>
@@ -277,8 +274,8 @@ function Page() {
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex gap-1 flex-wrap max-w-[200px]">
-                            {t.subjects?.map((c: string) => (
-                              <span key={c} className="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded text-[10px] font-bold">{c}</span>
+                            {t.subjects?.map((s: string) => (
+                              <span key={s} className="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded text-[10px] font-bold">{s}</span>
                             ))}
                           </div>
                         </td>
@@ -332,7 +329,7 @@ function Page() {
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-2">
           <div className="bg-white rounded-xl w-full max-w-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
             <div className="p-4 flex justify-between items-center bg-slate-900 text-white">
-              <h3 className="text-xl font-black">{editingTeacherId ? 'Edit Teacher' : 'Register Teacher'}</h3>
+              <h3 className="text-xl font-black">{editingTeacherId ? 'Edit Teacher Profile' : 'Register Teacher'}</h3>
               <button onClick={closeForm} className="w-8 h-8 flex justify-center items-center bg-white/10 hover:bg-red-500 rounded-full transition-all"><HiOutlineX /></button>
             </div>
             <form onSubmit={handleSubmit} className="p-8 overflow-y-auto space-y-4">
@@ -355,11 +352,25 @@ function Page() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="relative">
                   <HiOutlineLockClosed className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                  <input required={!editingTeacherId} value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} type="password" placeholder="Password" className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-md outline-none text-sm text-slate-700" />
+                  <input 
+                    required={!editingTeacherId} 
+                    value={formData.password} 
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })} 
+                    type="password" 
+                    placeholder={editingTeacherId ? "New Password (optional)" : "Password"} 
+                    className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-md outline-none text-sm text-slate-700" 
+                  />
                 </div>
                 <div className="relative">
                   <HiOutlineLockClosed className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                  <input required={!editingTeacherId} value={formData.confirmPassword} onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })} type="password" placeholder="Confirm Password" className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-md outline-none text-sm text-slate-700" />
+                  <input 
+                    required={!editingTeacherId} 
+                    value={formData.confirmPassword} 
+                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })} 
+                    type="password" 
+                    placeholder="Confirm Password" 
+                    className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-md outline-none text-sm text-slate-700" 
+                  />
                 </div>
               </div>
 
@@ -377,7 +388,9 @@ function Page() {
                   ))}
                 </div>
               </div>
-              <button type="submit" className="w-full py-4 bg-slate-900 text-white font-black rounded-xl text-xs uppercase tracking-widest mt-4 hover:bg-slate-800 transition-colors">Save Teacher Profile</button>
+              <button type="submit" className="w-full py-4 bg-slate-900 text-white font-black rounded-xl text-xs uppercase tracking-widest mt-4 hover:bg-slate-800 transition-colors">
+                {editingTeacherId ? 'Update Teacher Record' : 'Save Teacher Profile'}
+              </button>
             </form>
           </div>
         </div>

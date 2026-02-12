@@ -25,7 +25,7 @@ export const PaperHeader = ({ type, info, styles, onChangeLogo }: HeaderProps) =
   // Note: Added .institute because your admin object uses 'institute' key
   const displaySchoolName = userData?.institute || userData?.schoolName || info?.schoolName || "INSTITUTION NAME";
   const displaySchoolLogo = userData?.logo || info?.logo || styles?.logoUrl || "";
-  const displaySchoolAddress = userData?.address || info?.address || "Address Detail, Punjab Ph: 000-0000000";
+  const displaySchoolAddress = userData?.address || info?.address || "";
 
   const Logo = () => (
     <div onClick={onChangeLogo} className="cursor-pointer group relative print:opacity-100 shrink-0">
@@ -108,34 +108,21 @@ export const PaperHeader = ({ type, info, styles, onChangeLogo }: HeaderProps) =
 
     case 'grid-table':
       return (
-        <div className="w-full mb-6">
-          <div className="text-center mb-4">
+        <div className="w-full mb-8 border-b-2 border-black pb-4 text-center">
+          <div className="mb-6">
             <div className="flex justify-center mb-2"><Logo /></div>
-            <h1 className="text-2xl font-bold uppercase">{displaySchoolName}</h1>
-            <p className="text-[10px] font-bold">{displaySchoolAddress}</p>
+            <h1 className="text-4xl font-black uppercase tracking-widest leading-none mb-1">{displaySchoolName}</h1>
+            <p className="text-[10px] font-bold mb-4 uppercase">{displaySchoolAddress}</p>
+            <div className="flex justify-center gap-10 text-xs font-bold">
+                <span>DATE: {displayDate}</span>
+                <span>TIME: {displayTime}</span>
+            </div>
           </div>
-          <table className="w-full border-collapse border border-black text-[12px]">
-            <tbody>
-              <tr>
-                <td className="border border-black p-2 bg-gray-50 w-24 font-bold">Name</td>
-                <td className="border border-black p-2 w-1/2"></td>
-                <td className="border border-black p-2 bg-gray-50 w-24 font-bold">Roll No.</td>
-                <td className="border border-black p-2"></td>
-              </tr>
-              <tr>
-                <td className="border border-black p-2 bg-gray-50 font-bold">Subject</td>
-                <td className="border border-black p-2">{info?.subject}</td>
-                <td className="border border-black p-2 bg-gray-50 font-bold">Class / Date</td>
-                <td className="border border-black p-2">{info?.class} / {displayDate}</td>
-              </tr>
-              <tr>
-                <td className="border border-black p-2 bg-gray-50 font-bold">Total Marks</td>
-                <td className="border border-black p-2">{info?.totalMarks}</td>
-                <td className="border border-black p-2 bg-gray-50 font-bold">Duration</td>
-                <td className="border border-black p-2 font-bold">{displayTime}</td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="flex justify-between items-end font-bold text-sm uppercase px-2">
+            <div className="flex gap-2"><span>CLASS:</span><span className="border-b border-black min-w-[80px] text-center">{info?.class}</span></div>
+            <div className="flex gap-2 underline decoration-double underline-offset-4 decoration-2"><span>SUBJECT:</span><span>{info?.subject}</span></div>
+            <div className="flex gap-2"><span>TOTAL MARKS:</span><span className="border-b border-black min-w-[50px] text-center">{info?.totalMarks}</span></div>
+          </div>
         </div>
       );
 
@@ -286,21 +273,36 @@ export const PaperHeader = ({ type, info, styles, onChangeLogo }: HeaderProps) =
 
     default:
       return (
-        <div className="w-full mb-8 border-b-2 border-black pb-4 text-center">
-          <div className="mb-6">
+        
+
+        <div className="w-full mb-6">
+          <div className="text-center mb-4">
             <div className="flex justify-center mb-2"><Logo /></div>
-            <h1 className="text-4xl font-black uppercase tracking-widest leading-none mb-1">{displaySchoolName}</h1>
-            <p className="text-[10px] font-bold mb-4 uppercase">{displaySchoolAddress}</p>
-            <div className="flex justify-center gap-10 text-xs font-bold">
-                <span>DATE: {displayDate}</span>
-                <span>TIME: {displayTime}</span>
-            </div>
+            <h1 className="text-2xl font-bold uppercase">{displaySchoolName}</h1>
+            <p className="text-[10px] font-bold">{displaySchoolAddress}</p>
           </div>
-          <div className="flex justify-between items-end font-bold text-sm uppercase px-2">
-            <div className="flex gap-2"><span>CLASS:</span><span className="border-b border-black min-w-[80px] text-center">{info?.class}</span></div>
-            <div className="flex gap-2 underline decoration-double underline-offset-4 decoration-2"><span>SUBJECT:</span><span>{info?.subject}</span></div>
-            <div className="flex gap-2"><span>TOTAL MARKS:</span><span className="border-b border-black min-w-[50px] text-center">{info?.totalMarks}</span></div>
-          </div>
+          <table className="w-full border-collapse border border-black text-[12px]">
+            <tbody>
+              <tr>
+                <td className="border border-black p-2 bg-gray-50 w-24 font-bold">Name</td>
+                <td className="border border-black p-2 w-1/2"></td>
+                <td className="border border-black p-2 bg-gray-50 w-24 font-bold">Roll No.</td>
+                <td className="border border-black p-2"></td>
+              </tr>
+              <tr>
+                <td className="border border-black p-2 bg-gray-50 font-bold">Subject</td>
+                <td className="border border-black p-2">{info?.subject}</td>
+                <td className="border border-black p-2 bg-gray-50 font-bold">Class / Date</td>
+                <td className="border border-black p-2">{info?.class} / {displayDate}</td>
+              </tr>
+              <tr>
+                <td className="border border-black p-2 bg-gray-50 font-bold">Total Marks</td>
+                <td className="border border-black p-2">{info?.totalMarks}</td>
+                <td className="border border-black p-2 bg-gray-50 font-bold">Duration</td>
+                <td className="border border-black p-2 font-bold">{displayTime}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       );
   }

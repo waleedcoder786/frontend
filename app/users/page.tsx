@@ -15,6 +15,9 @@ import {
   AlertTriangle, UserPlus
 } from 'lucide-react';
 
+// API BASE URL
+const API_URL = 'http://localhost:5000/api';
+
 export default function UsersPage() {
   const router = useRouter();
   const [subAdmins, setSubAdmins] = useState<any[]>([]);
@@ -30,7 +33,7 @@ export default function UsersPage() {
 
   const [formData, setFormData] = useState({
     name: '', email: '', phone: '', institute: '', 
-    watermark: '', address: '', logo: '', // Teeno Optional hain
+    watermark: '', address: '', logo: '', 
     password: '', confirmPassword: '', role: 'admin',
     profilePic: 'https://cdn-icons-png.flaticon.com/512/149/149071.png'
   });
@@ -42,18 +45,27 @@ export default function UsersPage() {
       router.push('/dashboard');
       return;
     }
-    fetchData(user.id);
+    // Handle both id or _id from localStorage
+    fetchData(user.id || user._id);
   }, []);
 
   const fetchData = async (currentUserId: string) => {
     try {
       const [userRes, teacherRes] = await Promise.all([
-        axios.get('http://localhost:3001/users'),
-        axios.get('http://localhost:3001/teachers')
+        axios.get(`${API_URL}/users`),
+        axios.get(`${API_URL}/teachers`)
       ]);
-      const filteredAdmins = userRes.data.filter((u: any) => u.id !== currentUserId && u.role === 'admin');
+      
+      // Standardize IDs: Map MongoDB _id to id for frontend compatibility
+      const standardizedUsers = userRes.data.map((u: any) => ({ ...u, id: u._id || u.id }));
+      const standardizedTeachers = teacherRes.data.map((t: any) => ({ ...t, id: t._id || t.id }));
+
+      const filteredAdmins = standardizedUsers.filter((u: any) => 
+        String(u.id) !== String(currentUserId) && u.role === 'admin'
+      );
+      
       setSubAdmins(filteredAdmins);
-      setTeachers(teacherRes.data);
+      setTeachers(standardizedTeachers);
     } catch {
       toast.error('Data loading failed');
     } finally {
@@ -93,15 +105,16 @@ export default function UsersPage() {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
 
       if (editingAdminId) {
-        await axios.put(`http://localhost:3001/users/${editingAdminId}`, payload);
+        await axios.put(`${API_URL}/users/${editingAdminId}`, payload);
         toast.success('Admin updated successfully');
       } else {
-        await axios.post('http://localhost:3001/users', { ...payload, id: Date.now().toString() });
+        // Remove manual ID generation to let MongoDB handle it
+        await axios.post(`${API_URL}/users`, payload);
         toast.success('Admin registered successfully');
       }
 
       setIsFormOpen(false);
-      fetchData(user.id);
+      fetchData(user.id || user._id);
     } catch {
       toast.error('Operation failed');
     }
@@ -109,18 +122,21 @@ export default function UsersPage() {
 
   const handleDelete = async () => {
     if (!deletingItem) return;
+    
     try {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
-      if (deletingItem.type === 'users') {
-        const relatedTeachers = teachers.filter(t => String(t.userId) === String(deletingItem.id));
-        await Promise.all(relatedTeachers.map(t => axios.delete(`http://localhost:3001/teachers/${t.id}`)));
+      const deleteUrl = `${API_URL}/${deletingItem.type}/${deletingItem.id}`;
+
+      const res = await axios.delete(deleteUrl);
+      
+      if (res.status === 200 || res.status === 204) {
+        toast.success('Record Deleted Successfully');
+        setIsDeleteModalOpen(false);
+        fetchData(user.id || user._id); 
       }
-      await axios.delete(`http://localhost:3001/${deletingItem.type}/${deletingItem.id}`);
-      toast.success('Record Deleted');
-      setIsDeleteModalOpen(false);
-      fetchData(user.id);
-    } catch {
-      toast.error('Delete failed');
+    } catch (error: any) {
+      console.error("Delete Error details:", error.response);
+      toast.error(error.response?.data?.message || 'Server connection error');
     }
   };
 
@@ -230,7 +246,6 @@ export default function UsersPage() {
                 <input required value={formData.institute} onChange={(e) => setFormData({ ...formData, institute: e.target.value })} type="text" placeholder="Institute / School Name" className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-md outline-none text-sm text-slate-700 font-bold" />
               </div>
 
-              {/* ADDRESS FIELD (Optional) */}
               <div className="relative">
                 <HiOutlineLocationMarker className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} type="text" placeholder="Institute Address (Optional)" className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-md outline-none text-sm text-slate-700" />
@@ -243,12 +258,10 @@ export default function UsersPage() {
                 </div>
                 <div className="relative">
                   <HiOutlineBadgeCheck className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                  {/* WATERMARK Ab Optional Hai (Required Hata Diya) */}
                   <input value={formData.watermark} onChange={(e) => setFormData({ ...formData, watermark: e.target.value })} type="text" placeholder="Watermark (Optional)" className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-md outline-none text-sm text-slate-700" />
                 </div>
               </div>
 
-              {/* LOGO URL FIELD (Optional) */}
               <div className="relative">
                 <HiOutlinePhotograph className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input value={formData.logo} onChange={(e) => setFormData({ ...formData, logo: e.target.value })} type="url" placeholder="Institute Logo URL (Optional)" className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-md outline-none text-sm text-slate-700" />

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect, use, useRef } from "react";
 import { 
   HiOutlineSave, 
   HiOutlineChevronLeft, 
@@ -19,6 +19,33 @@ import Link from "next/link";
 import axios from "axios";
 import { PaperHeader } from "../../components/headers"; 
 
+// Backend Base URL
+const API_BASE = "http://localhost:5000/api";
+
+// --- HELPER COMPONENT: Auto-Resizing Textarea for seamless editing ---
+const AutoResizeTextarea = ({ value, onChange, className, style, placeholder }: any) => {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
+    }
+  }, [value, style]);
+
+  return (
+    <textarea
+      ref={textareaRef}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      rows={1}
+      className={`bg-transparent resize-none overflow-hidden outline-none w-full focus:bg-yellow-50/50 transition-colors ${className}`}
+      style={style}
+    />
+  );
+};
+
 export default function EditPaperPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const id = resolvedParams.id;
@@ -28,7 +55,6 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
   const [isSaving, setIsSaving] = useState(false);
   const [showToast, setShowToast] = useState(false);
   
-  // UI Controls State
   const [openSection, setOpenSection] = useState<string>("info");
 
   // --- STYLING STATES ---
@@ -48,6 +74,7 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
   });
 
   useEffect(() => {
+    // Load User Watermark Preference
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       try {
@@ -62,15 +89,14 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
 
     const fetchPaper = async () => {
       try {
-        // Fetching by query param ?id=...
-        const res = await axios.get(`http://localhost:3001/papers?id=${id}`);
-        if (res.data.length > 0) {
-          const data = res.data[0];
+        const res = await axios.get(`${API_BASE}/papers/${id}`);
+        if (res.data) {
+          const data = res.data;
           
           const processedData = {
             ...data,
-            // Ensure we use the exact ID from the database object
-            db_id: data.id, 
+            db_id: data._id || data.id, 
+            // Separate batches for UI handling
             mcqBatches: data.batches?.filter((b: any) => b.type === "mcqs") || [],
             shortBatches: data.batches?.filter((b: any) => b.type === "shorts") || [],
             longBatches: data.batches?.filter((b: any) => b.type === "longs") || [],
@@ -96,28 +122,56 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
     if (id) fetchPaper();
   }, [id]);
 
+  // --- EDIT HANDLERS (Updates State Instantly) ---
+
+  const updateQuestion = (batchType: 'mcqs' | 'shorts' | 'longs', batchIndex: number, qIndex: number, newVal: string) => {
+    const updatedData = { ...paperData };
+    const targetBatches = batchType === 'mcqs' ? 'mcqBatches' : batchType === 'shorts' ? 'shortBatches' : 'longBatches';
+    updatedData[targetBatches][batchIndex].questions[qIndex].question = newVal;
+    setPaperData(updatedData);
+  };
+
+  const updateOption = (batchIndex: number, qIndex: number, optKey: string, newVal: string) => {
+    const updatedData = { ...paperData };
+    updatedData.mcqBatches[batchIndex].questions[qIndex].options[optKey] = newVal;
+    setPaperData(updatedData);
+  };
+
   const handleSave = async () => {
-    // Agar paperData load nahi hua ya ID nahi hai
-    if (!paperData || (!paperData.id && !paperData.db_id)) {
-      alert("Error: Paper ID not found in data.");
+    if (!paperData || (!paperData._id && !paperData.id)) {
+      alert("Error: Paper ID not found.");
       return;
     }
 
-    const targetId = paperData.db_id || paperData.id;
+    const targetId = paperData._id || paperData.id;
     setIsSaving(true);
 
     try {
-      // PUT request specific ID par hoti hai: papers/1
-      await axios.put(`http://localhost:3001/papers/${targetId}`, {
+      // Recombine batches into single array for backend
+      const combinedBatches = [
+        ...paperData.mcqBatches,
+        ...paperData.shortBatches,
+        ...paperData.longBatches
+      ];
+
+      const payload = {
         ...paperData,
+        batches: combinedBatches, // Save the edited questions
         style: styles,
-      });
+      };
+
+      // Remove UI-only fields before sending if necessary, strictly keeping structure
+      delete payload.mcqBatches;
+      delete payload.shortBatches;
+      delete payload.longBatches;
+
+      await axios.put(`${API_BASE}/papers/${targetId}`, payload);
 
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     } catch (error: any) {
-      console.error("Server Error details:", error.response?.status, error.response?.data);
-      alert(`Save Failed (Error ${error.response?.status || 'Network'}): Sahi endpoint nahi mila.`);
+      console.error("Save error:", error);
+      alert("Failed to save. Please check backend connection.");
     } finally {
       setIsSaving(false);
     }
@@ -128,28 +182,27 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
   };
 
   if (loading) return (
-    <div className="h-screen flex items-center justify-center font-bold text-slate-600">Loading Editor...</div>
+    <div className="h-screen flex items-center justify-center font-bold text-slate-600 animate-pulse">Loading Editor...</div>
   );
 
   const layouts = [
     { id: 'default', name: 'Layout 01' },
-    { id: 'academy-pro', name: 'Layout 02' },
-    { id: 'modern-bar', name: 'Layout 03' },
+    { id: 'minimalist-top', name: 'Layout 02' },
+    { id: 'classic-school', name: 'Layout 03' },
     { id: 'grid-table', name: 'Layout 04' },
     { id: 'formal-double', name: 'Layout 05' },
     { id: 'marking-panel', name: 'Layout 06' },
-    { id: 'minimalist-top', name: 'Layout 07' },
+    { id: 'academy-pro ', name: 'Layout 07' },
     { id: 'university-elegant', name: 'Layout 08' },
     { id: 'split-sidebar', name: 'Layout 09' },
-    { id: 'classic-school', name: 'Layout 10' },
+    { id: 'modern-bar ', name: 'Layout 10' },
   ];
 
   return (
     <div className="relative flex h-screen w-screen bg-slate-100 overflow-hidden font-sans text-black">
-      {/* Toast Notification */}
       {showToast && (
         <div className="fixed top-6 right-6 bg-emerald-600 text-white px-6 py-3 rounded-xl shadow-2xl z-50 flex items-center gap-2 animate-bounce">
-          <HiOutlineCheckCircle size={22} /> <span className="font-bold">Settings Saved!</span>
+          <HiOutlineCheckCircle size={22} /> <span className="font-bold">Paper Updated & Saved!</span>
         </div>
       )}
 
@@ -168,10 +221,10 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
           {/* 1. Paper Info */}
           <div className="border-b">
             <button onClick={() => toggleSection("info")} className="w-full px-5 py-4 flex items-center justify-between bg-white hover:bg-slate-50 transition-colors">
-               <div className="flex items-center gap-2 text-xs font-black uppercase text-slate-700 tracking-wider">
-                 <HiOutlineCalendar size={16} className="text-blue-600"/> Paper Info
-               </div>
-               <HiOutlineChevronDown className={`text-slate-400 transition-transform duration-300 ${openSection === "info" ? "rotate-180" : ""}`} />
+                <div className="flex items-center gap-2 text-xs font-black uppercase text-slate-700 tracking-wider">
+                  <HiOutlineCalendar size={16} className="text-blue-600"/> Paper Info
+                </div>
+                <HiOutlineChevronDown className={`text-slate-400 transition-transform duration-300 ${openSection === "info" ? "rotate-180" : ""}`} />
             </button>
             {openSection === "info" && (
               <div className="px-5 pb-5 pt-1 bg-slate-50/50 space-y-4 animate-in slide-in-from-top-2">
@@ -193,10 +246,10 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
           {/* 2. Layouts */}
           <div className="border-b">
             <button onClick={() => toggleSection("layouts")} className="w-full px-5 py-4 flex items-center justify-between bg-white hover:bg-slate-50 transition-colors">
-               <div className="flex items-center gap-2 text-xs font-black uppercase text-slate-700 tracking-wider">
-                 <HiOutlineTemplate size={16} className="text-blue-600"/> Layouts
-               </div>
-               <HiOutlineChevronDown className={`text-slate-400 transition-transform duration-300 ${openSection === "layouts" ? "rotate-180" : ""}`} />
+                <div className="flex items-center gap-2 text-xs font-black uppercase text-slate-700 tracking-wider">
+                  <HiOutlineTemplate size={16} className="text-blue-600"/> Layouts
+                </div>
+                <HiOutlineChevronDown className={`text-slate-400 transition-transform duration-300 ${openSection === "layouts" ? "rotate-180" : ""}`} />
             </button>
             {openSection === "layouts" && (
               <div className="px-5 pb-5 pt-1 bg-slate-50/50 grid grid-cols-2 gap-2 animate-in slide-in-from-top-2">
@@ -212,10 +265,10 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
           {/* 3. Text Formatting */}
           <div className="border-b">
             <button onClick={() => toggleSection("formatting")} className="w-full px-5 py-4 flex items-center justify-between bg-white hover:bg-slate-50 transition-colors">
-               <div className="flex items-center gap-2 text-xs font-black uppercase text-slate-700 tracking-wider">
-                 <HiOutlinePencil size={16} className="text-blue-600"/> Text Formatting
-               </div>
-               <HiOutlineChevronDown className={`text-slate-400 transition-transform duration-300 ${openSection === "formatting" ? "rotate-180" : ""}`} />
+                <div className="flex items-center gap-2 text-xs font-black uppercase text-slate-700 tracking-wider">
+                  <HiOutlinePencil size={16} className="text-blue-600"/> Text Formatting
+                </div>
+                <HiOutlineChevronDown className={`text-slate-400 transition-transform duration-300 ${openSection === "formatting" ? "rotate-180" : ""}`} />
             </button>
             {openSection === "formatting" && (
               <div className="px-5 pb-5 pt-1 bg-slate-50/50 space-y-4 animate-in slide-in-from-top-2">
@@ -258,10 +311,10 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
           {/* 4. Page Elements */}
           <div className="border-b">
             <button onClick={() => toggleSection("elements")} className="w-full px-5 py-4 flex items-center justify-between bg-white hover:bg-slate-50 transition-colors">
-               <div className="flex items-center gap-2 text-xs font-black uppercase text-slate-700 tracking-wider">
-                 <HiOutlineDocumentText size={16} className="text-blue-600"/> Page Elements
-               </div>
-               <HiOutlineChevronDown className={`text-slate-400 transition-transform duration-300 ${openSection === "elements" ? "rotate-180" : ""}`} />
+                <div className="flex items-center gap-2 text-xs font-black uppercase text-slate-700 tracking-wider">
+                  <HiOutlineDocumentText size={16} className="text-blue-600"/> Page Elements
+                </div>
+                <HiOutlineChevronDown className={`text-slate-400 transition-transform duration-300 ${openSection === "elements" ? "rotate-180" : ""}`} />
             </button>
             {openSection === "elements" && (
               <div className="px-5 pb-5 pt-1 bg-slate-50/50 space-y-4 animate-in slide-in-from-top-2">
@@ -279,8 +332,8 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                  </div>
 
                  <div className="space-y-2 bg-white p-2 rounded border">
-                    <div className="flex items-center justify-between">                        
-                      <span className="text-[10px] font-bold text-gray-400">Exam Note</span>                        
+                    <div className="flex items-center justify-between">                         
+                      <span className="text-[10px] font-bold text-gray-400">Exam Note</span>                         
                       <input type="checkbox" checked={styles.showNote} onChange={(e)=>setStyles({...styles, showNote: e.target.checked})} className="accent-blue-600" />
                     </div>
                     {styles.showNote && (
@@ -301,7 +354,7 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
             <HiOutlinePrinter size={16} /> PRINT PAPER
           </button>
           <button onClick={handleSave} disabled={isSaving} className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-lg transition-all">
-            <HiOutlineSave size={16} /> {isSaving ? "SAVING..." : "SAVE SETTINGS"}
+            <HiOutlineSave size={16} /> {isSaving ? "SAVING..." : "SAVE & UPDATE"}
           </button>
         </div>
       </aside>
@@ -312,7 +365,7 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
           className={`bg-white w-[850px] min-h-[1100px] h-fit shadow-2xl relative p-12 print:shadow-none print:w-full print:p-4 ${styles.fontFamily}`}
           style={{ color: styles.textColor, lineHeight: styles.lineHeight }}
         >
-          {/* Watermark */}
+          {/* Watermark Rendering */}
           {styles.showWatermark && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden z-0">
               <h1 style={{ transform: 'rotate(-45deg)', fontSize: '120px', color: styles.textColor }} className="font-black opacity-[0.15] whitespace-nowrap uppercase select-none">
@@ -334,27 +387,27 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                 <div className="break-inside-avoid border border-slate-300 p-2 rounded-xl bg-slate-50/50 print:bg-transparent print:border-black mt-4">
                     <div className="grid grid-cols-4 gap-4">
                       {paperData.mcqBatches[0].questions.map((_:any, i:number) => (
-                         <div key={i} className="flex items-center gap-2 justify-center">
-                            <span className="text-[10px] font-bold w-4 text-right" style={{ color: styles.textColor }}>{i+1}.</span>
-                            <div className="flex gap-1">
-                              {['A','B','C','D'].map((opt) => (
-                                 <div key={opt} className="w-4 h-4 rounded-full border flex items-center justify-center text-[8px]" style={{ borderColor: styles.textColor, color: styles.textColor }}>{opt}</div>
-                              ))}
-                            </div>
-                         </div>
+                          <div key={i} className="flex items-center gap-2 justify-center">
+                             <span className="text-[10px] font-bold w-4 text-right" style={{ color: styles.textColor }}>{i+1}.</span>
+                             <div className="flex gap-1">
+                               {['A','B','C','D'].map((opt) => (
+                                   <div key={opt} className="w-4 h-4 rounded-full border flex items-center justify-center text-[8px]" style={{ borderColor: styles.textColor, color: styles.textColor }}>{opt}</div>
+                               ))}
+                             </div>
+                          </div>
                       ))}
                     </div>
                 </div>
               )}
 
-              <div contentEditable={true} suppressContentEditableWarning={true} style={{ fontSize: styles.textSize + "px" }} className="mt-6 outline-none p-2">
+              <div style={{ fontSize: styles.textSize + "px" }} className="mt-6 outline-none p-2">
                 {styles.showNote && (
                   <div className="rounded-lg flex items-start gap-3 mb-3">
                       <p className="text-[11px] font-bold italic opacity-80">{styles.noteText}</p>
                   </div>
                 )}
                 
-                {/* Sections Rendered Here (Shorts/Longs plural logic is in useEffect) */}
+                {/* Section-A: MCQs (Editable) */}
                 {paperData.mcqBatches?.map((batch: any, bIdx: number) => (
                   <div key={bIdx} className="mb-8 mt-4">
                     <div className="flex justify-between items-end border-b-2 pb-1 mb-6" style={{ borderColor: styles.textColor }}>
@@ -366,13 +419,24 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                         <div key={i} className="break-inside-avoid">
                           <div className="flex gap-2">
                              <span className="font-bold shrink-0">{i+1}.</span>
-                             <p className="font-bold" style={{ fontSize: styles.headingSize + "px" }}>{q.question}</p>
+                             <AutoResizeTextarea 
+                                value={q.question} 
+                                onChange={(e: any) => updateQuestion('mcqs', bIdx, i, e.target.value)}
+                                className="font-bold"
+                                style={{ fontSize: styles.headingSize + "px", color: styles.textColor }}
+                             />
                           </div>
                           <div className="grid grid-cols-4 gap-4 mt-2 ml-6">
                             {q.options && Object.entries(q.options).map(([k, v]: any) => (
                               <div key={k} className="flex items-center gap-2">
                                 <span className="w-5 h-5 border rounded-full text-[10px] flex items-center justify-center font-bold uppercase shrink-0" style={{ borderColor: styles.textColor }}>{k}</span>
-                                <span>{v as string}</span>
+                                <input 
+                                    type="text" 
+                                    value={v as string} 
+                                    onChange={(e) => updateOption(bIdx, i, k, e.target.value)}
+                                    className="bg-transparent outline-none w-full"
+                                    style={{ color: styles.textColor }}
+                                />
                               </div>
                             ))}
                           </div>
@@ -382,6 +446,7 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                   </div>
                 ))}
 
+                {/* Section-B: Shorts (Editable) */}
                 {paperData.shortBatches?.length > 0 && (
                   <div className="mt-8">
                     <h3 className="font-bold uppercase italic text-sm border-b-2 pb-1 mb-4" style={{ borderColor: styles.textColor }}>Section-B: Short Questions</h3>
@@ -397,7 +462,12 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                            {batch.questions.map((q: any, i: number) => (
                               <div key={i} className="break-inside-avoid flex gap-2">
                                  <span className="font-bold shrink-0">({i+1})</span>
-                                 <p className="font-bold" style={{ fontSize: styles.headingSize + "px" }}>{q.question}</p>
+                                 <AutoResizeTextarea 
+                                    value={q.question} 
+                                    onChange={(e: any) => updateQuestion('shorts', bIdx, i, e.target.value)}
+                                    className="font-bold"
+                                    style={{ fontSize: styles.headingSize + "px", color: styles.textColor }}
+                                 />
                               </div>
                            ))}
                         </div>
@@ -406,6 +476,7 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                   </div>
                 )}
 
+                {/* Section-C: Longs (Editable) */}
                 {paperData.longBatches?.length > 0 && (
                   <div className="mt-10">
                     <h3 className="font-bold uppercase italic text-sm border-b-2 pb-1 mb-4" style={{ borderColor: styles.textColor }}>Section-C: Detailed Questions</h3>
@@ -421,7 +492,12 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                            {batch.questions.map((q: any, i: number) => (
                               <div key={i} className="break-inside-avoid flex gap-2">
                                  <span className="font-bold shrink-0">Q.{i+1}</span>
-                                 <p className="font-bold" style={{ fontSize: styles.headingSize + "px" }}>{q.question}</p>
+                                 <AutoResizeTextarea 
+                                    value={q.question} 
+                                    onChange={(e: any) => updateQuestion('longs', bIdx, i, e.target.value)}
+                                    className="font-bold"
+                                    style={{ fontSize: styles.headingSize + "px", color: styles.textColor }}
+                                 />
                               </div>
                            ))}
                         </div>

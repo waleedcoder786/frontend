@@ -17,6 +17,9 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { PlusCircle } from "lucide-react";
 
+// Updated API Base URL
+const API_BASE = "http://localhost:5000/api";
+
 export default function DashboardPage() {
   const router = useRouter();
 
@@ -25,50 +28,48 @@ export default function DashboardPage() {
   const [allUsers, setAllUsers] = useState([]);
   const [loggedUser, setLoggedUser] = useState<any>(null);
 
-  // 1. Initial User Load & Papers Fetch
+  // 1. Initial User Load & Data Fetching
   useEffect(() => {
     const storedUserString = localStorage.getItem('user');
     const storedUser = storedUserString ? JSON.parse(storedUserString) : null;
     setLoggedUser(storedUser);
 
     if (storedUser) {
-      const userid = storedUser.id;
-      const fetchPapers = async () => {
+      // Handle both .id or ._id from MongoDB
+      const currentUserId = storedUser.id || storedUser._id;
+
+      const fetchDashboardData = async () => {
         try {
-          const res = await axios.get("http://localhost:3001/papers", {
-            params: { userId: userid },
+          // Fetch Papers
+          const res = await axios.get(`${API_BASE}/papers`, {
+            params: { userId: currentUserId },
           });
           setSavedPapers(res.data);
 
+          // Fetch Teachers if not a teacher themselves
           if (storedUser.role !== 'teacher') {
-            const resTec = await axios.get(`http://localhost:3001/teachers?userId=${userid}`);
+            const resTec = await axios.get(`${API_BASE}/teachers`, {
+               params: { userId: currentUserId }
+            });
             setSavedTec(resTec.data);
           }
+
+          // Fetch All Users for Superadmin
+          if (storedUser.role === 'superadmin') {
+            const userRes = await axios.get(`${API_BASE}/users`);
+            setAllUsers(userRes.data);
+          }
         } catch (err) {
-          console.error("Fetch error:", err);
+          console.error("Dashboard Fetch error:", err);
+          // toast.error("Error connecting to server");
         }
       };
-      fetchPapers();
+      
+      fetchDashboardData();
     }
   }, []);
 
-  // 2. Superadmin Data Fetch (FIXED: Moved outside the if statement)
-  useEffect(() => {
-    // Condition is now INSIDE the hook
-    if (loggedUser?.role === 'superadmin') {
-      const fetchData = async () => {
-        try {
-          const userRes = await axios.get('http://localhost:3001/users');
-          setAllUsers(userRes.data);
-        } catch (error) {
-          toast.error("Failed to load data");
-        }
-      };
-      fetchData();
-    }
-  }, [loggedUser]); // Runs when loggedUser updates
-
-  // 3. Filtered Stats Logic
+  // 3. Filtered Stats Logic (Style preserved)
   const filteredStats = useMemo(() => {
     const allStats = [
       { label: 'Generate Paper', value: savedPapers.length, color: 'bg-blue-500', lightColor: 'bg-blue-100/50', shadow: 'shadow-blue-200', icon: <FaPlus />, path: '/generate-paper' },
@@ -76,26 +77,26 @@ export default function DashboardPage() {
       { label: 'Past Papers', value: 'Punjab Boards', color: 'bg-purple-500', lightColor: 'bg-purple-100/50', shadow: 'shadow-purple-200', icon: <FaHistory />, path: '/past-papers' },
       { label: 'Total Teachers', value: savedTec.length, color: 'bg-indigo-500', lightColor: 'bg-indigo-100/50', shadow: 'shadow-indigo-200', icon: <FaChalkboardTeacher />, path: '/teachers' },
       { label: 'Paper History', value: '0', color: 'bg-cyan-500', lightColor: 'bg-cyan-100/50', shadow: 'shadow-cyan-200', icon: <FaFileAlt />, path: '/paper-history' },
-      { label: 'Login History', value: '0', color: 'bg-slate-700', lightColor: 'bg-slate-200/50', shadow: 'shadow-slate-300', icon: <FaSignOutAlt />, path: '/login-history' },
+      { label: 'login history', value: '0', color: 'bg-slate-700', lightColor: 'bg-slate-200/50', shadow: 'shadow-slate-300', icon: <FaSignOutAlt />, path: '/login-history' },
       { label: 'users', value: allUsers.length, color: 'bg-slate-700', lightColor: 'bg-slate-200/50', shadow: 'shadow-slate-300', icon: <FaUsers />, path: '/users' },
-      { label: 'Add Data', value: "00", color: 'bg-slate-700', lightColor: 'bg-slate-200/50', shadow: 'shadow-slate-300', icon: <PlusCircle />, path: '/add-data' },
-      { label: 'status', value: "Good", color: 'bg-slate-700', lightColor: 'bg-slate-200/50', shadow: 'shadow-slate-300', icon: <PlusCircle />, path: '/add-users' },
+      { label: 'add data', value: "DB", color: 'bg-slate-700', lightColor: 'bg-slate-200/50', shadow: 'shadow-slate-300', icon: <PlusCircle />, path: '/add-data' },
+      { label: 'status', value: "Good", color: 'bg-slate-700', lightColor: 'bg-slate-200/50', shadow: 'shadow-slate-300', icon: <PlusCircle />, path: '/status' },
     ];
 
     if (loggedUser?.role === 'teacher') {
-      return allStats.filter(stat => stat.label !== 'Total Teachers' && stat.label !== 'Login History' && stat.label !== 'users' && stat.label !== 'status'&& stat.label !== 'Add Data');
+      return allStats.filter(stat => ['Generate Paper', 'Saved Papers', 'Past Papers', 'Paper History'].includes(stat.label));
     }
 
     if (loggedUser?.role === 'superadmin') {
-      return allStats.filter(stat => stat.label !== 'Total Teachers' && stat.label !== 'Login History'
-        && stat.label !== 'Generate Paper' && stat.label !== 'Saved Papers' && stat.label !== 'Past Papers' && stat.label !== 'Paper History');
+      return allStats.filter(stat => ['users', 'add data', 'status'].includes(stat.label.toLowerCase()));
     }
+
     if (loggedUser?.role === 'admin') {
-      return allStats.filter(stat => stat.label !== 'users' && stat.label !== 'Login History'&& stat.label !== 'Add Data'&& stat.label !== 'status');
+      return allStats.filter(stat => !['users', 'login history', 'add data', 'status'].includes(stat.label.toLowerCase()));
     }
 
     return allStats;
-  }, [savedPapers, savedTec, loggedUser, allUsers]); // added allUsers to dependency
+  }, [savedPapers, savedTec, loggedUser, allUsers]);
 
   const handleCardClick = (path: string) => {
     router.push(path);
@@ -103,6 +104,7 @@ export default function DashboardPage() {
 
   return (
     <div className="h-screen w-full bg-[#f0f4f8] flex overflow-hidden font-sans relative">
+      {/* Decorative Blobs */}
       <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob pointer-events-none"></div>
       <div className="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000 pointer-events-none"></div>
 
@@ -137,8 +139,8 @@ export default function DashboardPage() {
                       {stat.icon}
                     </div>
 
-                    <div className={`flex items-center gap-2 text-sm font-bold text-slate-400 group-hover:${stat.color.replace("bg-", "text-")} transition-colors`}>
-                      Go to section{" "}
+                    <div className={`flex items-center gap-2 text-sm font-bold text-slate-400 group-hover:${stat.color.replace("bg-", "text-")} transition-colors uppercase tracking-widest`}>
+                      Explore{" "}
                       <FaArrowRight size={12} className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
                     </div>
                   </div>
@@ -148,7 +150,7 @@ export default function DashboardPage() {
                       {stat.label}
                     </h3>
                     <div className="flex items-baseline gap-2">
-                      <span className={`text-3xl font-black text-slate-800 tracking-tighter group-hover:${stat.color.replace("bg-", "text-")} transition-colors`}>
+                      <span className={`text-4xl font-black text-slate-800 tracking-tighter group-hover:${stat.color.replace("bg-", "text-")} transition-colors`}>
                         {stat.value}
                       </span>
                     </div>

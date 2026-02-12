@@ -9,6 +9,9 @@ import Navbar from '../components/navbar/page';
 import QuestionMenuModal from '../components/QuestionMenuModal/page';
 import toast from 'react-hot-toast';
 
+// Update this to your backend URL
+const BACKEND_URL = "http://localhost:5000/api/papers";
+
 interface PaperPreviewProps {
     className: string;
     subject: any;
@@ -57,10 +60,10 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
 
         if (editingBatch) {
             setQuestionBatches(prev => prev.map(b => b.id === editingBatch.id ? newBatch : b));
-            toast.success("Section updated successfully!");
+            toast.success("Section updated!");
         } else {
             setQuestionBatches(prev => [...prev, newBatch]);
-            toast.success(`Added ${config.type} as Q.${questionBatches.length + 1}`);
+            toast.success(`Section Added!`);
         }
 
         setIsMenuOpen(false);
@@ -92,35 +95,51 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
         sum + (Number(batch.config.attempt) * Number(batch.config.marks)), 0
     );
 
-    const handleSavePaper = async () => {
-        if (!paperName.trim()) return toast.error("Please enter a paper name.");
-        setIsLoading(true);
-        try {
-            const payload = {
-                id: Date.now(),
-                userId: user?.id,
-                paperName,
-                paperType,
-                paperDate,
-                paperTime,
-                batches: questionBatches,
-                info: {
-                    subject: subject?.name,
-                    class: className,
-                    totalMarks: grandTotalMarks,
-                    createdAt: new Date().toLocaleString()
-                }
-            };
-            await axios.post("http://localhost:3001/papers", payload);
-            toast.success("Paper saved successfully!");
-            setIsSaveModalOpen(false);
-        } catch (error) {
-            toast.error("Database error.");
-        } finally {
-            setIsLoading(false);
-        }
-    };
+const handleSavePaper = async () => {
+    if (!paperName.trim()) return toast.error("Please enter a paper name.");
+    if (questionBatches.length === 0) return toast.error("Paper is empty!");
 
+    setIsLoading(true);
+    try {
+        const payload = {
+            userId: user?.id || user?._id, 
+            paperName,
+            paperType,
+            paperDate,
+            paperTime,
+            className: className,
+            subject: subject?.name,
+            totalMarks: grandTotalMarks,
+            batches: questionBatches,
+            headerInfo: {
+                schoolName: user?.schoolName || "My School",
+                address: user?.address || "",
+                logo: user?.logo || "",
+                watermark: user?.watermark || ""
+            },
+            // IMPORTANT: Yeh missing tha
+            style: {
+                fontFamily: "font-sans", // Agar aapke paas iski state hai toh wo dalein
+                textSize: "14",
+                textColor: "#000000",
+                showWatermark: true,
+                // Jo bhi aapki designer settings hain wo yahan jayengi
+            }
+        };
+
+        // Agar paper pehle se database mein hai (Editing), toh PUT use karein
+        // Agar naya paper hai toh POST use karein
+        const response = await axios.post(BACKEND_URL, payload);
+        
+        toast.success("Paper saved to Database!");
+        setIsSaveModalOpen(false);
+    } catch (error: any) {
+        console.error("Save Error:", error);
+        toast.error(error.response?.data?.message || "Failed to save to server.");
+    } finally {
+        setIsLoading(false);
+    }
+};
     const getPartLabel = (index: number, type: string) => {
         if (type === 'mcqs') return `${index + 1}.`;
         const roman = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x', 'xi', 'xii'];
@@ -129,9 +148,7 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
 
     return (
         <div className="flex h-screen w-screen bg-slate-200 overflow-hidden font-sans text-black">
-            {/* <div className="print:hidden"> */}
-            {/* </div> */}
-                <Navbar />
+            <Navbar />
 
             <QuestionMenuModal
                 isOpen={isMenuOpen}
@@ -148,40 +165,45 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
 
             {/* --- SAVE MODAL --- */}
             {isSaveModalOpen && (
-                 <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
-                 <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-200">
-                     <div className="bg-slate-50 p-5 border-b border-slate-100 flex items-center gap-3">
-                         <FaCloudUploadAlt className="text-blue-600" />
-                         <h2 className="text-lg font-bold text-slate-800 uppercase">Save Paper</h2>
-                     </div>
-                     <div className="p-6 space-y-4">
-                         <div>
-                             <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Paper Name</label>
-                             <input type="text" placeholder="Enter paper name..." value={paperName} onChange={(e) => setPaperName(e.target.value)} className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-black outline-none focus:ring-2 focus:ring-blue-500/20" />
-                         </div>
-                         <div>
-                             <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Paper Type</label>
-                             <input value={paperType} onChange={(e) => setPaperType(e.target.value)} className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-black outline-none focus:ring-2 focus:ring-blue-500/20"/>
-                         </div>
-                         <div className="grid grid-cols-2 gap-4">
-                             <div>
-                                 <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Date</label>
-                                 <input type="date" value={paperDate} onChange={(e) => setPaperDate(e.target.value)} className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-black outline-none focus:ring-2 focus:ring-blue-500/20" />
-                             </div>
-                             <div>
-                                 <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Time / Duration</label>
-                                 <input type="text" placeholder="e.g. 1.5 Hours" value={paperTime} onChange={(e) => setPaperTime(e.target.value)} className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-black outline-none focus:ring-2 focus:ring-blue-500/20" />
-                             </div>
-                         </div>
-                     </div>
-                     <div className="bg-slate-50 px-6 py-4 flex gap-3 justify-end border-t border-slate-100">
-                         <button onClick={() => setIsSaveModalOpen(false)} className="text-slate-500 font-bold text-xs uppercase">Cancel</button>
-                         <button onClick={handleSavePaper} className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-bold text-xs uppercase shadow-lg shadow-blue-100">
-                             {isLoading ? "Saving..." : "Save Paper"}
-                         </button>
-                     </div>
-                 </div>
-             </div>
+                <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+                    <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-200">
+                        <div className="bg-slate-50 p-5 border-b border-slate-100 flex items-center gap-3">
+                            <FaCloudUploadAlt className="text-blue-600" />
+                            <h2 className="text-lg font-bold text-slate-800 uppercase">Save to Database</h2>
+                        </div>
+                        <div className="p-6 space-y-4">
+                            <div>
+                                <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Paper Title</label>
+                                <input type="text" placeholder="e.g. Mid-Term 2026" value={paperName} onChange={(e) => setPaperName(e.target.value)} className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-black outline-none focus:ring-2 focus:ring-blue-500/20" />
+                            </div>
+                            <div>
+                                <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Category</label>
+                                <input value={paperType} onChange={(e) => setPaperType(e.target.value)} className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-black outline-none"/>
+                                    {/* <option>Monthly Test</option>
+                                    <option>Send-Up Exam</option>
+                                    <option>Final Term</option>
+                                    <option>Class Test</option> */}
+                                {/* </select> */}
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Date</label>
+                                    <input type="date" value={paperDate} onChange={(e) => setPaperDate(e.target.value)} className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-black outline-none" />
+                                </div>
+                                <div>
+                                    <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Duration</label>
+                                    <input type="text" placeholder="1.5 Hours" value={paperTime} onChange={(e) => setPaperTime(e.target.value)} className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-black outline-none" />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="bg-slate-50 px-6 py-4 flex gap-3 justify-end border-t border-slate-100">
+                            <button onClick={() => setIsSaveModalOpen(false)} className="text-slate-500 font-bold text-xs uppercase">Cancel</button>
+                            <button onClick={handleSavePaper} className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-bold text-xs uppercase shadow-lg shadow-blue-100">
+                                {isLoading ? "Syncing..." : "Confirm Save"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
 
             <div className="flex-1 flex flex-col overflow-hidden">
@@ -198,11 +220,11 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
                             <FaPrint className="text-[10px]" /> PRINT
                         </button>
                         <button onClick={() => setIsSaveModalOpen(true)} disabled={questionBatches.length === 0} className="bg-slate-800 text-green-400 border border-slate-700 text-[12px] px-5 py-2.5 rounded-lg font-bold flex items-center gap-2 transition-all disabled:opacity-50">
-                            <FaCloudUploadAlt /> SAVE PAPER
+                            <FaCloudUploadAlt /> SAVE TO SERVER
                         </button>
                     </div>
                     <div className="bg-slate-900/50 border border-white/5 rounded-2xl px-4 py-1.5">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Marks: {grandTotalMarks}</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Marks: {grandTotalMarks}</span>
                     </div>
                     <button onClick={onClose} className="text-red-400 border border-red-500/50 px-5 py-2.5 rounded-lg text-[12px] font-bold transition-all">
                         <FaTrash className="inline mr-2"/> EXIT
@@ -212,10 +234,10 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
                 <div className="flex-1 overflow-y-auto p-10 bg-slate-400/20 print:p-0 print:bg-white custom-scrollbar">
                     <div ref={paperRef} id="printablePaper" className={`bg-white mx-auto w-[850px] min-h-[1100px] shadow-2xl relative p-16 print:shadow-none print:w-full print:p-12 text-black transition-all ${isEditMode ? 'ring-4 ring-amber-400 outline-none' : ''}`}>
                         
-                        {/* Header style */}
+                        {/* Header Section */}
                         <div className="border-b-4 border-black pb-4 text-center mb-10">
                             <h1 className="text-3xl font-black uppercase tracking-tighter" >{user?.schoolName || "SCHOOL NAME"}</h1>
-                            <p className="text-center text-[14px] " >{user?.address === "" ? user?.address :  ""}</p>
+                            <p className="text-center text-[14px] " >{user?.address || ""}</p>
                             <h2 className="text-lg font-bold uppercase mt-1">{paperType}</h2>
                             
                             <div className="flex justify-between mt-1 text-[15px] font-bold">
@@ -240,7 +262,6 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
 
                                 return (
                                     <div key={batch.id} className="group relative">
-                                        {/* Action Icons: Show on Hover */}
                                         {!isEditMode && (
                                             <div className="absolute -left-12 top-2 flex flex-row gap-3 opacity-0 group-hover:opacity-100 transition-all print:hidden">
                                                 <button title="Edit Section" onClick={() => handleEditBatch(batch)} className="text-blue-500 hover:scale-110 transition-transform"><FaEdit size={16}/></button>
@@ -295,26 +316,16 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
 
             <style jsx global>{`
                 @media print {
-                    /* Hide everything */
-                    body * {
-                        visibility: hidden;
-                    }
-                    /* Show only the paper sheet */
-                    #printablePaper, #printablePaper * {
-                        visibility: visible;
-                    }
+                    body * { visibility: hidden; }
+                    #printablePaper, #printablePaper * { visibility: visible; }
                     #printablePaper {
                         position: absolute;
-                        left: 0;
-                        top: 0;
+                        left: 0; top: 0;
                         width: 100% !important;
                         margin: 0 !important;
-                        padding: 10mm !important; /* Adjust padding for print */
+                        padding: 10mm !important;
                         box-shadow: none !important;
                         background: white !important;
-                    }
-                    .print-hidden {
-                        display: none !important;
                     }
                 }
                 .custom-scrollbar::-webkit-scrollbar { width: 4px; }
