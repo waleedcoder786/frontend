@@ -131,53 +131,57 @@ function Page() {
 
   /* ---------- SAVE / UPDATE (BACKEND STORE) ---------- */
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    // Password check only for new registrations
-    if (!editingTeacherId && formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
+  const storedUser = localStorage.getItem("user");
+  if (!storedUser) {
+    toast.error("Session expired. Please login again.");
+    return;
+  }
 
-    const storedUser = localStorage.getItem("user");
-    if (!storedUser) {
-      toast.error("Admin session not found");
-      return;
-    }
+  const admin = JSON.parse(storedUser);
+  
+  // Console check taake aapko pata chale actual ID kis field mein aa rahi hai
+  console.log("Admin Data from Storage:", admin);
 
-    const admin = JSON.parse(storedUser);
-    const { confirmPassword, ...data } = formData;
+  // Check karein ke ID kahan hai (kuch systems mein ye sirf ._id hota hai)
+  const actualAdminId = admin._id || admin.id || admin.data?._id || admin.data?.id;
 
-    const payload = {
-      ...data,
-      classes: selectedClasses,
-      subjects: selectedSubjects,
-      userId: admin.id || admin._id,
-      institute: admin.schoolName || admin.institute || "", 
-      watermark: admin.watermark || "", 
-      address: admin.address || "",    
-      logo: admin.logo || "",          
-      role: "teacher"
-    };
+  if (!actualAdminId) {
+    toast.error("Admin ID not found in session!");
+    return;
+  }
 
-    try {
-      if (editingTeacherId) {
-        // Update existing teacher in MongoDB
-        const res = await axios.put(`${API_BASE_URL}/${editingTeacherId}`, payload);
-        setTeachers(prev => prev.map(t => (t.id === editingTeacherId ? res.data : t)));
-        toast.success("Profile updated successfully!");
-      } else {
-        // Create new teacher in MongoDB
-        const res = await axios.post(API_BASE_URL, payload);
-        setTeachers(prev => [res.data, ...prev]);
-        toast.success("Teacher registered in database!");
-      }
-      closeForm();
-    } catch (err: any) {
-      console.error("Submit error:", err);
-      toast.error(err.response?.data?.error || "Error saving teacher");
-    }
+  const { confirmPassword, ...data } = formData;
+
+  const payload = {
+    ...data,
+    classes: selectedClasses,
+    subjects: selectedSubjects,
+    adminId: actualAdminId, // Yahan humne ensure kiya ke ID mil gayi hai
+    institute: admin.institute || admin.schoolName || admin.data?.institute || "",
+    watermark: admin.watermark || admin.data?.watermark || "",
+    address: admin.address || admin.data?.address || "",
+    logo: admin.logo || admin.data?.logo || "",
+    role: "teacher"
   };
+
+  try {
+    if (editingTeacherId) {
+      const res = await axios.put(`${API_BASE_URL}/${editingTeacherId}`, payload);
+      setTeachers(prev => prev.map(t => (t._id === editingTeacherId ? res.data : t)));
+      toast.success("Teacher updated!");
+    } else {
+      const res = await axios.post(API_BASE_URL, payload);
+      setTeachers(prev => [res.data, ...prev]);
+      toast.success("Teacher registered!");
+    }
+    closeForm();
+  } catch (err: any) {
+    console.error("Payload sent:", payload); // Debugging ke liye
+    toast.error(err.response?.data?.error || "Validation Failed: Check console");
+  }
+};
 
   const closeForm = () => {
     setIsFormOpen(false);
@@ -242,8 +246,8 @@ function Page() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {currentTeachers.map(t => (
-                      <tr key={t.id} className="hover:bg-slate-50/50 transition-colors">
+                    {currentTeachers.map((t,idx )=> (
+                      <tr key={idx} className="hover:bg-slate-50/50 transition-colors">
                         <td className="px-6 py-4 text-sm">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-slate-100 flex-shrink-0 border overflow-hidden">

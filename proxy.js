@@ -2,36 +2,38 @@ import { NextResponse } from 'next/server';
 
 export function proxy(request) {
   const token = request.cookies.get('auth_token')?.value;
-  const role = request.cookies.get('user_role')?.value; // Seedha role mil gaya
+  const role = request.cookies.get('user_role')?.value; // Role: 'superadmin', 'admin', 'teacher'
   const { pathname } = request.nextUrl;
 
   const isAuthPage = pathname.startsWith('/auth/login') || pathname.startsWith('/auth/signup');
 
-  // 1. Agar login nahi hai
+  // 1. Agar login nahi hai aur kisi protected page par ja raha hai
   if (!token && !isAuthPage && pathname !== '/') {
     return NextResponse.redirect(new URL('/auth/login', request.url));
   }
 
   // 2. Role based Protection
-  if (token && role === 'teacher') {
-    const adminOnlyPaths = ['/teachers', ];
-    const isTryingToAccessAdmin = adminOnlyPaths.some(path => pathname.startsWith(path));
-
-    if (isTryingToAccessAdmin) {
-      // Teacher ko wapis dashboard bhej do
-      return NextResponse.redirect(new URL('/dashboard', request.url));
+  if (token) {
+    // --- TEACHER PROTECTION ---
+    if (role === 'teacher') {
+      const adminPaths = ['/teachers', '/super-admin-dashboard', '/add-data'];
+      if (adminPaths.some(path => pathname.startsWith(path))) {
+        return NextResponse.redirect(new URL('/dashboard', request.url));
+      }
     }
+
+    // --- ADMIN PROTECTION ---
+    if (role === 'admin') {
+      const superAdminPaths = ['/super-admin-dashboard', '/status-center'];
+      if (superAdminPaths.some(path => pathname.startsWith(path))) {
+        return NextResponse.redirect(new URL('/dashboard', request.url));
+      }
+    }
+
+    // --- SUPER ADMIN PROTECTION ---
+    // Super admin aksar sab kuch dekh sakta hai, lekin agar aap chahte hain 
+    // ke woh Paper Generate na kare, toh yahan restricted paths daal dein.
   }
-
-  //  if (token && role === 'superadmin') {
-  //   const adminOnlyPaths = ['/teachers', ];
-  //   const isTryingToAccessAdmin = adminOnlyPaths.some(path => pathname.startsWith(path));
-
-  //   if (isTryingToAccessAdmin) {
-  //     // Teacher ko wapis dashboard bhej do 
-  //     return NextResponse.redirect(new URL('/dashboard', request.url));
-  //   }
-  // }
 
   // 3. Agar already login hai aur login page par jana chahay
   if (token && isAuthPage) {
@@ -47,6 +49,7 @@ export const config = {
     '/generate-paper/:path*',
     '/teachers/:path*',
     '/saved-papers/:path*',
-    '/auth/:path*'
+    '/auth/:path*',
+    '/super-admin-dashboard/:path*' // Super admin ka route bhi add kiya
   ],
 };

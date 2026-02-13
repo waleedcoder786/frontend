@@ -275,35 +275,56 @@ export default function QuestionMenuModal({
             </div>
 
             <div className="space-y-4 max-h-[350px] overflow-y-auto pr-3 custom-scrollbar mb-6">
-              {visibleQuestions.length > 0 ? visibleQuestions.map((q, idx) => {
-                const isSelected = tempSelected.some(item => item.tempId === q.tempId);
-                return (
-                  <div key={q.tempId} onClick={() => toggleSelection(q)}
-                       className={`p-4 rounded-lg border-2 transition-all cursor-pointer flex gap-5 ${
-                         isSelected ? 'border-blue-600 bg-blue-50/50 shadow-md' : 'bg-white border-slate-100 hover:border-blue-200 shadow-sm'
-                       }`}>
-                    <div className={`w-6 h-6 mt-1 rounded-sm border-2 flex items-center justify-center shrink-0 transition-all ${
-                      isSelected ? 'bg-blue-600 border-blue-600 text-white' : 'border-slate-200 bg-slate-50'
-                    }`}>
-                      {isSelected && <FaCheckSquare size={12} />}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex justify-between items-start">
-                          <p className="font-bold text-slate-800 text-sm leading-snug">
-                             <span className="text-blue-600 mr-2">{idx + 1}.</span> {q.question || q.text}
-                          </p>
-                          <span className="bg-slate-100 text-slate-500 text-[10px] font-black px-2 py-1 rounded ml-2 whitespace-nowrap">
-                            {q.marks} Marks
-                          </span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              }) : (
-                <div className="text-center py-20 text-slate-400 font-bold border-2 border-dashed border-slate-200 rounded-2xl">
-                    No Questions Found.
-                </div>
-              )}
+{/* visibleQuestions.map wale block ko isse replace karein */}
+{visibleQuestions.length > 0 ? visibleQuestions.map((q, idx) => {
+  const isSelected = tempSelected.some(item => item.tempId === q.tempId);
+  const isMCQ = selectedType.toLowerCase().includes('mcq');
+
+  return (
+    <div key={q.tempId} onClick={() => toggleSelection(q)}
+         className={`p-4 rounded-lg border-2 transition-all cursor-pointer flex gap-5 ${
+           isSelected ? 'border-blue-600 bg-blue-50/50 shadow-md' : 'bg-white border-slate-100 hover:border-blue-200 shadow-sm'
+         }`}>
+      <div className={`w-6 h-6 mt-1 rounded-sm border-2 flex items-center justify-center shrink-0 transition-all ${
+        isSelected ? 'bg-blue-600 border-blue-600 text-white' : 'border-slate-200 bg-slate-50'
+      }`}>
+        {isSelected && <FaCheckSquare size={12} />}
+      </div>
+      
+      <div className="flex-1">
+        <div className="flex justify-between items-start mb-2">
+            <p className="font-bold text-slate-800 text-sm leading-snug">
+               <span className="text-blue-600 mr-2">{idx + 1}.</span> {q.question || q.text}
+            </p>
+            <span className="bg-slate-100 text-slate-500 text-[10px] font-black px-2 py-1 rounded ml-2 whitespace-nowrap">
+              {q.marks} Marks
+            </span>
+        </div>
+
+        {/* --- MCQs OPTIONS DISPLAY LOGIC --- */}
+        {isMCQ && q.options && (
+          <div className="grid grid-cols-2 gap-2 mt-3 ml-6">
+            {Object.entries(q.options).map(([key, value]) => (
+              <div key={key} className="text-[12px] flex items-center gap-2">
+                <span className="font-black text-blue-600">{key})</span>
+                <span className="text-slate-600 font-medium">{String(value)}</span>
+              </div>
+            ))}
+            {q.answer && (
+              <div className="col-span-2 mt-1 italic text-[10px] text-green-600 font-bold">
+                Correct: {q.answer}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}) : (
+  <div className="text-center py-20 text-slate-400 font-bold border-2 border-dashed border-slate-200 rounded-2xl">
+      No Questions Found.
+  </div>
+)}
             </div>
 
 

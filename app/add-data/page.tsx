@@ -45,27 +45,38 @@ const WhiteAdminPanel = () => {
   const fetchDB = async () => {
     try {
       const res = await axios.get(`${API_URL}/classes`);
-      setAllClassesData(res.data || []);
+      // Agar backend se direct array aa raha ho ya [ { classes: [] } ] format mein
+      const data = res.data;
+      if (Array.isArray(data)) {
+        setAllClassesData(data);
+      }
     } catch (err) {
       toast.error("Cloud Database Offline", { icon: '☁️' });
     }
   };
 
-  // --- DATA HIERARCHY LOGIC ---
-  const classesList = allClassesData[0]?.classes || [];
+  // --- HIERARCHY LOGIC FIX ---
+  // Agar allClassesData[0].classes exists kare to wo le, warna direct array check kare
+  const classesList = allClassesData[0]?.classes || (Array.isArray(allClassesData) ? allClassesData : []);
+  
   const selectedClassObj = classesList.find((c: any) => c.id === formData.classId);
   const availableSubjects = selectedClassObj?.subjects || [];
+  
   const selectedSubjectObj = availableSubjects.find((s: any) => s.name === formData.subjectName);
   const availableChapters = (selectedSubjectObj?.chapters || []).map((ch: any) => typeof ch === 'string' ? { name: ch } : ch);
+  
   const selectedChapterObj = availableChapters.find((ch: any) => ch.name === formData.chapterName);
   const availableTopics = selectedChapterObj?.topics || [];
 
-  // --- VALIDATION: Check if all path fields are selected ---
   const isPathSelected = formData.classId !== "" && formData.subjectName !== "" && formData.chapterName !== "";
 
   const handleExcelUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!formData.topic && !isNewTopic) {
+        toast.error("Please select or create a Topic first!");
+        return;
+    }
 
     setBulkLoading(true);
     const reader = new FileReader();
@@ -81,12 +92,18 @@ const WhiteAdminPanel = () => {
 
         const firstRow = data[0];
         if (type === 'mcq') {
-          const hasOptions = 'A' in firstRow && 'B' in firstRow && 'C' in firstRow && 'D' in firstRow;
+          const hasOptions = 'question' in firstRow && 'A' in firstRow && 'B' in firstRow && 'C' in firstRow && 'D' in firstRow && 'answer' in firstRow;
           if (!hasOptions) {
-            toast.error("Invalid Format! MCQs require A, B, C, D columns.");
+            toast.error("Invalid MCQ Format! Need: question, A, B, C, D, answer");
             setBulkLoading(false);
             return;
           }
+        } else {
+            if (!('question' in firstRow && 'answer' in firstRow)) {
+                toast.error("Invalid Format! Need: question, answer");
+                setBulkLoading(false);
+                return;
+            }
         }
 
         toast.loading(`Injecting ${data.length} items...`, { id: 'bulk' });
@@ -100,7 +117,7 @@ const WhiteAdminPanel = () => {
               question: row.question,
               options: type === 'mcq' ? { A: row.A, B: row.B, C: row.C, D: row.D } : undefined,
               answer: String(row.answer || ""),
-              topic: row.topic || formData.topic || "General"
+              topic: formData.topic || "General"
             }
           });
         }
@@ -130,7 +147,7 @@ const WhiteAdminPanel = () => {
           question: formData.question,
           options: type === 'mcq' ? formData.options : undefined,
           answer: formData.answer,
-          topic: isNewTopic ? formData.topic : (formData.topic || "General")
+          topic: formData.topic || "General"
         }
       });
       toast.success("Saved Successfully!");
@@ -181,7 +198,7 @@ const WhiteAdminPanel = () => {
                   <label className="flex items-center gap-2 text-[10px] font-black uppercase text-slate-400 ml-1"><Tag size={12}/> Class</label>
                   <select value={formData.classId} onChange={(e) => setFormData({...formData, classId: e.target.value, subjectName: "", chapterName: ""})} className="w-full bg-slate-50 p-4 rounded-2xl border-2 border-transparent focus:border-blue-500 focus:bg-white transition-all outline-none font-bold text-sm">
                     <option value="">Select Class</option>
-                    {classesList.map((c: any) => <option key={c.id} value={c.id}>{c.title}</option>)}
+                    {classesList.map((c: any) => <option key={c.id} value={c.id}>{c.title || c.id}</option>)}
                   </select>
                 </div>
 
@@ -237,12 +254,12 @@ const WhiteAdminPanel = () => {
               </button>
             </div>
 
-            {/* STEP 3: WORKSPACE (Locked until Path Selected) */}
-            <div className={`min-h-[550px] mb-2 transition-all duration-500 ${!isPathSelected ? 'opacity-40 grayscale pointer-events-none' : 'opacity-100'}`}>
+            {/* STEP 3: WORKSPACE */}
+            <div className={`min-h-[550px] mb-2 transition-all duration-500 relative ${!isPathSelected ? 'opacity-40 grayscale pointer-events-none' : 'opacity-100'}`}>
               {!isPathSelected && (
                 <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/10 backdrop-blur-[1px]">
                    <div className="bg-slate-900 text-white px-6 py-2 rounded-full text-xs font-bold animate-bounce uppercase">
-                      ⚠️ Please select Class, Subject & Chapter
+                     ⚠️ Please select Class, Subject & Chapter
                    </div>
                 </div>
               )}
@@ -274,7 +291,7 @@ const WhiteAdminPanel = () => {
 
                   {type !== 'mcq' && (
                     <div className="space-y-4">
-                      <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 ml-3">Reference Key</label>
+                      <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 ml-3">Reference Key / Answer</label>
                       <textarea rows={4} value={formData.answer} onChange={(e) => setFormData({...formData, answer: e.target.value})} className="w-full bg-slate-100 p-6 rounded-md outline-none font-medium text-lg shadow-inner" placeholder="Provide the solution..."></textarea>
                     </div>
                   )}
@@ -290,13 +307,15 @@ const WhiteAdminPanel = () => {
                   </div>
                   <div className="text-center space-y-3">
                     <p className="text-slate-400 text-[13px] uppercase bg-slate-50 px-6 py-2 rounded-full flex items-center gap-2">
-                       <AlertCircle size={14} className="text-orange-400"/> Validation: {type === 'mcq' ? "question, A, B, C, D, answer, topic" : "question, answer, topic"}
+                       <AlertCircle size={14} className="text-orange-400"/> 
+                       Required Cols: {type === 'mcq' ? "question, A, B, C, D, answer" : "question, answer"}
                     </p>
+                    <p className="text-[10px] text-blue-500 font-bold uppercase italic">Topic will be set as: "{formData.topic || 'General'}"</p>
                   </div>
                   <input type="file" id="bulk-input" className="hidden" accept=".xlsx, .xls" onChange={handleExcelUpload} disabled={bulkLoading} />
                   <label htmlFor="bulk-input" className="bg-slate-900 text-white px-10 py-4 rounded-md uppercase cursor-pointer hover:bg-slate-700 transition-all shadow-2xl flex items-center gap-4 group">
                     {bulkLoading ? <Loader2 className="animate-spin" /> : <FileSpreadsheet size={24} />}
-                    {bulkLoading ? "Checking File..." : "Import File"}
+                    {bulkLoading ? "Checking File..." : `Import ${type.toUpperCase()} File`}
                   </label>
                 </div>
               )}

@@ -142,8 +142,8 @@ const handleSavePaper = async () => {
 };
     const getPartLabel = (index: number, type: string) => {
         if (type === 'mcqs') return `${index + 1}.`;
-        const roman = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x', 'xi', 'xii'];
-        return `(${roman[index] || index + 1})`;
+        // const roman = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x', 'xi', 'xii'];
+        return `(${ index + 1})`;
     };
 
     return (
