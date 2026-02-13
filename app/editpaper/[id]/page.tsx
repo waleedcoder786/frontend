@@ -20,7 +20,9 @@ import axios from "axios";
 import { PaperHeader } from "../../components/headers"; 
 
 // Backend Base URL
-const API_BASE = "http://localhost:5000/api";
+// const API_BASE = "http://localhost:5000/api";
+const API_BASE = "https://respectable-fionnula-personaluseprojects-818b9efd.koyeb.app/api";
+
 
 // --- HELPER COMPONENT: Auto-Resizing Textarea for seamless editing ---
 const AutoResizeTextarea = ({ value, onChange, className, style, placeholder }: any) => {

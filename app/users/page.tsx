@@ -16,7 +16,9 @@ import {
 } from 'lucide-react';
 
 // API BASE URL
-const API_URL = 'http://localhost:5000/api';
+// const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://respectable-fionnula-personaluseprojects-818b9efd.koyeb.app/api';
+
 
 export default function UsersPage() {
   const router = useRouter();
