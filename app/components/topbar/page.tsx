@@ -61,7 +61,7 @@ function Page() {
 
       // 3. Fetch User ID from DB using email
       const searchRes = await axios.get(
-        `http://localhost:3001/users?email=${user.email}`,
+        `https://respectable-fionnula-personaluseprojects-818b9efd.koyeb.app/api/users?email=${user.email}`,
       );
 
       if (searchRes.data.length > 0) {
@@ -86,7 +86,7 @@ function Page() {
 
         // 5. Update Database
         const response = await axios.put(
-          `http://localhost:3001/users/${userId}`,
+          `https://respectable-fionnula-personaluseprojects-818b9efd.koyeb.app/api/users/${userId}`,
           updatedData,
         );
 

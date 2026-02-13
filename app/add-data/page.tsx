@@ -32,7 +32,7 @@ const WhiteAdminPanel = () => {
     answer: "", 
   });
 
-  const API_URL = "http://localhost:5000/api";
+  const API_URL = "https://respectable-fionnula-personaluseprojects-818b9efd.koyeb.app/api";
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
