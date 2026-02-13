@@ -17,7 +17,7 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post(`https://backendrepoo.koyeb.app/api/login`, {
+      const response = await axios.post(`https://respectable-fionnula-personaluseprojects-818b9efd.koyeb.app/api/login`, {
         email: email.trim(), // Trim spaces
         password
       });
