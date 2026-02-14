@@ -94,7 +94,7 @@ export default function QuestionMenuModal({
   const handleSearchTrigger = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get('https://respectable-fionnula-personaluseprojects-818b9efd.koyeb.app/apiy/classes');
+      const response = await axios.get('https://respectable-fionnula-personaluseprojects-818b9efd.koyeb.app/api/classes');
       let rootData = response.data;
       if (Array.isArray(rootData) && rootData.length > 0) {
         if (rootData[0].chaptersData || rootData[0].classes) {
