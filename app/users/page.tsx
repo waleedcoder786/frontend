@@ -17,7 +17,7 @@ import {
 
 // API BASE URL
 // const API_URL = 'http://localhost:5000/api';
-const API_URL = 'https://respectable-fionnula-personaluseprojects-818b9efd.koyeb.app/api';
+const API_URL = 'https://backendrepoo-production.up.railway.app/api';
 
 
 export default function UsersPage() {

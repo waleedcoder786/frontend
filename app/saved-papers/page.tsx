@@ -21,7 +21,7 @@ import axios from "axios";
 import Link from "next/link";
 import toast from "react-hot-toast";
 
-const API_URL = "https://respectable-fionnula-personaluseprojects-818b9efd.koyeb.app/api/papers";
+const API_URL = "https://backendrepoo-production.up.railway.app/api/papers";
 
 interface Paper {
   id: string;

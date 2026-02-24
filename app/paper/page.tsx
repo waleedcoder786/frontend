@@ -11,7 +11,7 @@ import toast from 'react-hot-toast';
 
 // Update this to your backend URL
 
-const BACKEND_URL = "https://respectable-fionnula-personaluseprojects-818b9efd.koyeb.app/api/papers";
+const BACKEND_URL = "https://backendrepoo-production.up.railway.app/api/papers";
 
 interface PaperPreviewProps {
     className: string;

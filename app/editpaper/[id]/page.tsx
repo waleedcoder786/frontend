@@ -21,7 +21,7 @@ import { PaperHeader } from "../../components/headers";
 
 // Backend Base URL
 // const API_BASE = "http://localhost:5000/api";
-const API_BASE = "https://respectable-fionnula-personaluseprojects-818b9efd.koyeb.app/api";
+const API_BASE = "https://backendrepoo-production.up.railway.app/api";
 
 
 // --- HELPER COMPONENT: Auto-Resizing Textarea for seamless editing ---

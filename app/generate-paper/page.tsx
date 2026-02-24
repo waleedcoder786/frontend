@@ -24,7 +24,7 @@ useEffect(() => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await axios.get('https://respectable-fionnula-personaluseprojects-818b9efd.koyeb.app/api/classes'); 
+      const res = await axios.get('https://backendrepoo-production.up.railway.app/api/classes'); 
       
       let rawData = res.data;
       let allDataFromDB = [];

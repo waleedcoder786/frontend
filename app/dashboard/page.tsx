@@ -18,7 +18,7 @@ import toast from "react-hot-toast";
 import { PlusCircle } from "lucide-react";
 
 
-const API_BASE = "https://respectable-fionnula-personaluseprojects-818b9efd.koyeb.app/api";
+const API_BASE = "https://backendrepoo-production.up.railway.app/api";
 
 export default function DashboardPage() {
   const router = useRouter();

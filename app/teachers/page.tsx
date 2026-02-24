@@ -20,7 +20,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 
 // Update to your backend port
-const API_BASE_URL = "https://respectable-fionnula-personaluseprojects-818b9efd.koyeb.app/api/teachers";
+const API_BASE_URL = "https://backendrepoo-production.up.railway.app/api/teachers";
 // const API_BASE_URL = "http://localhost:5000/api/teachers";
 
 function Page() {

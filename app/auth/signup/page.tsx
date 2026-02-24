@@ -28,7 +28,7 @@ export default function SignupPage() {
       const hashedPassword = await bcrypt.hash(formData.password, salt);
 
       // 3. Send data with hashed password
-      const response = await axios.post('https://respectable-fionnula-personaluseprojects-818b9efd.koyeb.app/api/users', {
+      const response = await axios.post('https://backendrepoo-production.up.railway.app/api/users', {
         username: formData.username,
         email: formData.email,
         password: hashedPassword,
