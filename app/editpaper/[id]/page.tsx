@@ -7,20 +7,17 @@ import {
   HiOutlineTemplate, 
   HiOutlineColorSwatch,
   HiOutlinePrinter,
-  HiOutlineInformationCircle,
   HiOutlineChevronDown,
   HiOutlineDocumentText,
   HiOutlineCalendar,
   HiOutlineClock,
   HiOutlinePencil,
-  
 } from "react-icons/hi";
 
 import Link from "next/link";
 import axios from "axios";
 import { PaperHeader } from "../../components/headers"; 
 
-// Backend Base URL
 const API_BASE = "https://backendrepoo-production.up.railway.app/api";
 
 // --- HELPER COMPONENT: Auto-Resizing Textarea ---
@@ -55,7 +52,6 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [showToast, setShowToast] = useState(false);
-  
   const [openSection, setOpenSection] = useState<string>("info");
 
   // --- STYLING STATES ---
@@ -72,8 +68,8 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
     noteText: "Note: Use black/blue ballpoint only. Lead pencil is not allowed.", 
     logoUrl: "https://media.licdn.com/dms/image/v2/D4D0BAQGA4E56lsNThw/company-logo_200_200/company-logo_200_200/0/1695224355465?e=2147483647&v=beta&t=XDgZWCwvNAcrgv3Tfg2T64YBDnjbsyEV_jkbD5g8UxI",
     layoutType: "default",
-    shortCols: 1, // New: Columns for Short Qs
-    longCols: 1,  // New: Columns for Long Qs
+    shortCols: 1, 
+    longCols: 1,  
   });
 
   useEffect(() => {
