@@ -12,7 +12,8 @@ import {
   HiOutlineDocumentText,
   HiOutlineCalendar,
   HiOutlineClock,
-  HiOutlinePencil
+  HiOutlinePencil,
+  
 } from "react-icons/hi";
 
 import Link from "next/link";
@@ -20,11 +21,9 @@ import axios from "axios";
 import { PaperHeader } from "../../components/headers"; 
 
 // Backend Base URL
-// const API_BASE = "http://localhost:5000/api";
 const API_BASE = "https://backendrepoo-production.up.railway.app/api";
 
-
-// --- HELPER COMPONENT: Auto-Resizing Textarea for seamless editing ---
+// --- HELPER COMPONENT: Auto-Resizing Textarea ---
 const AutoResizeTextarea = ({ value, onChange, className, style, placeholder }: any) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -73,10 +72,11 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
     noteText: "Note: Use black/blue ballpoint only. Lead pencil is not allowed.", 
     logoUrl: "https://media.licdn.com/dms/image/v2/D4D0BAQGA4E56lsNThw/company-logo_200_200/company-logo_200_200/0/1695224355465?e=2147483647&v=beta&t=XDgZWCwvNAcrgv3Tfg2T64YBDnjbsyEV_jkbD5g8UxI",
     layoutType: "default",
+    shortCols: 1, // New: Columns for Short Qs
+    longCols: 1,  // New: Columns for Long Qs
   });
 
   useEffect(() => {
-    // Load User Watermark Preference
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       try {
@@ -94,18 +94,15 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
         const res = await axios.get(`${API_BASE}/papers/${id}`);
         if (res.data) {
           const data = res.data;
-          
           const processedData = {
             ...data,
             db_id: data._id || data.id, 
-            // Separate batches for UI handling
             mcqBatches: data.batches?.filter((b: any) => b.type === "mcqs") || [],
             shortBatches: data.batches?.filter((b: any) => b.type === "shorts") || [],
             longBatches: data.batches?.filter((b: any) => b.type === "longs") || [],
           };
 
           setPaperData(processedData);
-          
           if (data.style) {
             setStyles((prev) => ({ 
                 ...prev, 
@@ -123,8 +120,6 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
     };
     if (id) fetchPaper();
   }, [id]);
-
-  // --- EDIT HANDLERS (Updates State Instantly) ---
 
   const updateQuestion = (batchType: 'mcqs' | 'shorts' | 'longs', batchIndex: number, qIndex: number, newVal: string) => {
     const updatedData = { ...paperData };
@@ -144,36 +139,25 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
       alert("Error: Paper ID not found.");
       return;
     }
-
     const targetId = paperData._id || paperData.id;
     setIsSaving(true);
-
     try {
-      // Recombine batches into single array for backend
       const combinedBatches = [
         ...paperData.mcqBatches,
         ...paperData.shortBatches,
         ...paperData.longBatches
       ];
-
-      const payload = {
-        ...paperData,
-        batches: combinedBatches, // Save the edited questions
-        style: styles,
-      };
-
-      // Remove UI-only fields before sending if necessary, strictly keeping structure
+      const payload = { ...paperData, batches: combinedBatches, style: styles };
       delete payload.mcqBatches;
       delete payload.shortBatches;
       delete payload.longBatches;
 
       await axios.put(`${API_BASE}/papers/${targetId}`, payload);
-
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     } catch (error: any) {
       console.error("Save error:", error);
-      alert("Failed to save. Please check backend connection.");
+      alert("Failed to save.");
     } finally {
       setIsSaving(false);
     }
@@ -310,7 +294,7 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
             )}
           </div>
 
-          {/* 4. Page Elements */}
+          {/* 4. Page Elements & Grid Settings */}
           <div className="border-b">
             <button onClick={() => toggleSection("elements")} className="w-full px-5 py-4 flex items-center justify-between bg-white hover:bg-slate-50 transition-colors">
                 <div className="flex items-center gap-2 text-xs font-black uppercase text-slate-700 tracking-wider">
@@ -320,6 +304,30 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
             </button>
             {openSection === "elements" && (
               <div className="px-5 pb-5 pt-1 bg-slate-50/50 space-y-4 animate-in slide-in-from-top-2">
+                 
+                 {/* COLUMN CONTROLS */}
+                 <div className="space-y-2 bg-white p-2.5 rounded-lg border shadow-sm">
+                    <span className="text-[10px] font-black text-slate-700 uppercase flex items-center gap-2"> Question Layout</span>
+                    <div className="space-y-3 mt-2">
+                        <div className="flex flex-col gap-1">
+                           <label className="text-[9px] font-bold text-slate-400 uppercase">Short Questions</label>
+                           <div className="flex gap-1">
+                              {[1, 2].map(n => (
+                                <button key={n} onClick={()=>setStyles({...styles, shortCols: n})} className={`flex-1 py-1 text-[9px] font-bold border rounded ${styles.shortCols === n ? 'bg-blue-600 text-white' : 'bg-white text-slate-500'}`}>{n} Col</button>
+                              ))}
+                           </div>
+                        </div>
+                        <div className="flex flex-col gap-1">
+                           <label className="text-[9px] font-bold text-slate-400 uppercase">Long Questions</label>
+                           <div className="flex gap-1">
+                              {[1, 2].map(n => (
+                                <button key={n} onClick={()=>setStyles({...styles, longCols: n})} className={`flex-1 py-1 text-[9px] font-bold border rounded ${styles.longCols === n ? 'bg-blue-600 text-white' : 'bg-white text-slate-500'}`}>{n} Col</button>
+                              ))}
+                           </div>
+                        </div>
+                    </div>
+                 </div>
+
                  <div className="flex items-center justify-between bg-white p-2.5 rounded-lg border shadow-sm">
                     <span className="text-[10px] font-bold text-slate-700">Add Bubble Sheet</span>
                     <input type="checkbox" checked={styles.showBubbleSheet} onChange={(e)=>setStyles({...styles, showBubbleSheet: e.target.checked})} className="w-4 h-4 accent-blue-600" />
@@ -334,8 +342,8 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                  </div>
 
                  <div className="space-y-2 bg-white p-2 rounded border">
-                    <div className="flex items-center justify-between">                         
-                      <span className="text-[10px] font-bold text-gray-400">Exam Note</span>                         
+                    <div className="flex items-center justify-between">                        
+                      <span className="text-[10px] font-bold text-gray-400">Exam Note</span>                        
                       <input type="checkbox" checked={styles.showNote} onChange={(e)=>setStyles({...styles, showNote: e.target.checked})} className="accent-blue-600" />
                     </div>
                     {styles.showNote && (
@@ -367,7 +375,7 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
           className={`bg-white w-[850px] min-h-[1100px] h-fit shadow-2xl relative p-12 print:shadow-none print:w-full print:p-4 ${styles.fontFamily}`}
           style={{ color: styles.textColor, lineHeight: styles.lineHeight }}
         >
-          {/* Watermark Rendering */}
+          {/* Watermark */}
           {styles.showWatermark && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden z-0">
               <h1 style={{ transform: 'rotate(-45deg)', fontSize: '120px', color: styles.textColor }} className="font-black opacity-[0.15] whitespace-nowrap uppercase select-none">
@@ -409,7 +417,7 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                   </div>
                 )}
                 
-                {/* Section-A: MCQs (Editable) */}
+                {/* Section-A: MCQs */}
                 {paperData.mcqBatches?.map((batch: any, bIdx: number) => (
                   <div key={bIdx} className="mb-8 mt-4">
                     <div className="flex justify-between items-end border-b-2 pb-1 mb-6" style={{ borderColor: styles.textColor }}>
@@ -422,10 +430,10 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                           <div className="flex gap-2">
                              <span className="font-bold shrink-0">{i+1}.</span>
                              <AutoResizeTextarea 
-                                value={q.question} 
-                                onChange={(e: any) => updateQuestion('mcqs', bIdx, i, e.target.value)}
-                                className="font-bold"
-                                style={{ fontSize: styles.headingSize + "px", color: styles.textColor }}
+                                 value={q.question} 
+                                 onChange={(e: any) => updateQuestion('mcqs', bIdx, i, e.target.value)}
+                                 className="font-bold"
+                                 style={{ fontSize: styles.headingSize + "px", color: styles.textColor }}
                              />
                           </div>
                           <div className="grid grid-cols-4 gap-4 mt-2 ml-6">
@@ -448,7 +456,7 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                   </div>
                 ))}
 
-                {/* Section-B: Shorts (Editable) */}
+                {/* Section-B: Shorts */}
                 {paperData.shortBatches?.length > 0 && (
                   <div className="mt-8">
                     <h3 className="font-bold uppercase italic text-sm border-b-2 pb-1 mb-4" style={{ borderColor: styles.textColor }}>Section-B: Short Questions</h3>
@@ -456,11 +464,12 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                       <div key={bIdx} className="mb-6">
                         <div className="flex justify-between items-center bg-slate-50 p-1 mb-3 px-3 border-l-4 print:bg-transparent" style={{ borderLeftColor: styles.textColor }}>
                           <span className="text-[11px] font-black uppercase">
-                             Q. No {bIdx + 2}: Attempt any {batch.config.attempt} out of {batch.config.total} questions.
+                             Q. No {bIdx + 2}: Attempt any {batch.config.attempt} out of {batch.config.total}.
                           </span>
                           <span className="text-[11px] font-bold">({batch.config.attempt} x {batch.config.marks} = {batch.config.attempt * batch.config.marks})</span>
                         </div>
-                        <div className="grid grid-cols-1 gap-y-4 ml-4">
+                        {/* Dynamic Grid for Shorts */}
+                        <div className={`grid ${styles.shortCols === 2 ? 'grid-cols-2 gap-x-8 gap-y-4' : 'grid-cols-1 gap-y-4'} ml-4`}>
                            {batch.questions.map((q: any, i: number) => (
                               <div key={i} className="break-inside-avoid flex gap-2">
                                  <span className="font-bold shrink-0">({i+1})</span>
@@ -478,7 +487,7 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                   </div>
                 )}
 
-                {/* Section-C: Longs (Editable) */}
+                {/* Section-C: Longs */}
                 {paperData.longBatches?.length > 0 && (
                   <div className="mt-10">
                     <h3 className="font-bold uppercase italic text-sm border-b-2 pb-1 mb-4" style={{ borderColor: styles.textColor }}>Section-C: Detailed Questions</h3>
@@ -486,11 +495,12 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
                       <div key={bIdx} className="mb-6">
                         <div className="flex justify-between items-center bg-slate-50 p-1 mb-3 px-3 border-l-4 print:bg-transparent" style={{ borderLeftColor: styles.textColor }}>
                           <span className="text-[11px] font-black uppercase">
-                             Attempt any {batch.config.attempt} out of {batch.config.total} questions.
+                             Attempt any {batch.config.attempt} out of {batch.config.total}.
                           </span>
                           <span className="text-[11px] font-bold">({batch.config.attempt} x {batch.config.marks} = {batch.config.attempt * batch.config.marks})</span>
                         </div>
-                        <div className="space-y-6 ml-4">
+                        {/* Dynamic Grid for Longs */}
+                        <div className={`grid ${styles.longCols === 2 ? 'grid-cols-2 gap-x-8 gap-y-6' : 'grid-cols-1 gap-y-6'} ml-4`}>
                            {batch.questions.map((q: any, i: number) => (
                               <div key={i} className="break-inside-avoid flex gap-2">
                                  <span className="font-bold shrink-0">Q.{i+1}</span>
