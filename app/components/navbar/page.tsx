@@ -72,8 +72,7 @@ function Sidebar() {
 
   return (
     <>
-      {/* --- MOBILE HAMBURGER BUTTON --- */}
-      {/* Ye button sirf mobile view (hidden md:flex) mein nazar aayega jab sidebar band hoga */}
+      {/* --- MOBILE HAMBURGER BUTTON (OPENS SIDEBAR) --- */}
       {!isOpen && (
         <button 
           onClick={() => setIsOpen(true)}
@@ -84,7 +83,6 @@ function Sidebar() {
       )}
 
       {/* --- BACKDROP (MOBILE ONLY) --- */}
-      {/* Jab mobile par sidebar khulega, tab peeche ki screen dark ho jayegi */}
       {isOpen && (
         <div 
           className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[80] md:hidden"
@@ -101,28 +99,40 @@ function Sidebar() {
           ${isOpen ? 'w-64 translate-x-0' : 'w-20 -translate-x-full md:translate-x-0'}
         `}
       >
-        {/* Toggle Button (Desktop pe arrow, Mobile pe Close icon) */}
+        {/* ✅ Desktop Toggle Button (Mobile par hide kar diya hai taaki overlap na kare) */}
         <button 
           onClick={() => setIsOpen(!isOpen)}
-          className="absolute -right-3 top-10 bg-blue-600 w-7 h-7 rounded-full flex items-center justify-center border-2 border-slate-900 text-white shadow-lg hover:scale-110 transition-transform z-[100]"
+          className="hidden md:flex absolute -right-3 top-10 bg-blue-600 w-7 h-7 rounded-full items-center justify-center border-2 border-slate-900 text-white shadow-lg hover:scale-110 transition-transform z-[100]"
         >
-          {isOpen ? <FaChevronLeft size={12} className="hidden md:block" /> : <FaBars size={12} className="hidden md:block" />}
-          {/* Mobile close icon */}
-          <span className="md:hidden"> {isOpen ? <FaTimes size={12} /> : <FaBars size={12} />} </span>
+          {isOpen ? <FaChevronLeft size={12} /> : <FaBars size={12} />}
         </button>
 
-        {/* Logo Section */}
-        <div className={`flex items-center gap-3 p-6 mb-4 h-24 overflow-hidden ${!isOpen && 'md:justify-center'}`}>
-          <div className="w-10 h-10 bg-gradient-to-tr from-blue-600 to-blue-400 rounded-xl flex-shrink-0 flex items-center justify-center font-black text-xl shadow-lg shadow-blue-500/20">C</div>
-          {(isOpen) && (
-            <div className="flex flex-col overflow-hidden">
-              <span className="font-black tracking-tight text-xl whitespace-nowrap">
-                {userRole === 'teacher' ? 'CTM Teacher' : 'CTM Admin'}
-              </span>
-              <span className="text-[10px] text-blue-400 font-bold uppercase tracking-widest leading-none mt-1">
-                {userRole || 'User'}
-              </span>
+        {/* ✅ Logo Section */}
+        <div className={`flex items-center justify-between p-6 mb-4 h-24 overflow-hidden ${!isOpen && 'md:justify-center'}`}>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-tr from-blue-600 to-blue-400 rounded-xl flex-shrink-0 flex items-center justify-center font-black text-xl shadow-lg shadow-blue-500/20">
+              C
             </div>
+            {isOpen && (
+              <div className="flex flex-col overflow-hidden">
+                <span className="font-black tracking-tight text-xl whitespace-nowrap">
+                  {userRole === 'teacher' ? 'CTM Teacher' : 'CTM Admin'}
+                </span>
+                <span className="text-[10px] text-blue-400 font-bold uppercase tracking-widest leading-none mt-1">
+                  {userRole || 'User'}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* ✅ Mobile Close Button (Aaram se logo ki right side par flex item ki tarah baitha hai) */}
+          {isOpen && (
+            <button 
+              onClick={() => setIsOpen(false)}
+              className="md:hidden text-slate-400 hover:text-white transition-colors p-2 -mr-2"
+            >
+              <FaTimes size={18} />
+            </button>
           )}
         </div>
 
