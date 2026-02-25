@@ -9,6 +9,7 @@ import {
   FaChalkboardTeacher,
   FaArrowRight,
   FaPlus,
+  FaSpinner,
   FaUsers
 } from "react-icons/fa";
 import Navbar from "../components/navbar/page";
@@ -72,8 +73,8 @@ export default function DashboardPage() {
   // 3. Filtered Stats Logic (Style preserved)
   const filteredStats = useMemo(() => {
     const allStats = [
-      { label: 'Generate Paper', value: savedPapers.length, color: 'bg-blue-500', lightColor: 'bg-blue-100/50', shadow: 'shadow-blue-200', icon: <FaPlus />, path: '/generate-paper' },
-      { label: 'Saved Papers', value: savedPapers.length, color: 'bg-emerald-500', lightColor: 'bg-emerald-100/50', shadow: 'shadow-emerald-200', icon: <FaSave />, path: '/saved-papers' },
+      { label: 'Generate Paper', value: savedPapers.length < 0 ? <FaSpinner className="animate-spin" /> : savedPapers.length, color: 'bg-blue-500', lightColor: 'bg-blue-100/50', shadow: 'shadow-blue-200', icon: <FaPlus />, path: '/generate-paper' },
+      { label: 'Saved Papers', value: savedPapers.length < 0 ? <FaSpinner className="animate-spin" /> : savedPapers.length, color: 'bg-emerald-500', lightColor: 'bg-emerald-100/50', shadow: 'shadow-emerald-200', icon: <FaSave />, path: '/saved-papers' },
       { label: 'Past Papers', value: 'Punjab Boards', color: 'bg-purple-500', lightColor: 'bg-purple-100/50', shadow: 'shadow-purple-200', icon: <FaHistory />, path: '/past-papers' },
       { label: 'Total Teachers', value: savedTec.length, color: 'bg-indigo-500', lightColor: 'bg-indigo-100/50', shadow: 'shadow-indigo-200', icon: <FaChalkboardTeacher />, path: '/teachers' },
       { label: 'Paper History', value: '0', color: 'bg-cyan-500', lightColor: 'bg-cyan-100/50', shadow: 'shadow-cyan-200', icon: <FaFileAlt />, path: '/paper-history' },
