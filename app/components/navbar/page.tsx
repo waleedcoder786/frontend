@@ -99,7 +99,7 @@ function Sidebar() {
           ${isOpen ? 'w-64 translate-x-0' : 'w-20 -translate-x-full md:translate-x-0'}
         `}
       >
-        {/* ✅ Desktop Toggle Button (Mobile par hide kar diya hai taaki overlap na kare) */}
+        {/*  Desktop Toggle Button (Mobile par hide kar diya hai taaki overlap na kare) */}
         <button 
           onClick={() => setIsOpen(!isOpen)}
           className="hidden md:flex absolute -right-3 top-10 bg-blue-600 w-7 h-7 rounded-full items-center justify-center border-2 border-slate-900 text-white shadow-lg hover:scale-110 transition-transform z-[100]"
@@ -107,7 +107,7 @@ function Sidebar() {
           {isOpen ? <FaChevronLeft size={12} /> : <FaBars size={12} />}
         </button>
 
-        {/* ✅ Logo Section */}
+        {/*  Logo Section */}
         <div className={`flex items-center justify-between p-6 mb-4 h-24 overflow-hidden ${!isOpen && 'md:justify-center'}`}>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-tr from-blue-600 to-blue-400 rounded-xl flex-shrink-0 flex items-center justify-center font-black text-xl shadow-lg shadow-blue-500/20">
@@ -125,11 +125,11 @@ function Sidebar() {
             )}
           </div>
 
-          {/* ✅ Mobile Close Button (Aaram se logo ki right side par flex item ki tarah baitha hai) */}
+          {/*  Mobile Close Button (Aaram se logo ki right side par flex item ki tarah baitha hai) */}
           {isOpen && (
             <button 
               onClick={() => setIsOpen(false)}
-              className="md:hidden text-slate-400 hover:text-white transition-colors p-2 -mr-2"
+              className="md:hidden text-slate-400 hover:text-white transition-colors p-2 mt-30 -mr-2"
             >
               <FaTimes size={18} />
             </button>
