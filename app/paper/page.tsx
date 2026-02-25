@@ -221,7 +221,7 @@ const handleSavePaper = async () => {
                             <FaPrint className="text-[10px]" /> PRINT
                         </button>
                         <button onClick={() => setIsSaveModalOpen(true)} disabled={questionBatches.length === 0} className="bg-slate-800 text-green-400 border border-slate-700 text-[12px] px-5 py-2.5 rounded-lg font-bold flex items-center gap-2 transition-all disabled:opacity-50">
-                            <FaCloudUploadAlt /> SAVE TO SERVER
+                            <FaCloudUploadAlt /> SAVE PAPER
                         </button>
                     </div>
                     <div className="bg-slate-900/50 border border-white/5 rounded-2xl px-4 py-1.5">
