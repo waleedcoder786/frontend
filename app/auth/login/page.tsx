@@ -66,7 +66,6 @@ export default function LoginPage() {
 
   return (
     <div className="h-screen w-screen bg-[#f3f4f6] flex items-center justify-center p-4 font-sans text-black">
-      <Toaster position="top-right" />
       <div className="w-full max-w-6xl h-full max-h-[90vh] bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200 flex flex-col md:flex-row">
         
         {/* Left Side: Branding */}
