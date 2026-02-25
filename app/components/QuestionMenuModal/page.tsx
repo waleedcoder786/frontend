@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { 
   FaTimes, FaSearch, FaCheckSquare, FaArrowLeft, 
-  FaSpinner, FaDatabase, FaRandom, FaListUl, FaLayerGroup 
+  FaSpinner, FaDatabase, FaRandom, FaListUl, FaLayerGroup, FaColumns 
 } from "react-icons/fa";
 
 interface ModalProps {
@@ -33,50 +33,47 @@ export default function QuestionMenuModal({
   const [requiredCount, setRequiredCount] = useState<number>(10);
   const [defaultMarks, setDefaultMarks] = useState<number>(1);
   const [attemptCount, setAttemptCount] = useState<number>(8);
+  const [layoutCols, setLayoutCols] = useState<number>(1); // New State for Column Selection
   
   const [displayQuestions, setDisplayQuestions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [filterOnlySelected, setFilterOnlySelected] = useState(false);
 
-  // Yeh state track karegi ke kya humne edit data load kar liya hai
   const [isInitialLoad, setIsInitialLoad] = useState(false);
 
   // --- EDIT MODE LOGIC ---
   useEffect(() => {
     if (isOpen && editData && !isInitialLoad) {
-      // 1. Pehle values set karein
       setSelectedType(editData.config.typeName || 'MCQs');
       setRequiredCount(editData.config.total);
       setAttemptCount(editData.config.attempt);
       setDefaultMarks(editData.config.marks);
+      setLayoutCols(editData.config.layoutCols || 1); // Load existing layout
       setTempSelected(editData.questions);
       setDisplayQuestions(editData.questions);
       
-      // 2. Direct selection view par le jayein
       setViewMode('selection');
       setFilterOnlySelected(true); 
-      
-      // 3. Flag ko true kar dein taaki ye baar baar trigger na ho
       setIsInitialLoad(true);
     } 
     
     if (!isOpen) {
-      // Reset logic when closed
       setViewMode('filters');
       setTempSelected([]);
       setDisplayQuestions([]);
       setFilterOnlySelected(false);
-      setIsInitialLoad(false); // Reset flag for next time
+      setIsInitialLoad(false);
     }
   }, [isOpen, editData, isInitialLoad]);
 
-  // Marks auto-update logic (sirf naye creation ke waqt)
+  // Marks auto-update logic
   useEffect(() => {
     if(!editData || (isOpen && viewMode === 'filters')) {
         const type = selectedType.toLowerCase();
         if (type.includes('mcq')) {
             setDefaultMarks(1);
             setAttemptCount(requiredCount);
+            setLayoutCols(1); // MCQs usually full width in filters but adjustable later
         } else if (type.includes('short')) {
             setDefaultMarks(2);
             setAttemptCount(Math.min(8, requiredCount)); 
@@ -211,7 +208,8 @@ export default function QuestionMenuModal({
 
         {viewMode === 'filters' ? (
           <div className="p-10 space-y-10">
-            <div className={`grid grid-cols-1 sm:grid-cols-2 ${selectedType.toLowerCase().includes('mcq') ? 'md:grid-cols-4' : 'md:grid-cols-5'} gap-6`}>
+            {/* GRID UPDATED TO ACCOMMODATE LAYOUT OPTION */}
+            <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6`}>
               <div className="flex flex-col gap-2">
                 <label className="text-[11px] font-black text-slate-400 uppercase ml-1">Category</label>
                 <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)} 
@@ -251,6 +249,18 @@ export default function QuestionMenuModal({
                 <input type="number" value={defaultMarks} onChange={(e) => setDefaultMarks(Number(e.target.value))} 
                        className="bg-white border-2 border-slate-100 rounded-xl p-4 font-bold outline-none focus:border-blue-600 text-slate-700 shadow-sm" />
               </div>
+
+              {/* NEW LAYOUT OPTION: Appears for Shorts and Longs */}
+              {!selectedType.toLowerCase().includes('mcq') && (
+                <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2">
+                  <label className="text-[11px] font-black text-purple-600 uppercase ml-1">Qs Per Row</label>
+                  <select value={layoutCols} onChange={(e) => setLayoutCols(Number(e.target.value))}
+                          className="bg-purple-50 border-2 border-purple-100 rounded-xl p-4 font-bold outline-none focus:border-purple-600 text-purple-700 shadow-sm">
+                    <option value={1}>1 Question/Row</option>
+                    <option value={2}>2 Questions/Row</option>
+                  </select>
+                </div>
+              )}
             </div>
 
             <button onClick={handleSearchTrigger} disabled={isLoading}
@@ -262,69 +272,71 @@ export default function QuestionMenuModal({
         ) : (
           <div className="p-3">
             <div className="flex justify-between items-center mb-3 text-black">
-              {/* FIXED: Removed handleSearchTrigger from here */}
               <button 
                 onClick={() => setViewMode('filters')} 
                 className="flex items-center gap-2 text-blue-600 font-black uppercase text-xs hover:underline"
               >
                 <FaArrowLeft /> Back to Filters
               </button>
-              <div className="bg-blue-600 text-white px-6 py-1.5 rounded-sm shadow-lg font-black text-xs">
-                SELECTED: {tempSelected.length} / {requiredCount}
+              <div className="flex items-center gap-3">
+                <div className="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-sm font-black text-[10px] flex items-center gap-2">
+                   <FaColumns /> LAYOUT: {layoutCols} COL
+                </div>
+                <div className="bg-blue-600 text-white px-6 py-1.5 rounded-sm shadow-lg font-black text-xs">
+                  SELECTED: {tempSelected.length} / {requiredCount}
+                </div>
               </div>
             </div>
 
             <div className="space-y-4 max-h-[350px] overflow-y-auto pr-3 custom-scrollbar mb-6">
-{/* visibleQuestions.map wale block ko isse replace karein */}
-{visibleQuestions.length > 0 ? visibleQuestions.map((q, idx) => {
-  const isSelected = tempSelected.some(item => item.tempId === q.tempId);
-  const isMCQ = selectedType.toLowerCase().includes('mcq');
+              {visibleQuestions.length > 0 ? visibleQuestions.map((q, idx) => {
+                const isSelected = tempSelected.some(item => item.tempId === q.tempId);
+                const isMCQ = selectedType.toLowerCase().includes('mcq');
 
-  return (
-    <div key={q.tempId} onClick={() => toggleSelection(q)}
-         className={`p-4 rounded-lg border-2 transition-all cursor-pointer flex gap-5 ${
-           isSelected ? 'border-blue-600 bg-blue-50/50 shadow-md' : 'bg-white border-slate-100 hover:border-blue-200 shadow-sm'
-         }`}>
-      <div className={`w-6 h-6 mt-1 rounded-sm border-2 flex items-center justify-center shrink-0 transition-all ${
-        isSelected ? 'bg-blue-600 border-blue-600 text-white' : 'border-slate-200 bg-slate-50'
-      }`}>
-        {isSelected && <FaCheckSquare size={12} />}
-      </div>
-      
-      <div className="flex-1">
-        <div className="flex justify-between items-start mb-2">
-            <p className="font-bold text-slate-800 text-sm leading-snug">
-               <span className="text-blue-600 mr-2">{idx + 1}.</span> {q.question || q.text}
-            </p>
-            <span className="bg-slate-100 text-slate-500 text-[10px] font-black px-2 py-1 rounded ml-2 whitespace-nowrap">
-              {q.marks} Marks
-            </span>
-        </div>
+                return (
+                  <div key={q.tempId} onClick={() => toggleSelection(q)}
+                      className={`p-4 rounded-lg border-2 transition-all cursor-pointer flex gap-5 ${
+                        isSelected ? 'border-blue-600 bg-blue-50/50 shadow-md' : 'bg-white border-slate-100 hover:border-blue-200 shadow-sm'
+                      }`}>
+                    <div className={`w-6 h-6 mt-1 rounded-sm border-2 flex items-center justify-center shrink-0 transition-all ${
+                      isSelected ? 'bg-blue-600 border-blue-600 text-white' : 'border-slate-200 bg-slate-50'
+                    }`}>
+                      {isSelected && <FaCheckSquare size={12} />}
+                    </div>
+                    
+                    <div className="flex-1">
+                      <div className="flex justify-between items-start mb-2">
+                          <p className="font-bold text-slate-800 text-sm leading-snug">
+                            <span className="text-blue-600 mr-2">{idx + 1}.</span> {q.question || q.text}
+                          </p>
+                          <span className="bg-slate-100 text-slate-500 text-[10px] font-black px-2 py-1 rounded ml-2 whitespace-nowrap">
+                            {q.marks} Marks
+                          </span>
+                      </div>
 
-        {/* --- MCQs OPTIONS DISPLAY LOGIC --- */}
-        {isMCQ && q.options && (
-          <div className="grid grid-cols-2 gap-2 mt-3 ml-6">
-            {Object.entries(q.options).map(([key, value]) => (
-              <div key={key} className="text-[12px] flex items-center gap-2">
-                <span className="font-black text-blue-600">{key})</span>
-                <span className="text-slate-600 font-medium">{String(value)}</span>
-              </div>
-            ))}
-            {q.answer && (
-              <div className="col-span-2 mt-1 italic text-[10px] text-green-600 font-bold">
-                Correct: {q.answer}
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}) : (
-  <div className="text-center py-20 text-slate-400 font-bold border-2 border-dashed border-slate-200 rounded-2xl">
-      No Questions Found.
-  </div>
-)}
+                      {isMCQ && q.options && (
+                        <div className="grid grid-cols-2 gap-2 mt-3 ml-6">
+                          {Object.entries(q.options).map(([key, value]) => (
+                            <div key={key} className="text-[12px] flex items-center gap-2">
+                              <span className="font-black text-blue-600">{key})</span>
+                              <span className="text-slate-600 font-medium">{String(value)}</span>
+                            </div>
+                          ))}
+                          {q.answer && (
+                            <div className="col-span-2 mt-1 italic text-[10px] text-green-600 font-bold">
+                              Correct: {q.answer}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              }) : (
+                <div className="text-center py-20 text-slate-400 font-bold border-2 border-dashed border-slate-200 rounded-2xl">
+                    No Questions Found.
+                </div>
+              )}
             </div>
 
 
@@ -350,7 +362,6 @@ export default function QuestionMenuModal({
                 <FaRandom /> Random Pick
               </button>
               
-              {/* UPDATED BUTTON: Added disabled logic and dynamic styling */}
               <button 
                 disabled={tempSelected.length < Number(requiredCount)}
                 onClick={() => { 
@@ -358,7 +369,8 @@ export default function QuestionMenuModal({
                     total: requiredCount, 
                     attempt: attemptCount, 
                     marks: defaultMarks, 
-                    type: selectedType 
+                    type: selectedType,
+                    layoutCols: layoutCols // Included in the config object
                   }); 
                   onClose(); 
                 }} 
