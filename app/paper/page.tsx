@@ -9,8 +9,6 @@ import Navbar from '../components/navbar/page';
 import QuestionMenuModal from '../components/QuestionMenuModal/page';
 import toast from 'react-hot-toast';
 
-// Update this to your backend URL
-
 const BACKEND_URL = "https://backendrepoo-production.up.railway.app/api/papers";
 
 interface PaperPreviewProps {
@@ -29,7 +27,6 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
     const [user, setUser] = useState<any>(null);
     const [editingBatch, setEditingBatch] = useState<any>(null);
 
-    // --- Save Modal States ---
     const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
     const [paperName, setPaperName] = useState("");
     const [paperType, setPaperType] = useState("Monthly Test");
@@ -55,7 +52,8 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
                 total: config.total,
                 attempt: config.attempt,
                 marks: config.marks,
-                typeName: config.type 
+                typeName: config.type,
+                layoutCols: config.layoutCols || 1 // Yahan layout store ho raha hai
             }
         };
 
@@ -96,54 +94,47 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
         sum + (Number(batch.config.attempt) * Number(batch.config.marks)), 0
     );
 
-const handleSavePaper = async () => {
-    if (!paperName.trim()) return toast.error("Please enter a paper name.");
-    if (questionBatches.length === 0) return toast.error("Paper is empty!");
+    const handleSavePaper = async () => {
+        if (!paperName.trim()) return toast.error("Please enter a paper name.");
+        if (questionBatches.length === 0) return toast.error("Paper is empty!");
 
-    setIsLoading(true);
-    try {
-        const payload = {
-            userId: user?.id || user?._id, 
-            paperName,
-            paperType,
-            paperDate,
-            paperTime,
-            className: className,
-            subject: subject?.name,
-            totalMarks: grandTotalMarks,
-            batches: questionBatches,
-            headerInfo: {
-                schoolName: user?.schoolName || "My School",
-                address: user?.address || "",
-                logo: user?.logo || "",
-                watermark: user?.watermark || ""
-            },
-            // IMPORTANT: Yeh missing tha
-            style: {
-                fontFamily: "font-sans", // Agar aapke paas iski state hai toh wo dalein
-                textSize: "14",
-                textColor: "#000000",
-                showWatermark: true,
-                // Jo bhi aapki designer settings hain wo yahan jayengi
-            }
-        };
+        setIsLoading(true);
+        try {
+            const payload = {
+                userId: user?.id || user?._id, 
+                paperName,
+                paperType,
+                paperDate,
+                paperTime,
+                className: className,
+                subject: subject?.name,
+                totalMarks: grandTotalMarks,
+                batches: questionBatches,
+                headerInfo: {
+                    schoolName: user?.schoolName || "My School",
+                    address: user?.address || "",
+                    logo: user?.logo || "",
+                    watermark: user?.watermark || ""
+                },
+                style: {
+                    fontFamily: "font-sans",
+                    textSize: "14",
+                    textColor: "#000000",
+                    showWatermark: true,
+                }
+            };
 
-        // Agar paper pehle se database mein hai (Editing), toh PUT use karein
-        // Agar naya paper hai toh POST use karein
-        const response = await axios.post(BACKEND_URL, payload);
-        
-        toast.success("Paper saved to Database!");
-        setIsSaveModalOpen(false);
-    } catch (error: any) {
-        console.error("Save Error:", error);
-        toast.error(error.response?.data?.message || "Failed to save to server.");
-    } finally {
-        setIsLoading(false);
-    }
-};
+            await axios.post(BACKEND_URL, payload);
+            toast.success("Paper saved to Database!");
+            setIsSaveModalOpen(false);
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "Failed to save to server.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const getPartLabel = (index: number, type: string) => {
-        if (type === 'mcqs') return `${index + 1}.`;
-        // const roman = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x', 'xi', 'xii'];
         return `(${ index + 1})`;
     };
 
@@ -164,7 +155,7 @@ const handleSavePaper = async () => {
                 editData={editingBatch}
             />
 
-            {/* --- SAVE MODAL --- */}
+            {/* Save Modal Logic remains same... */}
             {isSaveModalOpen && (
                 <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
                     <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-200">
@@ -175,16 +166,11 @@ const handleSavePaper = async () => {
                         <div className="p-6 space-y-4">
                             <div>
                                 <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Paper Title</label>
-                                <input type="text" placeholder="e.g. Mid-Term 2026" value={paperName} onChange={(e) => setPaperName(e.target.value)} className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-black outline-none focus:ring-2 focus:ring-blue-500/20" />
+                                <input type="text" value={paperName} onChange={(e) => setPaperName(e.target.value)} className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-black outline-none focus:ring-2 focus:ring-blue-500/20" />
                             </div>
                             <div>
                                 <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Category</label>
                                 <input value={paperType} onChange={(e) => setPaperType(e.target.value)} className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-black outline-none"/>
-                                    {/* <option>Monthly Test</option>
-                                    <option>Send-Up Exam</option>
-                                    <option>Final Term</option>
-                                    <option>Class Test</option> */}
-                                {/* </select> */}
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
@@ -193,7 +179,7 @@ const handleSavePaper = async () => {
                                 </div>
                                 <div>
                                     <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Duration</label>
-                                    <input type="text" placeholder="1.5 Hours" value={paperTime} onChange={(e) => setPaperTime(e.target.value)} className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-black outline-none" />
+                                    <input type="text" value={paperTime} onChange={(e) => setPaperTime(e.target.value)} className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-black outline-none" />
                                 </div>
                             </div>
                         </div>
@@ -224,8 +210,8 @@ const handleSavePaper = async () => {
                             <FaCloudUploadAlt /> SAVE PAPER
                         </button>
                     </div>
-                    <div className="bg-slate-900/50 border border-white/5 rounded-2xl px-4 py-1.5">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Marks: {grandTotalMarks}</span>
+                    <div className="bg-slate-900/50 border border-white/5 rounded-2xl px-4 py-1.5 font-bold text-slate-400 text-[10px]">
+                        MARKS: {grandTotalMarks}
                     </div>
                     <button onClick={onClose} className="text-red-400 border border-red-500/50 px-5 py-2.5 rounded-lg text-[12px] font-bold transition-all">
                         <FaTrash className="inline mr-2"/> EXIT
@@ -240,7 +226,6 @@ const handleSavePaper = async () => {
                             <h1 className="text-3xl font-black uppercase tracking-tighter" >{user?.schoolName || "SCHOOL NAME"}</h1>
                             <p className="text-center text-[14px] " >{user?.address || ""}</p>
                             <h2 className="text-lg font-bold uppercase mt-1">{paperType}</h2>
-                            
                             <div className="flex justify-between mt-1 text-[15px] font-bold">
                                 <div className="text-left">
                                     <p>Class: {className}</p>
@@ -260,6 +245,9 @@ const handleSavePaper = async () => {
                                 const sectionTitle = batch.type.includes('short') ? 'Short Questions' 
                                                    : batch.type.includes('long') ? 'Long Questions' 
                                                    : 'Objective Type';
+                                
+                                // Yahan check ho raha hai ke user ne 1 row chahi hai ya 2
+                                const isTwoCol = batch.config.layoutCols === 2;
 
                                 return (
                                     <div key={batch.id} className="group relative">
@@ -277,7 +265,8 @@ const handleSavePaper = async () => {
                                             <span>({batch.config.attempt} x {batch.config.marks} = {batch.config.attempt * batch.config.marks})</span>
                                         </div>
 
-                                        <div className="space-y-4">
+                                        {/* Dynamic Grid: layoutCols ke mutabiq classes change hongi */}
+                                        <div className={`grid ${isTwoCol ? 'grid-cols-2 gap-x-10 gap-y-4' : 'grid-cols-1 space-y-4'}`}>
                                             {batch.questions.map((q: any, qIdx: number) => (
                                                 <div key={q.tempId} className="relative group/item">
                                                     {!isEditMode && (
@@ -296,7 +285,7 @@ const handleSavePaper = async () => {
                                                     </div>
 
                                                     {batch.type === 'mcqs' && q.options && (
-                                                        <div className="grid grid-cols-4 gap-2 mt-2 ml-8 text-[13px]">
+                                                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mt-2 ml-8 text-[13px]">
                                                             {Object.entries(q.options).map(([key, val]: any) => (
                                                                 <div key={key} className="flex gap-1">
                                                                     <span className="font-bold">({key})</span> {val}
