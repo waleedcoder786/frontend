@@ -186,7 +186,7 @@ export default function PaperPreview({ className, subject, chapters, onClose }: 
                         <div className="bg-slate-50 px-6 py-4 flex gap-3 justify-end border-t border-slate-100">
                             <button onClick={() => setIsSaveModalOpen(false)} className="text-slate-500 font-bold text-xs uppercase">Cancel</button>
                             <button onClick={handleSavePaper} className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-bold text-xs uppercase shadow-lg shadow-blue-100">
-                                {isLoading ? "Syncing..." : "Confirm Save"}
+                                {isLoading ? "Saving..." : "Confirm Save"}
                             </button>
                         </div>
                     </div>
