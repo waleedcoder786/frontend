@@ -5,11 +5,9 @@ import {
   FaFileAlt,
   FaSave,
   FaHistory,
-  FaSignOutAlt,
   FaChalkboardTeacher,
   FaArrowRight,
   FaPlus,
-  FaSpinner,
   FaUsers
 } from "react-icons/fa";
 import Navbar from "../components/navbar/page";
@@ -84,22 +82,20 @@ export default function DashboardPage() {
   }, [savedPapers, savedTec, loggedUser, allUsers]);
 
   return (
-    // min-h-screen use kiya taaki mobile pe scroll ho sake
-    <div className="min-h-screen w-full bg-[#f0f4f8] flex flex-col md:flex-row font-sans relative overflow-x-hidden">
+    // ✅ 1. Parent ko h-screen aur overflow-hidden kiya taaki poora page scroll na ho
+    <div className="h-screen w-full bg-[#f0f4f8] flex flex-col md:flex-row font-sans relative overflow-hidden">
       
-      {/* Decorative Blobs - Hidden on very small screens to improve performance */}
       <div className="hidden sm:block absolute top-[-10%] right-[-5%] w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 pointer-events-none"></div>
       <div className="hidden sm:block absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 pointer-events-none"></div>
 
-      {/* Sidebar / Navbar */}
       <Navbar />
 
-      <main className="flex-1 flex flex-col min-w-0 relative z-10">
+      {/* ✅ 2. Main container ko bhi h-full aur overflow-hidden diya */}
+      <main className="flex-1 flex flex-col min-w-0 h-full relative z-10 overflow-hidden">
         <Header />
 
-        {/* Content Area */}
-        <div className="flex-1 p-4 sm:p-6 md:p-10 lg:p-12 overflow-y-auto">
-          {/* Grid Layout: 1 col on mobile, 2 on tablet, 3 on desktop */}
+        {/* ✅ 3. Sirf is DIV mein scroll aayega */}
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-10 lg:p-12 custom-scrollbar">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 max-w-7xl mx-auto pb-10">
             {filteredStats.map((stat, index) => (
               <div
@@ -107,7 +103,6 @@ export default function DashboardPage() {
                 onClick={() => router.push(stat.path)}
                 className="group relative cursor-pointer"
               >
-                {/* Card Design */}
                 <div
                   className={`relative z-20 bg-white p-6 sm:p-8 h-48 sm:h-56 lg:h-60 flex flex-col justify-between
                   rounded-[30px_10px_30px_10px] sm:rounded-[40px_10px_40px_10px]
@@ -116,22 +111,18 @@ export default function DashboardPage() {
                   hover:-translate-y-2 hover:shadow-2xl hover:border-white
                   overflow-hidden`}
                 >
-                  {/* Background Decoration */}
                   <div className={`absolute -bottom-10 -right-10 w-24 h-24 sm:w-32 sm:h-32 ${stat.color} opacity-10 blur-2xl rounded-full group-hover:scale-150 transition-transform duration-700`}></div>
 
-                  {/* Icon & Explore Link */}
                   <div className="flex justify-between items-start relative z-10">
                     <div className={`w-12 h-12 sm:w-16 sm:h-16 ${stat.color} text-white rounded-full flex items-center justify-center shadow-lg text-xl sm:text-2xl transform group-hover:rotate-12 transition-transform duration-300`}>
                       {stat.icon}
                     </div>
-
                     <div className={`flex items-center gap-1 sm:gap-2 text-[10px] sm:text-sm font-bold text-slate-400 group-hover:${stat.color.replace("bg-", "text-")} transition-colors uppercase tracking-widest`}>
                       <span className="hidden xs:block">Explore</span>
                       <FaArrowRight size={10} className="group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
 
-                  {/* Labels and Values */}
                   <div className="relative z-10">
                     <h3 className="text-sm sm:text-lg font-bold text-slate-500 uppercase tracking-wider mb-1">
                       {stat.label}
@@ -143,8 +134,6 @@ export default function DashboardPage() {
                     </div>
                   </div>
                 </div>
-
-                {/* Card Glow Effect */}
                 <div className={`absolute inset-0 z-10 rounded-[35px_15px_35px_15px] ${stat.color} opacity-10 blur-xl translate-y-4 scale-95 group-hover:translate-y-6 group-hover:scale-100 transition-all duration-300`}></div>
               </div>
             ))}
@@ -152,19 +141,18 @@ export default function DashboardPage() {
         </div>
       </main>
 
-      {/* Internal Custom Scrollbar for better UI */}
       <style jsx global>{`
-        ::-webkit-scrollbar {
-          width: 5px;
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
         }
-        ::-webkit-scrollbar-track {
-          background: #f1f1f1;
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
         }
-        ::-webkit-scrollbar-thumb {
+        .custom-scrollbar::-webkit-scrollbar-thumb {
           background: #cbd5e1;
           border-radius: 10px;
         }
-        ::-webkit-scrollbar-thumb:hover {
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background: #94a3b8;
         }
       `}</style>
