@@ -115,7 +115,7 @@ export default function DashboardPage() {
         <Header />
 
         <div className="flex-1 p-8 md:p-12 overflow-y-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 max-w-7xl mx-auto pb-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 max-w-7xl mx-auto pb-10 bg-red-800">
             {filteredStats.map((stat, index) => (
               <div
                 key={index}
