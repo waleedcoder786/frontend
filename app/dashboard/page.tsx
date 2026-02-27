@@ -98,12 +98,12 @@ export default function DashboardPage() {
   const filteredStats = useMemo(() => {
     const currentId = loggedUser?.id || loggedUser?._id;
 
-    // ✅ Filter 1: Admin ko sirf uske apne banaye huye teachers dikhenge
+    //  Filter 1: Admin ko sirf uske apne banaye huye teachers dikhenge
     const myTeachersCount = savedTec.filter(
       (teacher) => String(teacher.adminId) === String(currentId)
     ).length;
 
-    // ✅ Filter 2: Users card mein sirf unki count ho jin ka role 'admin' ho
+    // Filter 2: Users card mein sirf unki count ho jin ka role 'admin' ho
     const adminsCount = allUsers.filter(user => user.role === 'admin').length;
 
     const allStats = [
@@ -173,7 +173,7 @@ export default function DashboardPage() {
                       </h3>
                       <div className="flex items-center gap-2 h-10">
                         {isLoading ? (
-                          // ✅ Round Spinner matching card theme
+                          //  Round Spinner matching card theme
                           <div className={`w-7 h-7 border-4 border-slate-200 border-t-current ${stat.textCol} rounded-full animate-spin`}></div>
                         ) : (
                           <span className={`text-2xl sm:text-4xl font-black text-slate-800 tracking-tighter group-hover:${stat.textCol} transition-colors`}>
