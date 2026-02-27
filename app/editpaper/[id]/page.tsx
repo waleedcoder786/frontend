@@ -384,7 +384,7 @@ export default function EditPaperPage({ params }: { params: Promise<{ id: string
             <div className="relative z-10">
               <PaperHeader 
                 type={styles.layoutType} 
-                info={{ ...paperData.info, paperDate: paperData.paperDate, paperTime: paperData.paperTime }} 
+                info={{ ...paperData.info, class:paperData.className, subject: paperData.subject, paperDate: paperData.paperDate, paperTime: paperData.paperTime }} 
                 styles={styles} 
                 onChangeLogo={()=>{}} 
               />
