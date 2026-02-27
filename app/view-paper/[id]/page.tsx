@@ -204,11 +204,6 @@ export default function ViewPaperPage({ params }: { params: Promise<{ id: string
                   )
                 ))}
               </div>
-
-              <div className="mt-24 pt-4 border-t flex justify-between text-[9px] uppercase font-black opacity-40" style={{ borderColor: styles.textColor }}>
-                  <span>Generated via AI Exam Suite</span>
-                  <span>{paperData.info?.schoolName || 'Institute Copy'}</span>
-              </div>
             </div>
           )}
         </div>
