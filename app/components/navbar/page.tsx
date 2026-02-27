@@ -42,25 +42,41 @@ function Sidebar() {
     { name: 'AddData', icon: <PlusCircle />, path: '/add-data' },
   ];
 
-  const menuItems = allMenuItems.filter(item => {
+
+
+  
+ const menuItems = allMenuItems.filter(item => {
+    // 1. Agar Role 'teacher' hai
     if (userRole === 'teacher') {
-      const teacherRestricted = [ 'Teachers', 'Users', 'Settings','AddData']; 
+      const teacherRestricted = [ 'Teachers', 'Users', 'Settings','AddData'];
       return !teacherRestricted.includes(item.name);
     }
-    if (userRole === 'superadmin') {
-      return true; 
+        if (userRole === 'superadmin') {
+      const teacherRestricted = ['Saved Paper', 'Teachers',  'Settings','Generate Paper','Past Papers'];
+      return !teacherRestricted.includes(item.name);
     }
+    // 2. Agar Role 'subadmin' hai (Admin table se aane wale users)
     if (userRole === 'admin') {
       return item.name !== 'Users'&& item.name !== 'AddData' && item.name !== 'Settings';
+        //  const teacherRestricted = ['Saved Paper', 'Teachers',  'Settings','Generate Paper','Past Papers'];
+      // return !teacherRestricted.includes(item.name);
+      // Sub-admin ko 'Users' ka page nahi dikhna chahiye (unke liye 'Teachers' hai)
     }
+    // 3. Agar Role 'superadmin' hai
+    if (userRole === 'superadmin') {
+      return true; // Super admin ko sab nazar aayega (including 'Users')
+    }
+    // Default: Security ke liye jab tak role load na ho, Users hide rakhein
     if (item.name === 'Users') return false;
-    return true; 
+    return true;
   });
 
   const handleCardClick = (path: string) => {
+
     router.push(path);
-    if (window.innerWidth < 768) setIsOpen(false); // Mobile pe click ke baad close ho jaye
+
   };
+
 
   const handleLogout = () => {
     document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=Lax";
