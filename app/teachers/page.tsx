@@ -178,10 +178,12 @@ function Page() {
         const res = await axios.put(`${API_BASE_URL}/${editingTeacherId}`, payload);
         setTeachers(prev => prev.map(t => ((t._id || t.id) === editingTeacherId ? res.data : t)));
         toast.success("Teacher updated!");
+        fetchTeachers(actualAdminId);
       } else {
         const res = await axios.post(API_BASE_URL, payload);
         setTeachers(prev => [res.data, ...prev]);
         toast.success("Teacher registered!");
+        fetchTeachers(actualAdminId);
       }
       closeForm();
     } catch (err: any) {
