@@ -27,7 +27,7 @@ export default function GeneratePaper() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`${API_BASE}/classes`); 
+        const res = await axios.get(`${API_BASE}`); 
         let rawData = res.data;
         let allDataFromDB = Array.isArray(rawData) ? (rawData[0]?.classes || rawData) : (rawData.classes || []);
 
