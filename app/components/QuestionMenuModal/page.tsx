@@ -174,7 +174,7 @@ export default function QuestionMenuModal({
   const handleSearchTrigger = async () => {
   setIsLoading(true);
   try {
-    const response = await axios.get(`${API_BASE}/classes`);
+    const response = await axios.get(`${API_BASE}`);
     let rootData = response.data;
 
     // Normalizing root data
