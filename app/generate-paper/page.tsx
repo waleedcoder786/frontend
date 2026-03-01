@@ -97,7 +97,7 @@ export default function GeneratePaper() {
   }
 
   return (
-    <div className="h-screen w-screen bg-[#f8fafc] flex overflow-hidden font-sans">
+    <div className="h-screen w-screen bg-red-600 flex overflow-hidden font-sans">
       <Toaster position="top-center"/>
       <Navbar />
       
