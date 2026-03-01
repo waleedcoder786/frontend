@@ -41,6 +41,11 @@ export default function QuestionMenuModal({
 
   const [isInitialLoad, setIsInitialLoad] = useState(false);
 
+  // const shuffle = (array: any[]) => [...array].sort(() => Math.random() - 0.5);   
+  const API_BASE = "http://localhost:5000/api"; 
+  // const  API_BASE = 'https://backendrepoo-production.up.railway.app/api/classes';
+
+
   // --- EDIT MODE LOGIC ---
   useEffect(() => {
     if (isOpen && editData && !isInitialLoad) {
@@ -88,83 +93,164 @@ export default function QuestionMenuModal({
 
   const shuffle = (array: any[]) => [...array].sort(() => Math.random() - 0.5);
 
-  const handleSearchTrigger = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axios.get('https://backendrepoo-production.up.railway.app/api/classes');
-      let rootData = response.data;
-      if (Array.isArray(rootData) && rootData.length > 0) {
-        if (rootData[0].chaptersData || rootData[0].classes) {
-            rootData = rootData[0]; 
-        }
-      }
-      const chaptersSource = rootData.chaptersData || rootData.classes || (Array.isArray(rootData) ? rootData : null);
+  // const handleSearchTrigger = async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await axios.get(`${API_BASE}/classes`);
+  //     let rootData = response.data;
+  //     if (Array.isArray(rootData) && rootData.length > 0) {
+  //       if (rootData[0].chaptersData || rootData[0].classes) {
+  //           rootData = rootData[0]; 
+  //       }
+  //     }
+  //     const chaptersSource = rootData.chaptersData || rootData.classes || (Array.isArray(rootData) ? rootData : null);
 
-      if (!chaptersSource) {
-        alert("Error: Data structure mismatch.");
-        return;
-      }
+  //     if (!chaptersSource) {
+  //       alert("Error: Data structure mismatch.");
+  //       return;
+  //     }
 
-      const classKey = className.replace(/\D/g, ''); 
-      let classData;
-      if (Array.isArray(chaptersSource)) {
-          classData = chaptersSource.find((c: any) => 
-             String(c.id) === classKey || String(c.title || c.className).includes(classKey)
-          );
-      } else {
-          classData = chaptersSource[classKey] || chaptersSource[className];
-      }
+  //     const classKey = className.replace(/\D/g, ''); 
+  //     let classData;
+  //     if (Array.isArray(chaptersSource)) {
+  //         classData = chaptersSource.find((c: any) => 
+  //            String(c.id) === classKey || String(c.title || c.className).includes(classKey)
+  //         );
+  //     } else {
+  //         classData = chaptersSource[classKey] || chaptersSource[className];
+  //     }
 
-      if (classData && classData.subjects) {
-        const targetSubject = classData.subjects.find((sub: any) => 
-            sub.name.toLowerCase() === subjectName.toLowerCase()
-        );
+  //     if (classData && classData.subjects) {
+  //       const targetSubject = classData.subjects.find((sub: any) => 
+  //           sub.name.toLowerCase() === subjectName.toLowerCase()
+  //       );
         
-        if (targetSubject?.chapters) {
-          let allQuestions: any[] = [];
-          const filteredChapters = targetSubject.chapters.filter((ch: any) => 
-              chapters.includes(ch.name)
+  //       if (targetSubject?.chapters) {
+  //         let allQuestions: any[] = [];
+  //         const filteredChapters = targetSubject.chapters.filter((ch: any) => 
+  //             chapters.includes(ch.name)
+  //         );
+
+  //         filteredChapters.forEach((chapter: any) => {
+  //           const typeKey = Object.keys(chapter).find(k => 
+  //               k.toLowerCase().startsWith(selectedType.toLowerCase().substring(0, 4))
+  //           );
+  //           const categoryData = typeKey ? chapter[typeKey] : null;
+
+  //           if (categoryData) {
+  //               if (Array.isArray(categoryData) && categoryData[0] && typeof categoryData[0] === 'object' && !categoryData[0].question) {
+  //                   const sourceList = categoryData[0][selectedSource] || [];
+  //                   allQuestions = [...allQuestions, ...sourceList];
+  //               } 
+  //               else if (Array.isArray(categoryData)) {
+  //                   allQuestions = [...allQuestions, ...categoryData];
+  //               }
+  //           }
+  //         });
+
+  //         const questionsWithTags = allQuestions.map((q, i) => ({ 
+  //           ...q, 
+  //           type: selectedType.toLowerCase(),
+  //           marks: defaultMarks, 
+  //           tempId: `${selectedType}-${q.id || i}-${Math.random().toString(36).substr(2, 9)}`
+  //         }));
+          
+  //         if (questionsWithTags.length === 0) {
+  //             alert("No questions found.");
+  //         }
+
+  //         setDisplayQuestions(questionsWithTags);
+  //         setViewMode('selection');
+  //         setFilterOnlySelected(false);
+  //       }
+  //     }
+  //   } catch (error: any) {
+  //     alert("Network Error: Could not connect to database.");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  const handleSearchTrigger = async () => {
+  setIsLoading(true);
+  try {
+    const response = await axios.get(`${API_BASE}/classes`);
+    let rootData = response.data;
+
+    // Normalizing root data
+    if (Array.isArray(rootData)) rootData = rootData[0];
+    const chaptersSource = rootData.classes || rootData.chaptersData || [];
+
+    // 1. Find Class
+    const classKey = className.replace(/\D/g, ''); 
+    const classData = chaptersSource.find((c: any) => String(c.id) === classKey);
+
+    if (classData && classData.subjects) {
+      // 2. Find Subject
+      const targetSubject = classData.subjects.find((sub: any) => 
+          sub.name.toLowerCase().trim() === subjectName.toLowerCase().trim()
+      );
+      
+      if (targetSubject?.chapters) {
+        let allQuestions: any[] = [];
+
+        // 3. Filter Chapters
+        const filteredChapters = targetSubject.chapters.filter((ch: any) => {
+          const chName = typeof ch === 'string' ? ch : ch.name;
+          return chapters.includes(chName);
+        });
+
+        filteredChapters.forEach((chapter: any) => {
+          // Skip if chapter is just a string (no data)
+          if (typeof chapter === 'string') return;
+
+          // Find Key (MCQs, shorts, longs)
+          const typeKey = Object.keys(chapter).find(k => 
+              k.toLowerCase().startsWith(selectedType.toLowerCase().substring(0, 3))
           );
 
-          filteredChapters.forEach((chapter: any) => {
-            const typeKey = Object.keys(chapter).find(k => 
-                k.toLowerCase().startsWith(selectedType.toLowerCase().substring(0, 4))
-            );
-            const categoryData = typeKey ? chapter[typeKey] : null;
+          if (typeKey && chapter[typeKey]) {
+            const typeData = chapter[typeKey];
 
-            if (categoryData) {
-                if (Array.isArray(categoryData) && categoryData[0] && typeof categoryData[0] === 'object' && !categoryData[0].question) {
-                    const sourceList = categoryData[0][selectedSource] || [];
-                    allQuestions = [...allQuestions, ...sourceList];
-                } 
-                else if (Array.isArray(categoryData)) {
-                    allQuestions = [...allQuestions, ...categoryData];
-                }
+            // AGAR DATA IS TARAH HAI: MCQs -> "Exercise Questions" -> []
+            if (typeData[selectedSource]) {
+               allQuestions = [...allQuestions, ...typeData[selectedSource]];
+            } 
+            // AGAR DATA DIRECT ARRAY HAI: MCQs -> []
+            else if (Array.isArray(typeData)) {
+               allQuestions = [...allQuestions, ...typeData];
             }
-          });
-
-          const questionsWithTags = allQuestions.map((q, i) => ({ 
-            ...q, 
-            type: selectedType.toLowerCase(),
-            marks: defaultMarks, 
-            tempId: `${selectedType}-${q.id || i}-${Math.random().toString(36).substr(2, 9)}`
-          }));
-          
-          if (questionsWithTags.length === 0) {
-              alert("No questions found.");
           }
+        });
 
-          setDisplayQuestions(questionsWithTags);
-          setViewMode('selection');
-          setFilterOnlySelected(false);
+        // 4. Map questions with unique IDs
+        const questionsWithTags = allQuestions.map((q, i) => ({ 
+          ...q, 
+          type: selectedType.toLowerCase(),
+          marks: defaultMarks, 
+          tempId: `${selectedType}-${i}-${Math.random().toString(36).substr(2, 5)}`
+        }));
+        
+        if (questionsWithTags.length === 0) {
+            alert(`No ${selectedType} found in ${selectedSource}`);
         }
+
+        setDisplayQuestions(questionsWithTags);
+        setViewMode('selection');
+        setFilterOnlySelected(false);
+      } else {
+        alert("Subject or Chapters missing in DB");
       }
-    } catch (error: any) {
-      alert("Network Error: Could not connect to database.");
-    } finally {
-      setIsLoading(false);
     }
-  };
+  } catch (error: any) {
+    console.error("Search Error:", error);
+    alert("Database Connection Error");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
 
   const handleRandomSelect = () => {
     setFilterOnlySelected(false);
