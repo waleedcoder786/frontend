@@ -174,56 +174,67 @@ export default function QuestionMenuModal({
   const handleSearchTrigger = async () => {
   setIsLoading(true);
   try {
-    const response = await axios.get(`${API_BASE}`);
+    const response = await axios.get(`${API_BASE}/classes`);
     let rootData = response.data;
 
-    // Normalizing root data
+    // 1. Data Normalization (Array handle karna)
     if (Array.isArray(rootData)) rootData = rootData[0];
     const chaptersSource = rootData.classes || rootData.chaptersData || [];
 
-    // 1. Find Class
+    // 2. Find Class (e.g., "9th" or "10th")
     const classKey = className.replace(/\D/g, ''); 
     const classData = chaptersSource.find((c: any) => String(c.id) === classKey);
 
-    if (classData && classData.subjects) {
-      // 2. Find Subject
-      const targetSubject = classData.subjects.find((sub: any) => 
-          sub.name.toLowerCase().trim() === subjectName.toLowerCase().trim()
+    if (!classData) {
+      alert(`Class ${className} nahi mili database mein.`);
+      return;
+    }
+
+    // 3. Find Subject
+    const targetSubject = classData.subjects?.find((sub: any) => 
+        sub.name.toLowerCase().trim() === subjectName.toLowerCase().trim()
+    );
+    
+    if (targetSubject?.chapters) {
+      let allQuestions: any[] = [];
+
+      // 4. Filter selected Chapters
+      const filteredChapters = targetSubject.chapters.filter((ch: any) => 
+        chapters.includes(ch.name)
       );
-      
-      if (targetSubject?.chapters) {
-        let allQuestions: any[] = [];
 
-        // 3. Filter Chapters
-        const filteredChapters = targetSubject.chapters.filter((ch: any) => {
-          const chName = typeof ch === 'string' ? ch : ch.name;
-          return chapters.includes(chName);
-        });
-
-        filteredChapters.forEach((chapter: any) => {
-          // Skip if chapter is just a string (no data)
-          if (typeof chapter === 'string') return;
-
-          // Find Key (MCQs, shorts, longs)
-          const typeKey = Object.keys(chapter).find(k => 
+      filteredChapters.forEach((chapter: any) => {
+        // Aapke data mein questions "topics" ke andar hain
+        if (chapter.topics && Array.isArray(chapter.topics)) {
+          chapter.topics.forEach((topic: any) => {
+            
+            // 5. Find Question Type (mcqs, shorts, longs)
+            const typeKey = Object.keys(topic.questionTypes || {}).find(k => 
               k.toLowerCase().startsWith(selectedType.toLowerCase().substring(0, 3))
-          );
+            );
 
-          if (typeKey && chapter[typeKey]) {
-            const typeData = chapter[typeKey];
+            if (typeKey && topic.questionTypes[typeKey]) {
+              const typeData = topic.questionTypes[typeKey]; // e.g. shorts object
 
-            // AGAR DATA IS TARAH HAI: MCQs -> "Exercise Questions" -> []
-            if (typeData[selectedSource]) {
-               allQuestions = [...allQuestions, ...typeData[selectedSource]];
-            } 
-            // AGAR DATA DIRECT ARRAY HAI: MCQs -> []
-            else if (Array.isArray(typeData)) {
-               allQuestions = [...allQuestions, ...typeData];
+              // 6. Find Category (Exercise, Pastpapers, etc.)
+              if (typeData.categories && Array.isArray(typeData.categories)) {
+                const targetCategory = typeData.categories.find((cat: any) => 
+                  cat.name.toLowerCase().trim() === selectedSource.toLowerCase().trim()
+                );
+
+                if (targetCategory && targetCategory.questions) {
+                  allQuestions = [...allQuestions, ...targetCategory.questions];
+                }
+              }
             }
-          }
-        });
+          });
+        }
+      });
 
-        // 4. Map questions with unique IDs
+      // 7. Mapping and Display
+      if (allQuestions.length === 0) {
+        alert(`${selectedSource} mein koi ${selectedType} nahi mile.`);
+      } else {
         const questionsWithTags = allQuestions.map((q, i) => ({ 
           ...q, 
           type: selectedType.toLowerCase(),
@@ -231,20 +242,16 @@ export default function QuestionMenuModal({
           tempId: `${selectedType}-${i}-${Math.random().toString(36).substr(2, 5)}`
         }));
         
-        if (questionsWithTags.length === 0) {
-            alert(`No ${selectedType} found in ${selectedSource}`);
-        }
-
         setDisplayQuestions(questionsWithTags);
         setViewMode('selection');
         setFilterOnlySelected(false);
-      } else {
-        alert("Subject or Chapters missing in DB");
       }
+    } else {
+      alert("Is subject ke chapters missing hain.");
     }
   } catch (error: any) {
-    console.error("Search Error:", error);
-    alert("Database Connection Error");
+    console.error("Fetch Error:", error);
+    alert("Database connect nahi ho raha.");
   } finally {
     setIsLoading(false);
   }
