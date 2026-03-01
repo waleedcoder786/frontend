@@ -42,8 +42,8 @@ export default function QuestionMenuModal({
   const [isInitialLoad, setIsInitialLoad] = useState(false);
 
   // const shuffle = (array: any[]) => [...array].sort(() => Math.random() - 0.5);   
-  const API_BASE = "http://localhost:5000/api"; 
-  // const  API_BASE = 'https://backendrepoo-production.up.railway.app/api/classes';
+  // const API_BASE = "http://localhost:5000/api"; 
+  const  API_BASE = 'https://backendrepoo-production.up.railway.app/api/classes';
 
 
   // --- EDIT MODE LOGIC ---
