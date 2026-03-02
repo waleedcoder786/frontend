@@ -10,7 +10,6 @@ import QuestionMenuModal from '../components/QuestionMenuModal/page';
 import toast from 'react-hot-toast';
 
 const BACKEND_URL = "https://backendrepoo-production.up.railway.app/api";
-";
 
 interface PaperPreviewProps {
     className: string;
