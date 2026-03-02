@@ -1,261 +1,310 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import { FaGraduationCap, FaArrowLeft, FaChevronRight, FaCheckCircle, FaBookOpen } from "react-icons/fa";
+import React, { useEffect, useState, useMemo } from 'react';
+import { FaGraduationCap, FaArrowLeft, FaChevronRight, FaCheckCircle } from "react-icons/fa";
 import Navbar from '../components/navbar/page';
 import PaperPreview from '../paper/page'; 
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 
+const API_BASE = "https://backendrepoo-production.up.railway.app/api";
+
 export default function GeneratePaper() {
-  const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
-  const [selectedClassName, setSelectedClassName] = useState<string | null>(null);
-  const [selectedSubject, setSelectedSubject] = useState<any | null>(null);
-  const [selectedChapters, setSelectedChapters] = useState<any[]>([]);
-  const [selectedTopics, setSelectedTopics] = useState<string[]>([]); // Topics state
-  const [showPreview, setShowPreview] = useState(false);
+  // --- State Management ---
   const [step, setStep] = useState(1);
-  
-  const [classes, setClasses] = useState<any[]>([]);
-  const [fullData, setFullData] = useState<any>(null);
-  const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [showPreview, setShowPreview] = useState(false);
+  
+  // Data State
+  const [classes, setClasses] = useState<any[]>([]);
+  const [fullData, setFullData] = useState<Record<string, any>>({});
+  
+  // Selection State
+  const [selection, setSelection] = useState({
+    classId: null as string | null,
+    className: null as string | null,
+    subject: null as any | null,
+    chapters: [] as any[],
+    topics: [] as string[],
+  });
 
-  // const API_BASE = "http://localhost:5000/api"; 
-  const API_BASE = "https://backendrepoo-production.up.railway.app/api";
-
-
+  // --- API & Data Handling ---
   useEffect(() => {
-    const fetchData = async () => {
+    const loadInitialData = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`${API_BASE}/classes`); 
-        let rawData = res.data;
-        let allDataFromDB = Array.isArray(rawData) ? (rawData[0]?.classes || rawData) : (rawData.classes || []);
+        const { data: rawData } = await axios.get(`${API_BASE}/classes`);
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-        const loggedInUser = JSON.parse(localStorage.getItem('user') || '{}');
-        setUser(loggedInUser);
+        // Normalize data based on your API structure
+        const allData = Array.isArray(rawData) 
+          ? (rawData[0]?.classes || rawData) 
+          : (rawData.classes || []);
 
-        const isAdmin = loggedInUser.role === 'admin' || loggedInUser.role === 'superadmin';
-        let finalClasses = isAdmin ? allDataFromDB : allDataFromDB.filter((c: any) => 
-          loggedInUser.classes?.includes(c.title)
-        ).map((c: any) => ({
-          ...c,
-          subjects: (c.subjects || []).filter((s: any) => loggedInUser.subjects?.includes(s.name))
-        })).filter((c: any) => c.subjects?.length > 0);
+        const isAdmin = ['admin', 'superadmin'].includes(user.role);
 
-        setClasses(finalClasses);
-        const dataMap: any = {};
-        finalClasses.forEach((c: any) => { dataMap[c.id || c.title] = c; });
+        const filteredClasses = isAdmin 
+          ? allData 
+          : allData.filter((c: any) => user.classes?.includes(c.title))
+              .map((c: any) => ({
+                ...c,
+                subjects: (c.subjects || []).filter((s: any) => user.subjects?.includes(s.name))
+              }))
+              .filter((c: any) => c.subjects?.length > 0);
+
+        setClasses(filteredClasses);
+        const dataMap = filteredClasses.reduce((acc: any, curr: any) => {
+          acc[curr.id || curr.title] = curr;
+          return acc;
+        }, {});
         setFullData(dataMap);
-      } catch (error) { 
+      } catch (error) {
         toast.error("Database Connection Failed");
       } finally {
         setLoading(false);
       }
     };
-    fetchData();
+    loadInitialData();
   }, []);
 
-  const currentSubjects = (selectedClassId && fullData && fullData[selectedClassId]) ? (fullData[selectedClassId].subjects || []) : [];
+  const currentSubjects = useMemo(() => {
+    return selection.classId ? (fullData[selection.classId]?.subjects || []) : [];
+  }, [selection.classId, fullData]);
 
+  // --- Handlers ---
   const handleBack = () => {
-    if (step === 3) { setStep(2); setSelectedChapters([]); setSelectedTopics([]); setSelectedSubject(null); }
-    else if (step === 2) { setStep(1); setSelectedClassId(null); setSelectedClassName(null); }
+    if (step === 3) {
+      setStep(2);
+      setSelection(prev => ({ ...prev, chapters: [], topics: [], subject: null }));
+    } else if (step === 2) {
+      setStep(1);
+      setSelection(prev => ({ ...prev, classId: null, className: null }));
+    }
   };
 
   const toggleChapter = (chapterObj: any) => {
     const chName = chapterObj.name || chapterObj;
-    setSelectedChapters(prev => {
-      const isExist = prev.find(c => (c.name || c) === chName);
+    setSelection(prev => {
+      const isExist = prev.chapters.find(c => (c.name || c) === chName);
       if (isExist) {
-        // Agar chapter unselect ho raha hai, to uske topics bhi unselect kar do
-        const chapterTopics = chapterObj.topics?.map((t: any) => typeof t === 'string' ? t : t.name) || [];
-        setSelectedTopics(topics => topics.filter(t => !chapterTopics.includes(t)));
-        return prev.filter(c => (c.name || c) !== chName);
+        const chTopics = chapterObj.topics?.map((t: any) => typeof t === 'string' ? t : t.name) || [];
+        return {
+          ...prev,
+          chapters: prev.chapters.filter(c => (c.name || c) !== chName),
+          topics: prev.topics.filter(t => !chTopics.includes(t))
+        };
       }
-      return [...prev, chapterObj];
+      return { ...prev, chapters: [...prev.chapters, chapterObj] };
     });
   };
 
-  const toggleTopic = (topicName: string) => {
-    setSelectedTopics(prev => 
-      prev.includes(topicName) ? prev.filter(t => t !== topicName) : [...prev, topicName]
-    );
+  const toggleTopic = (topicName: string, chapter: any) => {
+    setSelection(prev => {
+      const isChapterSelected = prev.chapters.find(c => (c.name || c) === (chapter.name || chapter));
+      const newChapters = isChapterSelected ? prev.chapters : [...prev.chapters, chapter];
+      const newTopics = prev.topics.includes(topicName) 
+        ? prev.topics.filter(t => t !== topicName) 
+        : [...prev.topics, topicName];
+      
+      return { ...prev, chapters: newChapters, topics: newTopics };
+    });
   };
 
-  // --- PREVIEW RENDER WITH TOPICS ---
   if (showPreview) {
     return (
       <PaperPreview 
-        className={selectedClassName || ''}
-        subject={selectedSubject}
-        chapters={selectedChapters.map(c => c.name || c)}
-        topics={selectedTopics} 
+        className={selection.className || ''}
+        subject={selection.subject}
+        chapters={selection.chapters.map(c => c.name || c)}
+        topics={selection.topics} 
         onClose={() => setShowPreview(false)}
       />
     );
   }
 
   return (
-    <div className="h-screen w-screen bg-red-600 flex overflow-hidden font-sans">
+    <div className="h-screen w-screen bg-slate-50 flex overflow-hidden font-sans">
       <Toaster position="top-center"/>
       <Navbar />
       
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-10 z-10">
+        {/* Refactored Header */}
+        <header className="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-10 z-10 shadow-sm">
           <div className="flex items-center gap-4">
             {step > 1 && (
-              <button onClick={handleBack} className="p-2 hover:bg-slate-100 rounded-full text-slate-600 transition-colors">
+              <button onClick={handleBack} className="p-2 hover:bg-slate-100 rounded-full text-slate-600 transition-all">
                 <FaArrowLeft />
               </button>
             )}
             <h1 className="text-xl font-black text-slate-800 uppercase tracking-tight">
-              {step === 3 ? `${selectedSubject?.name}` : step === 2 ? `${selectedClassName} Subjects` : 'Generate Test Paper'}
+              {step === 3 ? selection.subject?.name : step === 2 ? `${selection.className} Subjects` : 'Generate Test Paper'}
             </h1>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Step {step} of 3</span>
+            <div className="flex gap-1">
+              {[1, 2, 3].map((s) => (
+                <div key={s} className={`h-1.5 w-6 rounded-full transition-all ${step >= s ? 'bg-blue-600' : 'bg-slate-200'}`} />
+              ))}
+            </div>
+            <span className="text-[10px] font-black text-slate-400 uppercase">Step {step}/3</span>
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-12">
+        <main className="flex-1 overflow-y-auto p-12">
           {loading ? (
-             <div className="h-full flex items-center justify-center font-black text-slate-300 animate-pulse uppercase tracking-widest">Loading...</div>
+            <div className="h-full flex flex-col items-center justify-center space-y-4">
+               <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+               <p className="font-black text-slate-400 uppercase tracking-widest">Fetching Resources...</p>
+            </div>
           ) : (
-            <>
-              {/* STEP 1: CLASSES */}
+            <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+              
+              {/* STEP 1: CLASS SELECTION */}
               {step === 1 && (
-                <div className="max-w-7xl mx-auto animate-in fade-in duration-500">
-                  <h2 className="text-3xl font-black text-slate-900 mb-10 tracking-tight">Select Class</h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {classes.length > 0 ? classes.map((item: any) => (
-                      <div 
-                        key={item.id} 
-                        onClick={() => { setSelectedClassId(item.id); setSelectedClassName(item.title); setStep(2); }} 
-                        className="group relative bg-white rounded-xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer h-72"
-                      >
-                        <img src={item.img || item.image} className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700 opacity-20 group-hover:opacity-40" alt={item.title} />
-                        <div className="absolute inset-0 bg-gradient-to-b from-white via-white/80 to-transparent group-hover:opacity-0 transition-opacity duration-500" />
-                        <div className="relative p-8 h-full flex flex-col justify-between z-10">
-                          <div>
-                            <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${item.color || 'from-blue-600 to-blue-400'} flex items-center justify-center text-white shadow-lg mb-4`}>
-                              <FaGraduationCap size={20} />
-                            </div>
-                            <h3 className="text-2xl font-black text-slate-800">{item.title}</h3>
-                            <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">{item.sub}</p>
-                          </div>
-                          <div className="flex items-center gap-2 text-blue-600 font-bold text-sm opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all">
-                            View Subjects <FaChevronRight size={10} />
-                          </div>
-                        </div>
-                      </div>
-                    )) : (
-                        <div className="col-span-full text-center py-20 bg-white rounded-3xl border border-dashed text-slate-400 font-bold">
-                            No classes available.
-                        </div>
-                    )}
-                  </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {classes.map((item) => (
+                    <ClassCard 
+                      key={item.id} 
+                      item={item} 
+                      onClick={() => {
+                        setSelection(prev => ({ ...prev, classId: item.id, className: item.title }));
+                        setStep(2);
+                      }} 
+                    />
+                  ))}
                 </div>
               )}
 
-              {/* STEP 2: SUBJECTS */}
+              {/* STEP 2: SUBJECT SELECTION */}
               {step === 2 && (
-                <div className="max-w-7xl mx-auto animate-in fade-in duration-500">
-                  <h2 className="text-3xl font-black text-slate-900 mb-10 tracking-tight">Select Subject</h2>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {currentSubjects.map((sub: any, i: number) => (
-                      <div key={i} onClick={() => { setSelectedSubject(sub); setStep(3); }} className="group bg-white p-2 rounded-xl border border-slate-100 hover:border-blue-500 cursor-pointer transition-all shadow-sm hover:shadow-xl">
-                        <div className="h-45 rounded-xl bg-slate-100 mb-4 overflow-hidden">
-                          <img src={sub.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt={sub.name} />
-                        </div>
-                        <h3 className="text-xl font-black text-slate-800 text-center pb-2">{sub.name}</h3>
-                      </div>
-                    ))}
-                  </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                  {currentSubjects.map((sub: any, i: number) => (
+                    <SubjectCard 
+                      key={i} 
+                      sub={sub} 
+                      onClick={() => {
+                        setSelection(prev => ({ ...prev, subject: sub }));
+                        setStep(3);
+                      }} 
+                    />
+                  ))}
                 </div>
               )}
 
               {/* STEP 3: CHAPTERS & TOPICS */}
               {step === 3 && (
-                <div className="max-w-6xl mx-auto animate-in fade-in duration-500 pb-10">
-                  <div className="sticky top-0 z-20 bg-[#f8fafc] py-4 mb-6 border-b border-slate-200 flex justify-between items-center">
+                <div className="space-y-6 pb-20">
+                  <div className="sticky top-0 z-20 bg-slate-50/95 backdrop-blur py-4 flex justify-between items-center border-b border-slate-200">
                     <div>
-                      <h2 className="text-2xl font-black text-slate-800 tracking-tight">Select Chapters & Topics</h2>
-                      <div className="flex gap-3 mt-1 text-[10px] font-bold uppercase">
-                        <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded">Chapters: {selectedChapters.length}</span>
-                        <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded">Topics: {selectedTopics.length}</span>
+                      <h2 className="text-2xl font-black text-slate-800">Select Content</h2>
+                      <div className="flex gap-3 mt-1">
+                        <Badge color="blue">Chapters: {selection.chapters.length}</Badge>
+                        <Badge color="green">Topics: {selection.topics.length}</Badge>
                       </div>
                     </div>
                     <button 
                       onClick={() => setShowPreview(true)} 
-                      disabled={selectedChapters.length === 0}
-                      className="px-8 py-3 rounded-xl font-black text-sm bg-slate-900 text-white shadow-lg hover:bg-black disabled:bg-slate-200 disabled:text-slate-400 transition-all active:scale-95"
+                      disabled={selection.chapters.length === 0}
+                      className="px-10 py-3 rounded-xl font-black text-sm bg-blue-600 text-white shadow-xl hover:bg-blue-700 disabled:bg-slate-300 transition-all active:scale-95"
                     >
                       Generate Paper
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {selectedSubject.chapters.map((chapter: any, idx: number) => {
-                      const chapterName = chapter.name || chapter;
-                      const chapterTopics = chapter.topics || [];
-                      const isChapterSelected = selectedChapters.find(c => (c.name || c) === chapterName);
-
-                      return (
-                        <div key={idx} className={`rounded-2xl border transition-all overflow-hidden ${isChapterSelected ? 'border-blue-400 bg-white shadow-lg' : 'border-slate-200 bg-white/50'}`}>
-                          <div 
-                            onClick={() => toggleChapter(chapter)}
-                            className={`p-5 cursor-pointer flex items-center justify-between border-b ${isChapterSelected ? 'bg-blue-50/50 border-blue-100' : 'border-transparent'}`}
-                          >
-                            <div className="flex items-center gap-4">
-                              <span className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm ${isChapterSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-400'}`}>
-                                 {idx + 1}
-                              </span>
-                              <h3 className={`font-bold ${isChapterSelected ? 'text-slate-900' : 'text-slate-500'}`}>
-                                {chapterName}
-                              </h3>
-                            </div>
-                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isChapterSelected ? 'bg-blue-600 border-blue-600' : 'border-slate-300'}`}>
-                              {isChapterSelected && <FaCheckCircle className="text-white text-xs" />}
-                            </div>
-                          </div>
-
-                          {/* Topics List with flex-wrap for better UI */}
-                          <div className="p-4 bg-white/30">
-                            <div className="flex flex-wrap gap-2">
-                              {chapterTopics.length > 0 ? chapterTopics.map((topic: any, tIdx: number) => {
-                                const topicName = typeof topic === 'string' ? topic : topic.name;
-                                const isTopicSelected = selectedTopics.includes(topicName);
-
-                                return (
-                                  <div
-                                    key={tIdx}
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      if (!isChapterSelected) toggleChapter(chapter);
-                                      toggleTopic(topicName);
-                                    }}
-                                    className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer border text-[11px] font-bold transition-all ${isTopicSelected ? 'border-green-500 bg-green-50 text-green-700 shadow-sm' : 'border-slate-100 bg-slate-50 text-slate-500 hover:bg-slate-100'}`}
-                                  >
-                                    <span>{topicName}</span>
-                                    {isTopicSelected && <FaCheckCircle className="text-green-600" />}
-                                  </div>
-                                );
-                              }) : (
-                                <div className="text-[10px] text-slate-400 italic">No topics available.</div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {selection.subject.chapters.map((chapter: any, idx: number) => (
+                      <ChapterAccordion 
+                        key={idx}
+                        index={idx}
+                        chapter={chapter}
+                        isSelected={!!selection.chapters.find(c => (c.name || c) === (chapter.name || chapter))}
+                        selectedTopics={selection.topics}
+                        onToggleChapter={() => toggleChapter(chapter)}
+                        onToggleTopic={(t: string) => toggleTopic(t, chapter)}
+                      />
+                    ))}
                   </div>
                 </div>
               )}
-            </>
+            </div>
           )}
-        </div>
+        </main>
       </div>
     </div>
   );
 }
+
+// --- Sub-Components for Clarity ---
+
+const ClassCard = ({ item, onClick }: any) => (
+  <div 
+    onClick={onClick} 
+    className="group relative bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer h-72"
+  >
+    <img src={item.img || item.image} className="absolute inset-0 w-full h-full object-cover grayscale opacity-10 group-hover:opacity-30 group-hover:scale-110 transition-all duration-700" alt={item.title} />
+    <div className="relative p-8 h-full flex flex-col justify-between z-10">
+      <div>
+        <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${item.color || 'from-blue-600 to-blue-400'} flex items-center justify-center text-white shadow-lg mb-4`}>
+          <FaGraduationCap size={20} />
+        </div>
+        <h3 className="text-2xl font-black text-slate-800">{item.title}</h3>
+        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{item.sub}</p>
+      </div>
+      <div className="flex items-center gap-2 text-blue-600 font-bold text-sm translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all">
+        Explore <FaChevronRight size={10} />
+      </div>
+    </div>
+  </div>
+);
+
+const SubjectCard = ({ sub, onClick }: any) => (
+  <div onClick={onClick} className="group bg-white p-3 rounded-2xl border border-slate-200 hover:border-blue-500 cursor-pointer transition-all shadow-sm hover:shadow-xl">
+    <div className="aspect-video rounded-xl bg-slate-100 mb-4 overflow-hidden">
+      <img src={sub.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={sub.name} />
+    </div>
+    <h3 className="text-lg font-black text-slate-800 text-center pb-2">{sub.name}</h3>
+  </div>
+);
+
+const ChapterAccordion = ({ chapter, index, isSelected, selectedTopics, onToggleChapter, onToggleTopic }: any) => {
+  const chapterName = chapter.name || chapter;
+  const topics = chapter.topics || [];
+
+  return (
+    <div className={`rounded-2xl border transition-all ${isSelected ? 'border-blue-400 bg-white shadow-md' : 'border-slate-200 bg-white/50'}`}>
+      <div onClick={onToggleChapter} className={`p-4 cursor-pointer flex items-center justify-between ${isSelected ? 'bg-blue-50/50' : ''}`}>
+        <div className="flex items-center gap-3">
+          <span className={`w-8 h-8 rounded-lg flex items-center justify-center font-black text-xs ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-400'}`}>
+            {index + 1}
+          </span>
+          <h3 className={`font-bold text-sm ${isSelected ? 'text-slate-900' : 'text-slate-500'}`}>{chapterName}</h3>
+        </div>
+        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${isSelected ? 'bg-blue-600 border-blue-600' : 'border-slate-300'}`}>
+          {isSelected && <FaCheckCircle className="text-white text-[10px]" />}
+        </div>
+      </div>
+      {isSelected && (
+        <div className="p-4 pt-0 flex flex-wrap gap-2">
+          {topics.map((topic: any, tIdx: number) => {
+            const tName = typeof topic === 'string' ? topic : topic.name;
+            const isTSelected = selectedTopics.includes(tName);
+            return (
+              <button
+                key={tIdx}
+                onClick={(e) => { e.stopPropagation(); onToggleTopic(tName); }}
+                className={`px-3 py-1.5 rounded-lg border text-[10px] font-bold transition-all ${isTSelected ? 'border-green-500 bg-green-50 text-green-700' : 'border-slate-100 bg-slate-50 text-slate-400'}`}
+              >
+                {tName}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const Badge = ({ children, color }: any) => (
+  <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${color === 'blue' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
+    {children}
+  </span>
+);
