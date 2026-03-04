@@ -17,13 +17,9 @@ import {
 } from 'lucide-react';
 
 // API BASE URL
-<<<<<<< HEAD
 // const API_URL = 'http://localhost:5000/api';
 const API_URL = "https://backendrepoo-production.up.railway.app/api";
 
-=======
-const API_URL = 'http://localhost:5000/api';
->>>>>>> temp-fix
 
 export default function UsersPage() {
   const router = useRouter();

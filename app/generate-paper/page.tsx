@@ -6,10 +6,7 @@ import PaperPreview from '../paper/page';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 
-<<<<<<< HEAD
 // const API_BASE = "https://backendrepoo-production.up.railway.app/api";
-=======
->>>>>>> temp-fix
 const API_BASE = "https://backendrepoo-production.up.railway.app/api";
 
 export default function GeneratePaper() {
@@ -315,12 +312,4 @@ const Badge = ({ children, color }: any) => (
   <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${color === 'blue' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
     {children}
   </span>
-<<<<<<< HEAD
 );
-=======
-<<<<<<< HEAD
-);
-=======
-);
->>>>>>> 9e6fd6b (check)
->>>>>>> temp-fix
