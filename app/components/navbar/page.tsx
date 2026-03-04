@@ -12,6 +12,7 @@ import {
   FaUsers,
   FaSignOutAlt,
   FaChalkboardTeacher,
+  FaTrashAlt,
   FaTimes, // Close icon for mobile
 } from "react-icons/fa";
 import toast from "react-hot-toast";
@@ -40,6 +41,7 @@ function Sidebar() {
     { name: "Users", icon: <FaUsers />, path: "/users" },
     { name: "Settings", icon: <FaCog />, path: "/settings" },
     { name: "AddData", icon: <PlusCircle />, path: "/add-data" },
+    { name: "removeData", icon: <FaTrashAlt />, path: "/removeData" },
   ];
 
   const menuItems = allMenuItems.filter((item) => {
@@ -63,6 +65,7 @@ function Sidebar() {
       return (
         item.name !== "Users" &&
         item.name !== "AddData" &&
+        item.name !== "removeData" &&
         item.name !== "Settings"
       );
     }
@@ -172,7 +175,7 @@ function Sidebar() {
                   {item.icon}
                 </span>
                 {/* Mobile par hamesha text dikhe agar open ho, desktop par collapse logic chale */}
-                <span className="whitespace-nowrap">{item.name}</span>
+                <span className="whitespace-nowrap capitalize">{item.name}</span>
                 {/* Tooltip (Only for desktop when collapsed) */}
                 {isOpen && (
                   <div className="hidden md:block absolute left-16 bg-slate-800 text-white text-[10px] px-3 py-1.5 rounded-md opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity shadow-2xl whitespace-nowrap z-50 uppercase tracking-widest border border-slate-700">
