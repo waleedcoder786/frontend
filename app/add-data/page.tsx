@@ -31,7 +31,11 @@ const WhiteAdminPanel = () => {
     answer: "", 
   });
 
+<<<<<<< HEAD
   const API_URL = "https://backendrepoo-production.up.railway.app/api/classes"; 
+=======
+  const API_URL = "http://localhost:5000/api/classes"; 
+>>>>>>> 9e6fd6b (check)
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('user') || '{}');

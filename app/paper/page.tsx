@@ -9,7 +9,11 @@ import Navbar from '../components/navbar/page';
 import QuestionMenuModal from '../components/QuestionMenuModal/page';
 import toast from 'react-hot-toast';
 
+<<<<<<< HEAD
 const BACKEND_URL = "https://backendrepoo-production.up.railway.app/api";
+=======
+const BACKEND_URL = "http://localhost:5000/api/papers";
+>>>>>>> 9e6fd6b (check)
 
 interface PaperPreviewProps {
     className: string;

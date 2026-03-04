@@ -20,8 +20,8 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 
 // Update to your backend port
-const API_BASE_URL = "https://backendrepoo-production.up.railway.app/api/teachers";
-// const API_BASE_URL = "http://localhost:5000/api/teachers";
+// const API_BASE_URL = "https://backendrepoo-production.up.railway.app/api/teachers";
+const API_BASE_URL = "http://localhost:5000/api/teachers";
 
 function Page() {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -74,7 +74,11 @@ function Page() {
     if (adminId) fetchTeachers(adminId);
   }, []);
 
+  
+
   const fetchTeachers = async (adminId: string) => {
+    console.log(adminId);
+    
     setLoading(true);
     try {
       // ✅ Yahan userId ko adminId se replace kar diya gaya hai
@@ -183,7 +187,11 @@ function Page() {
         const res = await axios.post(API_BASE_URL, payload);
         setTeachers(prev => [res.data, ...prev]);
         toast.success("Teacher registered!");
+<<<<<<< HEAD
         fetchTeachers(actualAdminId);
+=======
+        fetchTeachers(actualAdminId); 
+>>>>>>> 9e6fd6b (check)
       }
       closeForm();
     } catch (err: any) {
