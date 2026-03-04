@@ -116,13 +116,14 @@ export default function DashboardPage() {
       { label: 'Paper History', value: '0', color: 'bg-cyan-500', textCol: 'text-cyan-500', lightColor: 'bg-cyan-100/50', icon: <FaFileAlt />, path: '/paper-history' },
       { label: 'Users', value: adminsCount || 0, color: 'bg-slate-700', textCol: 'text-slate-700', lightColor: 'bg-slate-200/50', icon: <FaUsers />, path: '/users' },
       { label: 'Add Data', value: "DB", color: 'bg-orange-500', textCol: 'text-orange-500', lightColor: 'bg-orange-100/50', icon: <PlusCircle />, path: '/add-data' },
+      { label: 'Remove Data', value: "DB", color: 'bg-red-500', textCol: 'text-red-500', lightColor: 'bg-red-100/50', icon: <PlusCircle />, path: '/removeData' },
     ];
 
     if (loggedUser?.role === 'teacher') {
       return allStats.filter(stat => ['Generate Paper', 'Saved Papers', 'Past Papers', 'Paper History'].includes(stat.label));
     }
     if (loggedUser?.role === 'superadmin') {
-      return allStats.filter(stat => ['Users', 'Add Data'].includes(stat.label));
+      return allStats.filter(stat => ['Users', 'Add Data ', 'Remove Data'].includes(stat.label));
     }
     if (loggedUser?.role === 'admin') {
       return allStats.filter(stat => !['Users', 'Add Data'].includes(stat.label));
