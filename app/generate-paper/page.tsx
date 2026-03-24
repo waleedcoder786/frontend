@@ -6,7 +6,7 @@ import PaperPreview from '../paper/page';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 
-const API_BASE = "https://backendrepoo-production.up.railway.app/api";
+const API_BASE = "https://testbackend-production-69cb.up.railway.app/api";
 
 
 export default function GeneratePaper() {

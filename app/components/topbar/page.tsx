@@ -16,8 +16,8 @@ function Page() {
     role: "",
   });
 
-  // const API_BASE = "https://backendrepoo-production.up.railway.app/api";
-  const API_BASE = "http://localhost:5000";
+  const API_BASE = "https://testbackend-production-69cb.up.railway.app/api";
+  // const API_BASE = "http://localhost:5000";
 
   const pathname = usePathname().split("/").pop()?.replace(/-/g, " ");
 

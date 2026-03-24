@@ -21,7 +21,7 @@ import axios from "axios";
 import Link from "next/link";
 import toast from "react-hot-toast";
 
-const API_BASE = "https://backendrepoo-production.up.railway.app/api";
+const API_BASE = "https://testbackend-production-69cb.up.railway.app/api";
 
 interface Paper {
   id: string;
