@@ -5,8 +5,8 @@ import Link from "next/link";
 import axios from "axios";
 import { PaperHeader } from "../../components/headers";
 
-// const API_BASE = "https://backendrepoo-production.up.railway.app/api";
-const API_BASE = "http://localhost:5000/api"; 
+const API_BASE = "https://backendrepoo-production.up.railway.app/api";
+// const API_BASE = "http://localhost:5000/api"; 
 
 // --- Types for better DX ---
 interface Question {
