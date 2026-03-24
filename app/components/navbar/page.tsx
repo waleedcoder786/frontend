@@ -47,7 +47,7 @@ function Sidebar() {
   const menuItems = allMenuItems.filter((item) => {
     // 1. Agar Role 'teacher' hai
     if (userRole === "teacher") {
-      const teacherRestricted = ["Teachers", "Users", "Settings", "AddData"];
+      const teacherRestricted = ["Teachers", "Users", "Settings", "AddData", "removeData"];
       return !teacherRestricted.includes(item.name);
     }
     if (userRole === "superadmin") {
@@ -127,7 +127,7 @@ function Sidebar() {
         </button> */}
 
         {/*  Logo Section */}
-        <div className={`flex items-center  p-4 mb-4 h-24 overflow-hidden `}>
+        <div className={`flex items-center  p-4 mb-4 h-24 overflow-hidden border-b border-slate-800 `}>
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-gradient-to-tr from-blue-600 to-blue-400 rounded-xl flex-shrink-0 flex items-center justify-center font-black text-xl shadow-lg shadow-blue-500/20">
               C
@@ -154,9 +154,16 @@ function Sidebar() {
             </button>
           )}
         </div>
+        
 
         {/* Navigation Items */}
         <nav className="flex-1 px-3 space-y-2 overflow-y-auto custom-scrollbar">
+          
+
+
+
+
+
           {menuItems.map((item) => {
             const isActive = pathname === item.path;
             return (

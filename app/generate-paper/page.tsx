@@ -1,26 +1,27 @@
 'use client';
 import React, { useEffect, useState, useMemo } from 'react';
-import { FaGraduationCap, FaArrowLeft, FaChevronRight, FaCheckCircle } from "react-icons/fa";
+import { FaGraduationCap, FaArrowLeft, FaChevronRight, FaCheckCircle, FaUniversity } from "react-icons/fa";
 import Navbar from '../components/navbar/page';
 import PaperPreview from '../paper/page'; 
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 
-// const API_BASE = "https://backendrepoo-production.up.railway.app/api";
 const API_BASE = "https://backendrepoo-production.up.railway.app/api";
 
 export default function GeneratePaper() {
   // --- State Management ---
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0); 
   const [loading, setLoading] = useState(true);
   const [showPreview, setShowPreview] = useState(false);
   
   // Data State
+  const [fullRawData, setFullRawData] = useState<any>(null);
   const [classes, setClasses] = useState<any[]>([]);
   const [fullData, setFullData] = useState<Record<string, any>>({});
   
   // Selection State
   const [selection, setSelection] = useState({
+    board: null as string | null,
     classId: null as string | null,
     className: null as string | null,
     subject: null as any | null,
@@ -33,31 +34,14 @@ export default function GeneratePaper() {
     const loadInitialData = async () => {
       try {
         setLoading(true);
-        const { data: rawData } = await axios.get(`${API_BASE}/classes`);
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-
-        // Normalize data based on your API structure
-        const allData = Array.isArray(rawData) 
-          ? (rawData[0]?.classes || rawData) 
-          : (rawData.classes || []);
-
-        const isAdmin = ['admin', 'superadmin'].includes(user.role);
-
-        const filteredClasses = isAdmin 
-          ? allData 
-          : allData.filter((c: any) => user.classes?.includes(c.title))
-              .map((c: any) => ({
-                ...c,
-                subjects: (c.subjects || []).filter((s: any) => user.subjects?.includes(s.name))
-              }))
-              .filter((c: any) => c.subjects?.length > 0);
-
-        setClasses(filteredClasses);
-        const dataMap = filteredClasses.reduce((acc: any, curr: any) => {
-          acc[curr.id || curr.title] = curr;
-          return acc;
-        }, {});
-        setFullData(dataMap);
+        const { data: response } = await axios.get(`${API_BASE}`);
+        
+        // Handling MongoDB structure: response[0].data format
+        const actualData = Array.isArray(response) 
+          ? (response[0]?.data || response[0]) 
+          : (response?.data || response);
+        
+        setFullRawData(actualData);
       } catch (error) {
         toast.error("Database Connection Failed");
       } finally {
@@ -67,11 +51,58 @@ export default function GeneratePaper() {
     loadInitialData();
   }, []);
 
+  // --- Board Selection Handler ---
+  const handleBoardSelect = (boardKey: string) => {
+    if (!fullRawData) {
+        toast.error("Data not loaded yet");
+        return;
+    }
+
+    const boardData = fullRawData[boardKey];
+    
+    // Federal check fix: Ensure boardData exists AND classes array is not empty
+    if (!boardData || !boardData.classes || boardData.classes.length === 0) {
+      toast.error(`No classes found in ${boardKey} board. Please add data from admin.`);
+      return;
+    }
+
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const allBoardClasses = boardData.classes || [];
+    const isAdmin = ['admin', 'superadmin'].includes(user.role);
+
+    // Filter classes based on user access
+    const filteredClasses = isAdmin 
+      ? allBoardClasses 
+      : allBoardClasses.filter((c: any) => user.classes?.includes(c.title))
+          .map((c: any) => ({
+            ...c,
+            subjects: (c.subjects || []).filter((s: any) => user.subjects?.includes(s.name))
+          }))
+          .filter((c: any) => c.subjects?.length > 0);
+
+    if (filteredClasses.length === 0 && !isAdmin) {
+        toast.error("You don't have access to classes in this board");
+        return;
+    }
+
+    setClasses(filteredClasses);
+    const dataMap = filteredClasses.reduce((acc: any, curr: any) => {
+      // Use id or title as key for mapping
+      const key = curr.id || curr.title;
+      acc[key] = curr;
+      return acc;
+    }, {});
+    
+    setFullData(dataMap);
+    setSelection(prev => ({ ...prev, board: boardKey }));
+    setStep(1);
+  };
+
   const currentSubjects = useMemo(() => {
     return selection.classId ? (fullData[selection.classId]?.subjects || []) : [];
   }, [selection.classId, fullData]);
 
-  // --- Handlers ---
+  // --- Navigation Handlers ---
   const handleBack = () => {
     if (step === 3) {
       setStep(2);
@@ -79,6 +110,9 @@ export default function GeneratePaper() {
     } else if (step === 2) {
       setStep(1);
       setSelection(prev => ({ ...prev, classId: null, className: null }));
+    } else if (step === 1) {
+      setStep(0);
+      setSelection(prev => ({ ...prev, board: null }));
     }
   };
 
@@ -128,21 +162,21 @@ export default function GeneratePaper() {
       <Navbar />
       
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Refactored Header */}
+        {/* Header Section */}
         <header className="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-10 z-10 shadow-sm">
           <div className="flex items-center gap-4">
-            {step > 1 && (
+            {step > 0 && (
               <button onClick={handleBack} className="p-2 hover:bg-slate-100 rounded-full text-slate-600 transition-all">
                 <FaArrowLeft />
               </button>
             )}
             <h1 className="text-xl font-black text-slate-800 uppercase tracking-tight">
-              {step === 3 ? selection.subject?.name : step === 2 ? `${selection.className} Subjects` : 'Generate Test Paper'}
+              {step === 0 ? 'Select Board' : step === 3 ? selection.subject?.name : step === 2 ? `${selection.className} Subjects` : 'Select Class'}
             </h1>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex gap-1">
-              {[1, 2, 3].map((s) => (
+              {[0, 1, 2, 3].map((s) => (
                 <div key={s} className={`h-1.5 w-6 rounded-full transition-all ${step >= s ? 'bg-blue-600' : 'bg-slate-200'}`} />
               ))}
             </div>
@@ -159,15 +193,33 @@ export default function GeneratePaper() {
           ) : (
             <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
               
+              {/* STEP 0: BOARD SELECTION */}
+              {step === 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mt-10">
+                  <BoardCard 
+                    title="Punjab Board" 
+                    sub="BISE Lahore, Multan, etc."
+                    color="from-emerald-600 to-teal-400"
+                    onClick={() => handleBoardSelect('punjab')} 
+                  />
+                  <BoardCard 
+                    title="Federal Board" 
+                    sub="FBISE Islamabad"
+                    color="from-blue-600 to-indigo-500"
+                    onClick={() => handleBoardSelect('federal')} 
+                  />
+                </div>
+              )}
+
               {/* STEP 1: CLASS SELECTION */}
               {step === 1 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {classes.map((item) => (
+                  {classes.map((item, idx) => (
                     <ClassCard 
-                      key={item.id} 
+                      key={item.id || idx} 
                       item={item} 
                       onClick={() => {
-                        setSelection(prev => ({ ...prev, classId: item.id, className: item.title }));
+                        setSelection(prev => ({ ...prev, classId: item.id || item.title, className: item.title }));
                         setStep(2);
                       }} 
                     />
@@ -234,7 +286,23 @@ export default function GeneratePaper() {
   );
 }
 
-// --- Sub-Components for Clarity ---
+// --- Internal Components (Original CSS kept) ---
+
+const BoardCard = ({ title, sub, color, onClick }: any) => (
+  <div 
+    onClick={onClick} 
+    className="group relative bg-white rounded-3xl p-10 border border-slate-200 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer flex flex-col items-center text-center"
+  >
+    <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center text-white shadow-lg mb-6 group-hover:scale-110 transition-transform`}>
+      <FaUniversity size={35} />
+    </div>
+    <h3 className="text-2xl font-black text-slate-800 mb-2">{title}</h3>
+    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">{sub}</p>
+    <div className="flex items-center gap-2 text-blue-600 font-bold text-sm opacity-0 group-hover:opacity-100 transition-all">
+      Continue <FaChevronRight size={10} />
+    </div>
+  </div>
+);
 
 const ClassCard = ({ item, onClick }: any) => (
   <div 
@@ -260,7 +328,7 @@ const ClassCard = ({ item, onClick }: any) => (
 const SubjectCard = ({ sub, onClick }: any) => (
   <div onClick={onClick} className="group bg-white p-3 rounded-2xl border border-slate-200 hover:border-blue-500 cursor-pointer transition-all shadow-sm hover:shadow-xl">
     <div className="aspect-video rounded-xl bg-slate-100 mb-4 overflow-hidden">
-      <img src={sub.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={sub.name} />
+      <img src={sub.image || 'https://via.placeholder.com/150'} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={sub.name} />
     </div>
     <h3 className="text-lg font-black text-slate-800 text-center pb-2">{sub.name}</h3>
   </div>
@@ -269,9 +337,6 @@ const SubjectCard = ({ sub, onClick }: any) => (
 const ChapterAccordion = ({ chapter, index, isSelected, selectedTopics, onToggleChapter, onToggleTopic }: any) => {
   const chapterName = chapter.name || chapter;
   const topics = chapter.topics || [];
-
-  console.log(topics);
-  
 
   return (
     <div className={`rounded-2xl border transition-all ${isSelected ? 'border-blue-400 bg-white shadow-md' : 'border-slate-200 bg-white/50'}`}>
@@ -290,7 +355,6 @@ const ChapterAccordion = ({ chapter, index, isSelected, selectedTopics, onToggle
         <div className="p-4 pt-2 flex flex-wrap gap-2">
           {topics.map((topic: any, tIdx: number) => {
             const tName = typeof topic === 'string' ? topic : topic.name;
-            const tid = typeof topic === 'string' ? topic : topic.topicNum;
             const isTSelected = selectedTopics.includes(tName);
             return (
               <button
@@ -298,7 +362,7 @@ const ChapterAccordion = ({ chapter, index, isSelected, selectedTopics, onToggle
                 onClick={(e) => { e.stopPropagation(); onToggleTopic(tName); }}
                 className={`px-3 py-1.5 rounded-lg border text-[10px] font-bold transition-all ${isTSelected ? 'border-green-500 bg-green-50 text-green-700' : 'border-slate-100 bg-slate-50 text-slate-400'}`}
               >
-               {tid} {tName}
+                {tName}
               </button>
             );
           })}

@@ -14,20 +14,20 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   // const API_BASE = "http://localhost:5000/api"; 
-  const API_BASE = "https://backendrepoo-production.up.railway.app/api"; // Local backend URL  
+  const API_BASE = "https://testbackend-production-69cb.up.railway.app/api";
+  // const API_BASE = "https://backendrepoo-production.up.railway.app/api"; 
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
       const response = await axios.post(`${API_BASE}/login`, {
-        email: email.trim(), // Trim spaces
+        email: email.trim(),
         password
       });
 
       const { type, data } = response.data;
       
-      // Backend se aane wala role hi final hai
       let finalRole = data.role || (type === 'teacher' ? 'teacher' : 'admin');
 
       loginSuccess(data, finalRole);

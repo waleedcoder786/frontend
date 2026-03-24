@@ -1,0 +1,3381 @@
+{
+ "data": {
+
+  "punjab": {
+     "id": "1",
+     "name": "Punjab Board",
+  "classes": [
+    {
+      "id": "12",
+      "title": "12th",
+      "sub": "2nd Year",
+      "color": "from-blue-600 to-blue-400",
+      "img": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=400",
+      "subjects": [
+        {
+          "name": "Physics",
+          "image": "https://www.adda247.com/jobs/wp-content/uploads/sites/2/2023/09/13170935/Physics.jpg",
+          "color": "bg-blue-600",
+          "chapters": [
+            {
+              "name": "Electrostatics",
+              "topics": [
+                {
+                  "name": "new topic",
+                  "questionTypes": {
+                    "mcqs": {
+                      "categories": [
+                        {
+                          "name": "Exercise Questions",
+                          "questions": [
+                            {
+                              "id": 1772643682105,
+                              "question": "What does CPU stand for?",
+                              "options": {
+                                "A": "Central Processing Unit",
+                                "B": "Computer Personal Unit",
+                                "C": "Central Print Unit",
+                                "D": "Control Processing Unit"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643684141,
+                              "question": "Which device is used to input data?",
+                              "options": {
+                                "A": "Monitor",
+                                "B": "Printer",
+                                "C": "Keyboard",
+                                "D": "Speaker"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772643686552,
+                              "question": "Which is an output device?",
+                              "options": {
+                                "A": "Mouse",
+                                "B": "Keyboard",
+                                "C": "Monitor",
+                                "D": "Scanner"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772643688762,
+                              "question": "What is RAM?",
+                              "options": {
+                                "A": "Read Access Memory",
+                                "B": "Random Access Memory",
+                                "C": "Run Access Memory",
+                                "D": "Real Application Memory"
+                              },
+                              "answer": "B"
+                            },
+                            {
+                              "id": 1772643690398,
+                              "question": "Which software is used to browse the internet?",
+                              "options": {
+                                "A": "MS Word",
+                                "B": "Google Chrome",
+                                "C": "Excel",
+                                "D": "Paint"
+                              },
+                              "answer": "B"
+                            },
+                            {
+                              "id": 1772643691726,
+                              "question": "Which is a storage device?",
+                              "options": {
+                                "A": "Hard Disk",
+                                "B": "Monitor",
+                                "C": "Keyboard",
+                                "D": "Mouse"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643693305,
+                              "question": "What does HTML stand for?",
+                              "options": {
+                                "A": "Hyper Text Markup Language",
+                                "B": "High Text Machine Language",
+                                "C": "Hyper Tool Markup Language",
+                                "D": "Home Tool Markup Language"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643695030,
+                              "question": "Which company developed Windows?",
+                              "options": {
+                                "A": "Apple",
+                                "B": "Microsoft",
+                                "C": "Google",
+                                "D": "IBM"
+                              },
+                              "answer": "B"
+                            },
+                            {
+                              "id": 1772643700397,
+                              "question": "Which key is used to delete text?",
+                              "options": {
+                                "A": "Enter",
+                                "B": "Delete",
+                                "C": "Shift",
+                                "D": "Tab"
+                              },
+                              "answer": "B"
+                            },
+                            {
+                              "id": 1772643703599,
+                              "question": "Which part of computer shows output?",
+                              "options": {
+                                "A": "CPU",
+                                "B": "RAM",
+                                "C": "Monitor",
+                                "D": "Motherboard"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772643706425,
+                              "question": "What is the full form of USB?",
+                              "options": {
+                                "A": "Universal Serial Bus",
+                                "B": "United Service Bus",
+                                "C": "Universal System Bus",
+                                "D": "User Serial Bus"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643709816,
+                              "question": "Which is an example of operating system?",
+                              "options": {
+                                "A": "Linux",
+                                "B": "MS Word",
+                                "C": "Excel",
+                                "D": "PowerPoint"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643712694,
+                              "question": "Which memory is permanent?",
+                              "options": {
+                                "A": "RAM",
+                                "B": "Cache",
+                                "C": "ROM",
+                                "D": "Register"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772643714843,
+                              "question": "What is a mouse?",
+                              "options": {
+                                "A": "Input Device",
+                                "B": "Output Device",
+                                "C": "Storage Device",
+                                "D": "Software"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643717585,
+                              "question": "Which is used to print documents?",
+                              "options": {
+                                "A": "Scanner",
+                                "B": "Printer",
+                                "C": "Monitor",
+                                "D": "Speaker"
+                              },
+                              "answer": "B"
+                            },
+                            {
+                              "id": 1772643719823,
+                              "question": "What does WWW stand for?",
+                              "options": {
+                                "A": "World Wide Web",
+                                "B": "Wide World Web",
+                                "C": "World Web Wide",
+                                "D": "Web World Wide"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643721894,
+                              "question": "Which device connects computer to internet?",
+                              "options": {
+                                "A": "Modem",
+                                "B": "Monitor",
+                                "C": "Keyboard",
+                                "D": "Printer"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643725304,
+                              "question": "What is MS Excel used for?",
+                              "options": {
+                                "A": "Typing",
+                                "B": "Drawing",
+                                "C": "Calculations",
+                                "D": "Browsing"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772643728883,
+                              "question": "Which is not hardware?",
+                              "options": {
+                                "A": "Mouse",
+                                "B": "Keyboard",
+                                "C": "Software",
+                                "D": "Monitor"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772643732285,
+                              "question": "Binary number system uses?",
+                              "options": {
+                                "A": "0 and 1",
+                                "B": "1 and 2",
+                                "C": "2 and 3",
+                                "D": "0 and 2"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643733845,
+                              "question": "Which is brain of computer?",
+                              "options": {
+                                "A": "Monitor",
+                                "B": "CPU",
+                                "C": "Keyboard",
+                                "D": "Mouse"
+                              },
+                              "answer": "B"
+                            },
+                            {
+                              "id": 1772643736018,
+                              "question": "Which key is used to save file?",
+                              "options": {
+                                "A": "Ctrl + S",
+                                "B": "Ctrl + C",
+                                "C": "Ctrl + V",
+                                "D": "Ctrl + P"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643738401,
+                              "question": "Which is input device?",
+                              "options": {
+                                "A": "Scanner",
+                                "B": "Printer",
+                                "C": "Speaker",
+                                "D": "Monitor"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643740965,
+                              "question": "Which company makes iPhone?",
+                              "options": {
+                                "A": "Samsung",
+                                "B": "Apple",
+                                "C": "Nokia",
+                                "D": "Huawei"
+                              },
+                              "answer": "B"
+                            },
+                            {
+                              "id": 1772643744091,
+                              "question": "Which is example of application software?",
+                              "options": {
+                                "A": "Windows",
+                                "B": "Linux",
+                                "C": "MS Word",
+                                "D": "DOS"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772643746235,
+                              "question": "Which part stores data temporarily?",
+                              "options": {
+                                "A": "ROM",
+                                "B": "RAM",
+                                "C": "Hard Disk",
+                                "D": "CPU"
+                              },
+                              "answer": "B"
+                            },
+                            {
+                              "id": 1772643747933,
+                              "question": "Which is used for video calls?",
+                              "options": {
+                                "A": "Zoom",
+                                "B": "Paint",
+                                "C": "Notepad",
+                                "D": "Calculator"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643750660,
+                              "question": "What is keyboard used for?",
+                              "options": {
+                                "A": "Typing",
+                                "B": "Printing",
+                                "C": "Scanning",
+                                "D": "Displaying"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643753509,
+                              "question": "Which is not input device?",
+                              "options": {
+                                "A": "Keyboard",
+                                "B": "Mouse",
+                                "C": "Monitor",
+                                "D": "Scanner"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772643756186,
+                              "question": "Which is example of browser?",
+                              "options": {
+                                "A": "Chrome",
+                                "B": "Word",
+                                "C": "Excel",
+                                "D": "PowerPoint"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643759115,
+                              "question": "Which port is used for internet cable?",
+                              "options": {
+                                "A": "USB",
+                                "B": "HDMI",
+                                "C": "Ethernet",
+                                "D": "VGA"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772643760796,
+                              "question": "Which is primary memory?",
+                              "options": {
+                                "A": "RAM",
+                                "B": "Hard Disk",
+                                "C": "Pen Drive",
+                                "D": "CD"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643765396,
+                              "question": "Which device is used to scan documents?",
+                              "options": {
+                                "A": "Scanner",
+                                "B": "Printer",
+                                "C": "Monitor",
+                                "D": "Keyboard"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643767639,
+                              "question": "Which is example of output device?",
+                              "options": {
+                                "A": "Speaker",
+                                "B": "Mouse",
+                                "C": "Keyboard",
+                                "D": "Scanner"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643769297,
+                              "question": "What does PDF stand for?",
+                              "options": {
+                                "A": "Portable Document Format",
+                                "B": "Public Document File",
+                                "C": "Print Document Format",
+                                "D": "Personal Data File"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643771896,
+                              "question": "Which is secondary storage?",
+                              "options": {
+                                "A": "RAM",
+                                "B": "ROM",
+                                "C": "Hard Disk",
+                                "D": "Cache"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772643774507,
+                              "question": "Which is not operating system?",
+                              "options": {
+                                "A": "Windows",
+                                "B": "Linux",
+                                "C": "Android",
+                                "D": "MS Word"
+                              },
+                              "answer": "D"
+                            },
+                            {
+                              "id": 1772643775974,
+                              "question": "Which key is used for new line?",
+                              "options": {
+                                "A": "Enter",
+                                "B": "Shift",
+                                "C": "Ctrl",
+                                "D": "Alt"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643777944,
+                              "question": "Which is cloud storage service?",
+                              "options": {
+                                "A": "Google Drive",
+                                "B": "MS Paint",
+                                "C": "Notepad",
+                                "D": "WordPad"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643780456,
+                              "question": "Which device produces sound?",
+                              "options": {
+                                "A": "Speaker",
+                                "B": "Monitor",
+                                "C": "Mouse",
+                                "D": "Keyboard"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643782035,
+                              "question": "Which is example of spreadsheet software?",
+                              "options": {
+                                "A": "Excel",
+                                "B": "Word",
+                                "C": "Paint",
+                                "D": "Chrome"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643783977,
+                              "question": "Which is used to make presentations?",
+                              "options": {
+                                "A": "PowerPoint",
+                                "B": "Excel",
+                                "C": "Word",
+                                "D": "Notepad"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643785594,
+                              "question": "Which is smallest unit of data?",
+                              "options": {
+                                "A": "Bit",
+                                "B": "Byte",
+                                "C": "KB",
+                                "D": "MB"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643787221,
+                              "question": "Which is example of programming language?",
+                              "options": {
+                                "A": "Python",
+                                "B": "Windows",
+                                "C": "Chrome",
+                                "D": "Mouse"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643790989,
+                              "question": "Which is used to store large data?",
+                              "options": {
+                                "A": "Hard Disk",
+                                "B": "RAM",
+                                "C": "Cache",
+                                "D": "Register"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643793850,
+                              "question": "Which is input and output device?",
+                              "options": {
+                                "A": "Touchscreen",
+                                "B": "Monitor",
+                                "C": "Printer",
+                                "D": "Speaker"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643795404,
+                              "question": "Which is example of database software?",
+                              "options": {
+                                "A": "MySQL",
+                                "B": "Paint",
+                                "C": "Chrome",
+                                "D": "Notepad"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643800399,
+                              "question": "Which device is used for pointing?",
+                              "options": {
+                                "A": "Mouse",
+                                "B": "Keyboard",
+                                "C": "Printer",
+                                "D": "Monitor"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643802372,
+                              "question": "Which is example of antivirus software?",
+                              "options": {
+                                "A": "Avast",
+                                "B": "Word",
+                                "C": "Excel",
+                                "D": "Chrome"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772643804139,
+                              "question": "Which is file extension of Excel?",
+                              "options": {
+                                "A": ".xlsx",
+                                "B": ".docx",
+                                "C": ".pptx",
+                                "D": ".txt"
+                              },
+                              "answer": "A"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "shorts": {
+                      "categories": []
+                    },
+                    "longs": {
+                      "categories": []
+                    }
+                  }
+                }
+              ]
+            },
+            "Current Electricity",
+            "Electromagnetism",
+            "Atomic Spectra",
+            "AC",
+            "Nuclear Physics"
+          ]
+        },
+        {
+          "name": "Computer",
+          "image": "https://media.geeksforgeeks.org/wp-content/uploads/20250127131719608492/Computer-Science-Core-.webp",
+          "color": "bg-blue-600",
+          "chapters": [
+            {
+              "name": "Software Development Life Cycle (SDLC)",
+              "topics": [
+                {
+                  "id": 1,
+                  "name": "SDLC Fundamentals",
+                  "questionTypes": {
+                    "mcqs": {
+                      "categories": [
+                        {
+                          "name": "Exercise Questions",
+                          "questions": [
+                            {
+                              "id": 1772617380542,
+                              "question": "Which is an output device?",
+                              "options": {
+                                "A": "Mouse",
+                                "B": "Keyboard",
+                                "C": "Monitor",
+                                "D": "Scanner"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772617382151,
+                              "question": "What is RAM?",
+                              "options": {
+                                "A": "Read Access Memory",
+                                "B": "Random Access Memory",
+                                "C": "Run Access Memory",
+                                "D": "Real Application Memory"
+                              },
+                              "answer": "B"
+                            },
+                            {
+                              "id": 1772617383935,
+                              "question": "Which software is used to browse the internet?",
+                              "options": {
+                                "A": "MS Word",
+                                "B": "Google Chrome",
+                                "C": "Excel",
+                                "D": "Paint"
+                              },
+                              "answer": "B"
+                            },
+                            {
+                              "id": 1772617385708,
+                              "question": "Which is a storage device?",
+                              "options": {
+                                "A": "Hard Disk",
+                                "B": "Monitor",
+                                "C": "Keyboard",
+                                "D": "Mouse"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617388036,
+                              "question": "What does HTML stand for?",
+                              "options": {
+                                "A": "Hyper Text Markup Language",
+                                "B": "High Text Machine Language",
+                                "C": "Hyper Tool Markup Language",
+                                "D": "Home Tool Markup Language"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617390316,
+                              "question": "Which company developed Windows?",
+                              "options": {
+                                "A": "Apple",
+                                "B": "Microsoft",
+                                "C": "Google",
+                                "D": "IBM"
+                              },
+                              "answer": "B"
+                            },
+                            {
+                              "id": 1772617392729,
+                              "question": "Which key is used to delete text?",
+                              "options": {
+                                "A": "Enter",
+                                "B": "Delete",
+                                "C": "Shift",
+                                "D": "Tab"
+                              },
+                              "answer": "B"
+                            },
+                            {
+                              "id": 1772617395642,
+                              "question": "Which part of computer shows output?",
+                              "options": {
+                                "A": "CPU",
+                                "B": "RAM",
+                                "C": "Monitor",
+                                "D": "Motherboard"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772617399280,
+                              "question": "What is the full form of USB?",
+                              "options": {
+                                "A": "Universal Serial Bus",
+                                "B": "United Service Bus",
+                                "C": "Universal System Bus",
+                                "D": "User Serial Bus"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617402653,
+                              "question": "Which is an example of operating system?",
+                              "options": {
+                                "A": "Linux",
+                                "B": "MS Word",
+                                "C": "Excel",
+                                "D": "PowerPoint"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617405381,
+                              "question": "Which memory is permanent?",
+                              "options": {
+                                "A": "RAM",
+                                "B": "Cache",
+                                "C": "ROM",
+                                "D": "Register"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772617407378,
+                              "question": "What is a mouse?",
+                              "options": {
+                                "A": "Input Device",
+                                "B": "Output Device",
+                                "C": "Storage Device",
+                                "D": "Software"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617409071,
+                              "question": "Which is used to print documents?",
+                              "options": {
+                                "A": "Scanner",
+                                "B": "Printer",
+                                "C": "Monitor",
+                                "D": "Speaker"
+                              },
+                              "answer": "B"
+                            },
+                            {
+                              "id": 1772617410550,
+                              "question": "What does WWW stand for?",
+                              "options": {
+                                "A": "World Wide Web",
+                                "B": "Wide World Web",
+                                "C": "World Web Wide",
+                                "D": "Web World Wide"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617411866,
+                              "question": "Which device connects computer to internet?",
+                              "options": {
+                                "A": "Modem",
+                                "B": "Monitor",
+                                "C": "Keyboard",
+                                "D": "Printer"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617413045,
+                              "question": "What is MS Excel used for?",
+                              "options": {
+                                "A": "Typing",
+                                "B": "Drawing",
+                                "C": "Calculations",
+                                "D": "Browsing"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772617416269,
+                              "question": "Which is not hardware?",
+                              "options": {
+                                "A": "Mouse",
+                                "B": "Keyboard",
+                                "C": "Software",
+                                "D": "Monitor"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772617419395,
+                              "question": "Binary number system uses?",
+                              "options": {
+                                "A": "0 and 1",
+                                "B": "1 and 2",
+                                "C": "2 and 3",
+                                "D": "0 and 2"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617420814,
+                              "question": "Which is brain of computer?",
+                              "options": {
+                                "A": "Monitor",
+                                "B": "CPU",
+                                "C": "Keyboard",
+                                "D": "Mouse"
+                              },
+                              "answer": "B"
+                            },
+                            {
+                              "id": 1772617422712,
+                              "question": "Which key is used to save file?",
+                              "options": {
+                                "A": "Ctrl + S",
+                                "B": "Ctrl + C",
+                                "C": "Ctrl + V",
+                                "D": "Ctrl + P"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617424091,
+                              "question": "Which is input device?",
+                              "options": {
+                                "A": "Scanner",
+                                "B": "Printer",
+                                "C": "Speaker",
+                                "D": "Monitor"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617425694,
+                              "question": "Which company makes iPhone?",
+                              "options": {
+                                "A": "Samsung",
+                                "B": "Apple",
+                                "C": "Nokia",
+                                "D": "Huawei"
+                              },
+                              "answer": "B"
+                            },
+                            {
+                              "id": 1772617427430,
+                              "question": "Which is example of application software?",
+                              "options": {
+                                "A": "Windows",
+                                "B": "Linux",
+                                "C": "MS Word",
+                                "D": "DOS"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772617429080,
+                              "question": "Which part stores data temporarily?",
+                              "options": {
+                                "A": "ROM",
+                                "B": "RAM",
+                                "C": "Hard Disk",
+                                "D": "CPU"
+                              },
+                              "answer": "B"
+                            },
+                            {
+                              "id": 1772617430643,
+                              "question": "Which is used for video calls?",
+                              "options": {
+                                "A": "Zoom",
+                                "B": "Paint",
+                                "C": "Notepad",
+                                "D": "Calculator"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617432080,
+                              "question": "What is keyboard used for?",
+                              "options": {
+                                "A": "Typing",
+                                "B": "Printing",
+                                "C": "Scanning",
+                                "D": "Displaying"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617435134,
+                              "question": "Which is not input device?",
+                              "options": {
+                                "A": "Keyboard",
+                                "B": "Mouse",
+                                "C": "Monitor",
+                                "D": "Scanner"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772617436435,
+                              "question": "Which is example of browser?",
+                              "options": {
+                                "A": "Chrome",
+                                "B": "Word",
+                                "C": "Excel",
+                                "D": "PowerPoint"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617439721,
+                              "question": "Which port is used for internet cable?",
+                              "options": {
+                                "A": "USB",
+                                "B": "HDMI",
+                                "C": "Ethernet",
+                                "D": "VGA"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772617441919,
+                              "question": "Which is primary memory?",
+                              "options": {
+                                "A": "RAM",
+                                "B": "Hard Disk",
+                                "C": "Pen Drive",
+                                "D": "CD"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617443926,
+                              "question": "Which device is used to scan documents?",
+                              "options": {
+                                "A": "Scanner",
+                                "B": "Printer",
+                                "C": "Monitor",
+                                "D": "Keyboard"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617445386,
+                              "question": "Which is example of output device?",
+                              "options": {
+                                "A": "Speaker",
+                                "B": "Mouse",
+                                "C": "Keyboard",
+                                "D": "Scanner"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617447076,
+                              "question": "What does PDF stand for?",
+                              "options": {
+                                "A": "Portable Document Format",
+                                "B": "Public Document File",
+                                "C": "Print Document Format",
+                                "D": "Personal Data File"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617448479,
+                              "question": "Which is secondary storage?",
+                              "options": {
+                                "A": "RAM",
+                                "B": "ROM",
+                                "C": "Hard Disk",
+                                "D": "Cache"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772617449771,
+                              "question": "Which is not operating system?",
+                              "options": {
+                                "A": "Windows",
+                                "B": "Linux",
+                                "C": "Android",
+                                "D": "MS Word"
+                              },
+                              "answer": "D"
+                            },
+                            {
+                              "id": 1772617451228,
+                              "question": "Which key is used for new line?",
+                              "options": {
+                                "A": "Enter",
+                                "B": "Shift",
+                                "C": "Ctrl",
+                                "D": "Alt"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617452744,
+                              "question": "Which is cloud storage service?",
+                              "options": {
+                                "A": "Google Drive",
+                                "B": "MS Paint",
+                                "C": "Notepad",
+                                "D": "WordPad"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617454024,
+                              "question": "Which device produces sound?",
+                              "options": {
+                                "A": "Speaker",
+                                "B": "Monitor",
+                                "C": "Mouse",
+                                "D": "Keyboard"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617455702,
+                              "question": "Which is example of spreadsheet software?",
+                              "options": {
+                                "A": "Excel",
+                                "B": "Word",
+                                "C": "Paint",
+                                "D": "Chrome"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617457543,
+                              "question": "Which is used to make presentations?",
+                              "options": {
+                                "A": "PowerPoint",
+                                "B": "Excel",
+                                "C": "Word",
+                                "D": "Notepad"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617459322,
+                              "question": "Which is smallest unit of data?",
+                              "options": {
+                                "A": "Bit",
+                                "B": "Byte",
+                                "C": "KB",
+                                "D": "MB"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617461123,
+                              "question": "Which is example of programming language?",
+                              "options": {
+                                "A": "Python",
+                                "B": "Windows",
+                                "C": "Chrome",
+                                "D": "Mouse"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617463003,
+                              "question": "Which is used to store large data?",
+                              "options": {
+                                "A": "Hard Disk",
+                                "B": "RAM",
+                                "C": "Cache",
+                                "D": "Register"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617465222,
+                              "question": "Which is input and output device?",
+                              "options": {
+                                "A": "Touchscreen",
+                                "B": "Monitor",
+                                "C": "Printer",
+                                "D": "Speaker"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617466938,
+                              "question": "Which is example of database software?",
+                              "options": {
+                                "A": "MySQL",
+                                "B": "Paint",
+                                "C": "Chrome",
+                                "D": "Notepad"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617468406,
+                              "question": "Which device is used for pointing?",
+                              "options": {
+                                "A": "Mouse",
+                                "B": "Keyboard",
+                                "C": "Printer",
+                                "D": "Monitor"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617470037,
+                              "question": "Which is example of antivirus software?",
+                              "options": {
+                                "A": "Avast",
+                                "B": "Word",
+                                "C": "Excel",
+                                "D": "Chrome"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772617471721,
+                              "question": "Which is file extension of Excel?",
+                              "options": {
+                                "A": ".xlsx",
+                                "B": ".docx",
+                                "C": ".pptx",
+                                "D": ".txt"
+                              },
+                              "answer": "A"
+                            }
+                          ]
+                        },
+                        {
+                          "name": "Additional Questions",
+                          "questions": []
+                        },
+                        {
+                          "name": "Pastpapers Questions",
+                          "questions": [
+                            {
+                              "q_no": 101,
+                              "question": "What is the correct way to declare a variable in Python?",
+                              "options": {
+                                "A": "var myVar = 10",
+                                "B": "myVar : int = 10",
+                                "C": "myVar = 10",
+                                "D": "int myVar = 10"
+                              }
+                            },
+                            {
+                              "q_no": 102,
+                              "question": "What will be the output of the following code? x = 5 y = x y += 2 print(x, y)",
+                              "options": {
+                                "A": "5 7",
+                                "B": "7 7",
+                                "C": "5 5",
+                                "D": "7 5"
+                              }
+                            },
+                            {
+                              "q_no": 103,
+                              "question": "Which operator is used for floor division in Python?",
+                              "options": {
+                                "A": "/",
+                                "B": "//",
+                                "C": "%",
+                                "D": "**"
+                              }
+                            },
+                            {
+                              "q_no": 104,
+                              "question": "Which of these gives True only when both conditions are True?",
+                              "options": {
+                                "A": "or",
+                                "B": "not",
+                                "C": "and",
+                                "D": "=="
+                              }
+                            },
+                            {
+                              "q_no": 105,
+                              "question": "Which logical operator is used to reverse a condition?",
+                              "options": {
+                                "A": "and",
+                                "B": "or",
+                                "C": "not",
+                                "D": "!="
+                              }
+                            },
+                            {
+                              "q_no": 106,
+                              "question": "Which statement is used to combine conditions in decision making?",
+                              "options": {
+                                "A": "Logical operators",
+                                "B": "Arithmetic operators",
+                                "C": "Input/output functions",
+                                "D": "Assignment operators"
+                              }
+                            },
+                            {
+                              "q_no": 107,
+                              "question": "Which line of code correctly takes float input from the user?",
+                              "options": {
+                                "A": "height = float(input(\"Enter height: \"))",
+                                "B": "float = input(height)",
+                                "C": "height := input(float)",
+                                "D": "input(float(height))"
+                              }
+                            },
+                            {
+                              "q_no": 108,
+                              "question": "What is the result of the following code? x = 10 y = 3 result = x % y print(result)",
+                              "options": {
+                                "A": "1",
+                                "B": "3",
+                                "C": "0",
+                                "D": "10"
+                              }
+                            },
+                            {
+                              "q_no": 109,
+                              "question": "Which operator is used to check if two values are equal in Python?",
+                              "options": {
+                                "A": "=",
+                                "B": "==",
+                                "C": "!=",
+                                "D": "==="
+                              }
+                            },
+                            {
+                              "q_no": 110,
+                              "question": "Which operator is used to check if a value is not equal to another value?",
+                              "options": {
+                                "A": "=",
+                                "B": "==",
+                                "C": "!=",
+                                "D": "<>"
+                              }
+                            },
+                            {
+                              "q_no": 111,
+                              "question": "What will be the output of the following code? a = 7 b = 7 c = 8 result = a < b < c print(result)",
+                              "options": {
+                                "A": "True",
+                                "B": "False",
+                                "C": "Error",
+                                "D": "None"
+                              }
+                            },
+                            {
+                              "q_no": 112,
+                              "question": "Which logical operator is used to perform a logical AND operation in Python?",
+                              "options": {
+                                "A": "&&",
+                                "B": "and",
+                                "C": "&",
+                                "D": "Or"
+                              }
+                            },
+                            {
+                              "q_no": 113,
+                              "question": "What is the output of this code: print(\"Even\" if 10 % 2 == 0 else \"Odd\")?",
+                              "options": {
+                                "A": "True",
+                                "B": "False",
+                                "C": "Even",
+                                "D": "Odd"
+                              }
+                            },
+                            {
+                              "q_no": 114,
+                              "question": "In which statement does the condition check happen before each iteration?",
+                              "options": {
+                                "A": "for",
+                                "B": "while",
+                                "C": "if",
+                                "D": "else"
+                              }
+                            },
+                            {
+                              "q_no": 115,
+                              "question": "Which is the correct short-hand form to check if a number is odd?",
+                              "options": {
+                                "A": "print(\"Odd\" if num % 2 != 0 else \"Even\")",
+                                "B": "if num % 2 != 0 print(\"Odd\")",
+                                "C": "num % 2 == 1 then print(\"Odd\")",
+                                "D": "print(\"Even\" if num % 2 == 0 or \"Odd\")"
+                              }
+                            },
+                            {
+                              "q_no": 116,
+                              "question": "How does Python decide which elif block to run?",
+                              "options": {
+                                "A": "It checks all and runs all true ones",
+                                "B": "Only the last one is checked",
+                                "C": "The first true condition runs",
+                                "D": "None are checked if is false"
+                              }
+                            },
+                            {
+                              "q_no": 117,
+                              "question": "Which one helps handle opposite actions based on a condition?",
+                              "options": {
+                                "A": "elif",
+                                "B": "else only",
+                                "C": "if-else",
+                                "D": "while loop"
+                              }
+                            },
+                            {
+                              "q_no": 118,
+                              "question": "Which part of the code runs if no if or elif condition is true?",
+                              "options": {
+                                "A": "loop block",
+                                "B": "return block",
+                                "C": "else block",
+                                "D": "print block"
+                              }
+                            },
+                            {
+                              "q_no": 119,
+                              "question": "What does this Python code print? age = 20 print(\"Teen\" if age < 18 else \"Adult\")",
+                              "options": {
+                                "A": "Teen",
+                                "B": "Adult",
+                                "C": "Error",
+                                "D": "20"
+                              }
+                            },
+                            {
+                              "q_no": 120,
+                              "question": "Which of the following statements about if-else is FALSE?",
+                              "options": {
+                                "A": "It runs both blocks always",
+                                "B": "Only one block runs",
+                                "C": "It helps in decision-making",
+                                "D": "It runs else if the condition is false"
+                              }
+                            },
+                            {
+                              "q_no": 121,
+                              "question": "Which of the following best defines a Control Structure in programming?",
+                              "options": {
+                                "A": "Flow rule",
+                                "B": "Repeat code",
+                                "C": "Code flow control",
+                                "D": "It controls the flow of instructions in a program."
+                              }
+                            },
+                            {
+                              "q_no": 122,
+                              "question": "What will be the output of this code? x = 10 if x < 5: print(\"Smart\") print(\"Done\")",
+                              "options": {
+                                "A": "Small",
+                                "B": "Done",
+                                "C": "Small Done",
+                                "D": "Error"
+                              }
+                            },
+                            {
+                              "q_no": 123,
+                              "question": "The keyword elif in Python is used for:",
+                              "options": {
+                                "A": "Ending loop",
+                                "B": "Multiple conditions",
+                                "C": "Infinite loop",
+                                "D": "Loop termination"
+                              }
+                            },
+                            {
+                              "q_no": 124,
+                              "question": "Which structure lets Python repeat a block of code?",
+                              "options": {
+                                "A": "Looping",
+                                "B": "Jumping",
+                                "C": "Conditional",
+                                "D": "Returning repeatedly"
+                              }
+                            },
+                            {
+                              "q_no": 125,
+                              "question": "What type of loop runs based on a condition?",
+                              "options": {
+                                "A": "for",
+                                "B": "while",
+                                "C": "both",
+                                "D": "None"
+                              }
+                            },
+                            {
+                              "q_no": 126,
+                              "question": "What will this print: n = 1 while n < 4: print(n) n += 1",
+                              "options": {
+                                "A": "0 1 2",
+                                "B": "1 2 3",
+                                "C": "1 2 3 4",
+                                "D": "Infinite loop"
+                              }
+                            },
+                            {
+                              "q_no": 127,
+                              "question": "What will be the output of the following code? count = 0 while count < 5: print(count, end=' ') count +=2 else: print(\"Done\")",
+                              "options": {
+                                "A": "0 1 2 3 4 Done",
+                                "B": "0 2 4 Done",
+                                "C": "0 2 4",
+                                "D": "0 1 2 3 4"
+                              }
+                            },
+                            {
+                              "q_no": 128,
+                              "question": "Why are default parameters useful in Python functions?",
+                              "options": {
+                                "A": "To avoid runtime errors",
+                                "B": "To reuse variables",
+                                "C": "To handle missing arguments",
+                                "D": "To define global variables"
+                              }
+                            },
+                            {
+                              "q_no": 129,
+                              "question": "How many arguments will be used in this function call: greet() if the function is def greet(name = \"Guest\")?",
+                              "options": {
+                                "A": "Two",
+                                "B": "One",
+                                "C": "Zero",
+                                "D": "Infinite"
+                              }
+                            },
+                            {
+                              "q_no": 130,
+                              "question": "Why are modules used in large Python programs?",
+                              "options": {
+                                "A": "To reduce memory",
+                                "B": "To avoid syntax errors",
+                                "C": "To organize code into parts",
+                                "D": "To increase complexity"
+                              }
+                            },
+                            {
+                              "q_no": 131,
+                              "question": "Which function will return the largest number from a list?",
+                              "options": {
+                                "A": "max()",
+                                "B": "sum()",
+                                "C": "large()",
+                                "D": "sort()"
+                              }
+                            },
+                            {
+                              "q_no": 132,
+                              "question": "How does Python know which module belongs to which package?",
+                              "options": {
+                                "A": "By naming it",
+                                "B": "By folder structure",
+                                "C": "Using comments",
+                                "D": "Manually assigning"
+                              }
+                            },
+                            {
+                              "q_no": 133,
+                              "question": "What will be the output of this code? import random print(random.randint(1, 1))",
+                              "options": {
+                                "A": "Error",
+                                "B": "Random number",
+                                "C": "1",
+                                "D": "None"
+                              }
+                            },
+                            {
+                              "q_no": 134,
+                              "question": "Which function is being called in this line? print(greet(\"Ali\"))",
+                              "options": {
+                                "A": "print",
+                                "B": "input",
+                                "C": "Ali",
+                                "D": "greet"
+                              }
+                            },
+                            {
+                              "q_no": 135,
+                              "question": "Who decides the number of parameters in a function?",
+                              "options": {
+                                "A": "Python interpreter",
+                                "B": "Built-in module",
+                                "C": "Function designer",
+                                "D": "The user"
+                              }
+                            },
+                            {
+                              "q_no": 136,
+                              "question": "Which output is correct for this code? def hello(name = \"Friend\"): return \"Hi \" + name print(hello())",
+                              "options": {
+                                "A": "Hi",
+                                "B": "Error",
+                                "C": "Hello Friend",
+                                "D": "Hi Friend"
+                              }
+                            },
+                            {
+                              "q_no": 137,
+                              "question": "Which of these is an example of a package?",
+                              "options": {
+                                "A": ".py file",
+                                "B": "def function",
+                                "C": "import math",
+                                "D": "ecommerce"
+                              }
+                            },
+                            {
+                              "q_no": 138,
+                              "question": "Which slicing expression gives ['Blue', 'Yellow'] from this list? color = [\"Red\", \"Green\", \"Blue\", \"Yellow\", \"Purple\"]",
+                              "options": {
+                                "A": "colors[2:4]",
+                                "B": "colors[1:3]",
+                                "C": "colors[0:2]",
+                                "D": "colors[3:5]"
+                              }
+                            },
+                            {
+                              "q_no": 139,
+                              "question": "How many items will this tuple contain? t = (\"Hi\", 2, 3.5, True, [1, 2])",
+                              "options": {
+                                "A": "4",
+                                "B": "5",
+                                "C": "6",
+                                "D": "Error"
+                              }
+                            },
+                            {
+                              "q_no": 140,
+                              "question": "Which one is an immutable data structure?",
+                              "options": {
+                                "A": "List",
+                                "B": "Tuple",
+                                "C": "Dictionary",
+                                "D": "Set"
+                              }
+                            },
+                            {
+                              "q_no": 141,
+                              "question": "What will be printed by this code? my_list = [\"a\", \"b\", \"c\"] my_list.append([\"d\", \"e\"]) print(len(my_list))",
+                              "options": {
+                                "A": "3",
+                                "B": "4",
+                                "C": "5",
+                                "D": "Error"
+                              }
+                            },
+                            {
+                              "q_no": 142,
+                              "question": "Which method will sort a list in alphabetical order permanently?",
+                              "options": {
+                                "A": "reverse()",
+                                "B": "sorted()",
+                                "C": "sort()",
+                                "D": "swap()"
+                              }
+                            },
+                            {
+                              "q_no": 143,
+                              "question": "Which of these allows duplicate elements?",
+                              "options": {
+                                "A": "List",
+                                "B": "Tuple",
+                                "C": "Both",
+                                "D": "None"
+                              }
+                            },
+                            {
+                              "q_no": 144,
+                              "question": "How many elements are returned by colors[::2] if colors = [\"Red\", \"Green\", \"Blue\", \"Yellow\", \"Purple\", \"Black\"]",
+                              "options": {
+                                "A": "3",
+                                "B": "4",
+                                "C": "2",
+                                "D": "6"
+                              }
+                            },
+                            {
+                              "q_no": 145,
+                              "question": "Which function will raise an error if the value does not exist in the list?",
+                              "options": {
+                                "A": "remove()",
+                                "B": "pop()",
+                                "C": "append()",
+                                "D": "insert()"
+                              }
+                            },
+                            {
+                              "q_no": 146,
+                              "question": "What happens if we try to change a tuple element?",
+                              "options": {
+                                "A": "Change it",
+                                "B": "Ignores it",
+                                "C": "Throws Error",
+                                "D": "Adds it"
+                              }
+                            },
+                            {
+                              "q_no": 147,
+                              "question": "Which code will print ['Green', 'Blue', 'Yellow']?",
+                              "options": {
+                                "A": "colors[1:4]",
+                                "B": "colors[0:3]",
+                                "C": "colors[2:5]",
+                                "D": "colors[1:3]"
+                              }
+                            },
+                            {
+                              "q_no": 148,
+                              "question": "In which case does slicing not include the last index?",
+                              "options": {
+                                "A": "Always",
+                                "B": "Never",
+                                "C": "Sometimes",
+                                "D": "Only in even indices"
+                              }
+                            },
+                            {
+                              "q_no": 149,
+                              "question": "What will be the output? lst = [1, 2, 3] lst.remove(4) print(lst)",
+                              "options": {
+                                "A": "[1, 2, 3]",
+                                "B": "[1, 2]",
+                                "C": "Error",
+                                "D": "None"
+                              }
+                            },
+                            {
+                              "q_no": 150,
+                              "question": "Which built-in function returns the number of elements in a tuple?",
+                              "options": {
+                                "A": "len()",
+                                "B": "count()",
+                                "C": "index()",
+                                "D": "range()"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "shorts": {
+                      "categories": [
+                        {
+                          "name": "Exercise Questions",
+                          "questions": [
+                            {
+                              "id": 2,
+                              "question": "Write four components of a computer system."
+                            },
+                            {
+                              "id": 3,
+                              "question": "Differentiate between data and information."
+                            },
+                            {
+                              "id": 4,
+                              "question": "What is IPO cycle?"
+                            },
+                            {
+                              "id": 5,
+                              "question": "Define processing."
+                            },
+                            {
+                              "id": 6,
+                              "question": "What is storage device?"
+                            },
+                            {
+                              "id": 7,
+                              "question": "Define digital computer."
+                            },
+                            {
+                              "id": 8,
+                              "question": "What is output device?"
+                            },
+                            {
+                              "id": 9,
+                              "question": "Write two examples of input devices."
+                            },
+                            {
+                              "id": 10,
+                              "question": "What is CPU?"
+                            }
+                          ]
+                        },
+                        {
+                          "name": "Pastpapers Questions",
+                          "questions": [
+                            {
+                              "id": 1,
+                              "question": "What is the full form of CPU?"
+                            },
+                            {
+                              "id": 2,
+                              "question": "Write two examples of output devices."
+                            },
+                            {
+                              "id": 3,
+                              "question": "What is the function of RAM?"
+                            },
+                            {
+                              "id": 4,
+                              "question": "Define software."
+                            },
+                            {
+                              "id": 5,
+                              "question": "What is the difference between hardware and software?"
+                            },
+                            {
+                              "id": 6,
+                              "question": "What is the function of an operating system  (OS)?"
+                            }
+                          ]
+                        },
+                        {
+                          "name": "Additional Questions",
+                          "questions": [
+                            {
+                              "id": 1,
+                              "question": "What is booting?"
+                            },
+                            {
+                              "id": 2,
+                              "question": "Define BIOS."
+                            },
+                            {
+                              "id": 3,
+                              "question": "What is motherboard?"
+                            },
+                            {
+                              "id": 4,
+                              "question": "Write types of memory."
+                            },
+                            {
+                              "id": 5,
+                              "question": "What is secondary storage?"
+                            },
+                            {
+                              "id": 6,
+                              "question": "Define firmware."
+                            },
+                            {
+                              "id": 7,
+                              "question": "What is computer speed measured in?"
+                            },
+                            {
+                              "id": 8,
+                              "question": "Define peripheral devices."
+                            },
+                            {
+                              "id": 9,
+                              "question": "What is system unit?"
+                            },
+                            {
+                              "id": 10,
+                              "question": "Write two advantages of computers."
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "longs": {
+                      "categories": [
+                        {
+                          "name": "Exercise Questions",
+                          "questions": [
+                            {
+                              "id": 1,
+                              "question": "What is touch screen?"
+                            },
+                            {
+                              "id": 2,
+                              "question": "Define barcode reader."
+                            },
+                            {
+                              "id": 3,
+                              "question": "What is webcam?"
+                            },
+                            {
+                              "id": 4,
+                              "question": "Define joystick."
+                            },
+                            {
+                              "id": 5,
+                              "question": "What is trackball?"
+                            }
+                          ]
+                        },
+                        {
+                          "name": "Pastpapers Questions",
+                          "questions": [
+                            {
+                              "id": 1,
+                              "question": "What is touch screen?"
+                            },
+                            {
+                              "id": 2,
+                              "question": "Define barcode reader."
+                            },
+                            {
+                              "id": 3,
+                              "question": "What is webcam?"
+                            },
+                            {
+                              "id": 4,
+                              "question": "Define joystick."
+                            },
+                            {
+                              "id": 5,
+                              "question": "What is trackball?"
+                            },
+                            {
+                              "id": 6,
+                              "question": "Define plotter."
+                            },
+                            {
+                              "id": 7,
+                              "question": "What is motherboard chipset?"
+                            },
+                            {
+                              "id": 8,
+                              "question": "Define CMOS battery."
+                            },
+                            {
+                              "id": 9,
+                              "question": "What is LAN card?"
+                            }
+                          ]
+                        },
+                        {
+                          "name": "Additional Questions",
+                          "questions": [
+                            {
+                              "id": 1,
+                              "question": "What is touch screen?"
+                            },
+                            {
+                              "id": 2,
+                              "question": "Define barcode reader."
+                            },
+                            {
+                              "id": 3,
+                              "question": "What is webcam?"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "topicNum": "1.1"
+                },
+                {
+                  "id": 1,
+                  "name": "SDLC Fundamentals topic 02",
+                  "questionTypes": {
+                    "mcqs": {
+                      "categories": [
+                        {
+                          "name": "Exercise Questions",
+                          "questions": []
+                        },
+                        {
+                          "name": "Pastpapers Questions",
+                          "questions": [
+                            {
+                              "q_no": 101,
+                              "question": "What is the correct way to declare a variable in Python?",
+                              "options": {
+                                "A": "var myVar = 10",
+                                "B": "myVar : int = 10",
+                                "C": "myVar = 10",
+                                "D": "int myVar = 10"
+                              }
+                            },
+                            {
+                              "q_no": 102,
+                              "question": "What will be the output of the following code? x = 5 y = x y += 2 print(x, y)",
+                              "options": {
+                                "A": "5 7",
+                                "B": "7 7",
+                                "C": "5 5",
+                                "D": "7 5"
+                              }
+                            },
+                            {
+                              "q_no": 103,
+                              "question": "Which operator is used for floor division in Python?",
+                              "options": {
+                                "A": "/",
+                                "B": "//",
+                                "C": "%",
+                                "D": "**"
+                              }
+                            },
+                            {
+                              "q_no": 104,
+                              "question": "Which of these gives True only when both conditions are True?",
+                              "options": {
+                                "A": "or",
+                                "B": "not",
+                                "C": "and",
+                                "D": "=="
+                              }
+                            },
+                            {
+                              "q_no": 119,
+                              "question": "What does this Python code print? age = 20 print(\"Teen\" if age < 18 else \"Adult\")",
+                              "options": {
+                                "A": "Teen",
+                                "B": "Adult",
+                                "C": "Error",
+                                "D": "20"
+                              }
+                            },
+                            {
+                              "q_no": 120,
+                              "question": "Which of the following statements about if-else is FALSE?",
+                              "options": {
+                                "A": "It runs both blocks always",
+                                "B": "Only one block runs",
+                                "C": "It helps in decision-making",
+                                "D": "It runs else if the condition is false"
+                              }
+                            },
+                            {
+                              "q_no": 121,
+                              "question": "Which of the following best defines a Control Structure in programming?",
+                              "options": {
+                                "A": "Flow rule",
+                                "B": "Repeat code",
+                                "C": "Code flow control",
+                                "D": "It controls the flow of instructions in a program."
+                              }
+                            },
+                            {
+                              "q_no": 122,
+                              "question": "What will be the output of this code? x = 10 if x < 5: print(\"Smart\") print(\"Done\")",
+                              "options": {
+                                "A": "Small",
+                                "B": "Done",
+                                "C": "Small Done",
+                                "D": "Error"
+                              }
+                            },
+                            {
+                              "q_no": 123,
+                              "question": "The keyword elif in Python is used for:",
+                              "options": {
+                                "A": "Ending loop",
+                                "B": "Multiple conditions",
+                                "C": "Infinite loop",
+                                "D": "Loop termination"
+                              }
+                            },
+                            {
+                              "q_no": 124,
+                              "question": "Which structure lets Python repeat a block of code?",
+                              "options": {
+                                "A": "Looping",
+                                "B": "Jumping",
+                                "C": "Conditional",
+                                "D": "Returning repeatedly"
+                              }
+                            },
+                            {
+                              "q_no": 125,
+                              "question": "What type of loop runs based on a condition?",
+                              "options": {
+                                "A": "for",
+                                "B": "while",
+                                "C": "both",
+                                "D": "None"
+                              }
+                            },
+                            {
+                              "q_no": 126,
+                              "question": "What will this print: n = 1 while n < 4: print(n) n += 1",
+                              "options": {
+                                "A": "0 1 2",
+                                "B": "1 2 3",
+                                "C": "1 2 3 4",
+                                "D": "Infinite loop"
+                              }
+                            },
+                            {
+                              "q_no": 127,
+                              "question": "What will be the output of the following code? count = 0 while count < 5: print(count, end=' ') count +=2 else: print(\"Done\")",
+                              "options": {
+                                "A": "0 1 2 3 4 Done",
+                                "B": "0 2 4 Done",
+                                "C": "0 2 4",
+                                "D": "0 1 2 3 4"
+                              }
+                            },
+                            {
+                              "q_no": 128,
+                              "question": "Why are default parameters useful in Python functions?",
+                              "options": {
+                                "A": "To avoid runtime errors",
+                                "B": "To reuse variables",
+                                "C": "To handle missing arguments",
+                                "D": "To define global variables"
+                              }
+                            },
+                            {
+                              "q_no": 129,
+                              "question": "How many arguments will be used in this function call: greet() if the function is def greet(name = \"Guest\")?",
+                              "options": {
+                                "A": "Two",
+                                "B": "One",
+                                "C": "Zero",
+                                "D": "Infinite"
+                              }
+                            },
+                            {
+                              "q_no": 130,
+                              "question": "Why are modules used in large Python programs?",
+                              "options": {
+                                "A": "To reduce memory",
+                                "B": "To avoid syntax errors",
+                                "C": "To organize code into parts",
+                                "D": "To increase complexity"
+                              }
+                            },
+                            {
+                              "q_no": 131,
+                              "question": "Which function will return the largest number from a list?",
+                              "options": {
+                                "A": "max()",
+                                "B": "sum()",
+                                "C": "large()",
+                                "D": "sort()"
+                              }
+                            },
+                            {
+                              "q_no": 132,
+                              "question": "How does Python know which module belongs to which package?",
+                              "options": {
+                                "A": "By naming it",
+                                "B": "By folder structure",
+                                "C": "Using comments",
+                                "D": "Manually assigning"
+                              }
+                            },
+                            {
+                              "q_no": 133,
+                              "question": "What will be the output of this code? import random print(random.randint(1, 1))",
+                              "options": {
+                                "A": "Error",
+                                "B": "Random number",
+                                "C": "1",
+                                "D": "None"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "name": "Additional Questions",
+                          "questions": [
+                            {
+                              "id": 1772391719491.9497,
+                              "question": "What is the brain of the computer?",
+                              "options": {
+                                "A": "Monitor",
+                                "B": "Keyboard",
+                                "C": " CPU",
+                                "D": "None"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772391720435.3335,
+                              "question": "Instructions given to a computer are called?",
+                              "options": {
+                                "A": "Data",
+                                "B": "Output",
+                                "C": "Program",
+                                "D": "Hardware"
+                              },
+                              "answer": "C"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "shorts": {
+                      "categories": [
+                        {
+                          "name": "Exercise Questions",
+                          "questions": [
+                            {
+                              "id": 1,
+                              "question": "Define computer."
+                            },
+                            {
+                              "id": 3,
+                              "question": "Differentiate between data and information."
+                            },
+                            {
+                              "id": 4,
+                              "question": "What is IPO cycle?"
+                            },
+                            {
+                              "id": 5,
+                              "question": "Define processing."
+                            },
+                            {
+                              "id": 6,
+                              "question": "What is storage device?"
+                            },
+                            {
+                              "id": 7,
+                              "question": "Define digital computer."
+                            },
+                            {
+                              "id": 8,
+                              "question": "What is output device?"
+                            },
+                            {
+                              "id": 9,
+                              "question": "Write two examples of input devices."
+                            },
+                            {
+                              "id": 10,
+                              "question": "What is CPU?"
+                            }
+                          ]
+                        },
+                        {
+                          "name": "Pastpapers Questions",
+                          "questions": [
+                            {
+                              "id": 1,
+                              "question": "What is the full form of CPU?"
+                            },
+                            {
+                              "id": 2,
+                              "question": "Write two examples of output devices."
+                            },
+                            {
+                              "id": 3,
+                              "question": "What is the function of RAM?"
+                            },
+                            {
+                              "id": 4,
+                              "question": "Define software."
+                            },
+                            {
+                              "id": 5,
+                              "question": "What is the difference between hardware and software?"
+                            },
+                            {
+                              "id": 6,
+                              "question": "What is the function of an operating system  (OS)?"
+                            }
+                          ]
+                        },
+                        {
+                          "name": "Additional Questions",
+                          "questions": [
+                            {
+                              "id": 1,
+                              "question": "What is booting?"
+                            },
+                            {
+                              "id": 2,
+                              "question": "Define BIOS."
+                            },
+                            {
+                              "id": 3,
+                              "question": "What is motherboard?"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "longs": {
+                      "categories": [
+                        {
+                          "name": "Exercise Questions",
+                          "questions": [
+                            {
+                              "id": 1,
+                              "question": "What is touch screen?"
+                            },
+                            {
+                              "id": 2,
+                              "question": "Define barcode reader."
+                            },
+                            {
+                              "id": 3,
+                              "question": "What is webcam?"
+                            },
+                            {
+                              "id": 4,
+                              "question": "Define joystick."
+                            },
+                            {
+                              "id": 5,
+                              "question": "What is trackball?"
+                            }
+                          ]
+                        },
+                        {
+                          "name": "Pastpapers Questions",
+                          "questions": [
+                            {
+                              "id": 1,
+                              "question": "What is touch screen?"
+                            },
+                            {
+                              "id": 2,
+                              "question": "Define barcode reader."
+                            },
+                            {
+                              "id": 6,
+                              "question": "Define plotter."
+                            },
+                            {
+                              "id": 7,
+                              "question": "What is motherboard chipset?"
+                            },
+                            {
+                              "id": 8,
+                              "question": "Define CMOS battery."
+                            },
+                            {
+                              "id": 9,
+                              "question": "What is LAN card?"
+                            }
+                          ]
+                        },
+                        {
+                          "name": "Additional Questions",
+                          "questions": [
+                            {
+                              "id": 1,
+                              "question": "What is touch screen?"
+                            },
+                            {
+                              "id": 2,
+                              "question": "Define barcode reader."
+                            },
+                            {
+                              "id": 3,
+                              "question": "What is webcam?"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "topicNum": "1.2"
+                },
+                {
+                  "name": "new added",
+                  "questionTypes": {
+                    "mcqs": {
+                      "categories": [
+                        {
+                          "name": "Additional Questions",
+                          "questions": []
+                        }
+                      ]
+                    },
+                    "shorts": {
+                      "categories": []
+                    },
+                    "longs": {
+                      "categories": []
+                    }
+                  },
+                  "topicNum": "1.3"
+                }
+              ]
+            },
+            {
+              "name": "Requirement Gathering and Analysis",
+              "MCQs": []
+            },
+            {
+              "name": "Design and Implementation",
+              "MCQs": []
+            },
+            {
+              "name": "Testing and Deployment",
+              "MCQs": []
+            },
+            {
+              "name": "Maintenance and Support",
+              "MCQs": []
+            },
+            {
+              "name": "Project Management Fundamentals",
+              "MCQs": []
+            },
+            {
+              "name": "Cost Estimation and Budgeting",
+              "MCQs": []
+            },
+            {
+              "name": "Risk Management in Software Projects",
+              "MCQs": []
+            },
+            {
+              "name": "Quality Assurance and Testing Methodologies",
+              "MCQs": []
+            }
+          ]
+        },
+        {
+          "name": "Mathematics",
+          "image": "https://s2982.pcdn.co/wp-content/uploads/2014/07/math-book.jpg.optimal.jpg",
+          "color": "bg-indigo-600",
+          "chapters": [
+            {
+              "name": "Integration",
+              "topics": [
+                {
+                  "name": "rational num",
+                  "questionTypes": {
+                    "mcqs": {
+                      "categories": [
+                        {
+                          "name": "Exercise Questions",
+                          "questions": [
+                            {
+                              "id": 1772520323740.1462,
+                              "question": "Identify the rational number:",
+                              "options": {
+                                "A": "2.36067...",
+                                "B": "√7",
+                                "C": "0.6̅",
+                                "D": "π"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772520325548.1807,
+                              "question": "Which of the following is an irrational number?",
+                              "options": {
+                                "A": "15/4",
+                                "B": "2.35355",
+                                "C": "5 + √11",
+                                "D": "0.666..."
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772520326941.345,
+                              "question": "The number √71 is a/an:",
+                              "options": {
+                                "A": "Whole number",
+                                "B": "Rational number",
+                                "C": "Irrational number",
+                                "D": "Natural number"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772520328170.4128,
+                              "question": "0.37 in rational form will be:",
+                              "options": {
+                                "A": "37/99",
+                                "B": "37/100",
+                                "C": "37/10",
+                                "D": "37"
+                              },
+                              "answer": "B"
+                            },
+                            {
+                              "id": 1772520329500.5212,
+                              "question": "The decimal form of 22/7 is:",
+                              "options": {
+                                "A": "π",
+                                "B": "3.14159...",
+                                "C": "22.7",
+                                "D": "2.718"
+                              },
+                              "answer": "B"
+                            },
+                            {
+                              "id": 1772520331343.9219,
+                              "question": "Which real number property is used in: a(b+c)=ab+ac?",
+                              "options": {
+                                "A": "Associative",
+                                "B": "Division property",
+                                "C": "Transitive",
+                                "D": "Distributive"
+                              },
+                              "answer": "D"
+                            },
+                            {
+                              "id": 1772520332573.4487,
+                              "question": "-16 to the power -16 is a/an:",
+                              "options": {
+                                "A": "Additive identity",
+                                "B": "Additive inverse",
+                                "C": "Whole number",
+                                "D": "Natural number"
+                              },
+                              "answer": "B"
+                            },
+                            {
+                              "id": 1772520334006.374,
+                              "question": "Multiplicative identity of real numbers is:",
+                              "options": {
+                                "A": "100×1=100",
+                                "B": "100×1=100",
+                                "C": "100÷1=100",
+                                "D": "100+1=101"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772520335235.6829,
+                              "question": "A number multiplied with its reciprocal is called:",
+                              "options": {
+                                "A": "Additive inverse",
+                                "B": "Multiplication identity",
+                                "C": "Multiplicative inverse",
+                                "D": "Multiplicative property"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772520337077.7832,
+                              "question": "If a=b and 1/a = 1/b then property used is:",
+                              "options": {
+                                "A": "Reciprocal property",
+                                "B": "Division property",
+                                "C": "Multiplicative property",
+                                "D": "Reflexive property"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772520338717.7063,
+                              "question": "Choose correct option for a=b, a>b where a,b ∈ R:",
+                              "options": {
+                                "A": "Symmetric",
+                                "B": "Trichotomy",
+                                "C": "Transitive",
+                                "D": "Cancellation"
+                              },
+                              "answer": "B"
+                            },
+                            {
+                              "id": 1772520340149.714,
+                              "question": "Which rational number lies between 3/5 and 4/5?",
+                              "options": {
+                                "A": "7/10",
+                                "B": "2/5",
+                                "C": "3/6",
+                                "D": "7/5"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772520341587.9897,
+                              "question": "If -3 < -1 => 0 < 2 then property used is:",
+                              "options": {
+                                "A": "Additive property",
+                                "B": "Multiplicative property",
+                                "C": "Transitive property",
+                                "D": "Trichotomy property"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772520343426.8154,
+                              "question": "Write following two rational numbers:",
+                              "options": {
+                                "A": "3/7 , 1/5",
+                                "B": "8/3 , 9/4",
+                                "C": "7/12 , 13/12",
+                                "D": "2/3 , 2/4"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772520344657.9768,
+                              "question": "-2.7 on number line will be represented as:",
+                              "options": {
+                                "A": "A",
+                                "B": "B",
+                                "C": "C",
+                                "D": "D"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772520346091.4155,
+                              "question": "Rationalized denominator of (√2 + √5)/√3 is:",
+                              "options": {
+                                "A": "(√2+√5)/3",
+                                "B": "(√6+√15)/3",
+                                "C": "(√6+√15)/√3",
+                                "D": "(√2+√15)/3√3"
+                              },
+                              "answer": "B"
+                            },
+                            {
+                              "id": 1772520347389.158,
+                              "question": "The simplified form of (81/16)^(-3/4) is:",
+                              "options": {
+                                "A": "8/27",
+                                "B": "27/8",
+                                "C": "2^3/3^3",
+                                "D": "(81)^3/(16)^4"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772520349368.5205,
+                              "question": "(0.027)^(-1/3) can be reduced to:",
+                              "options": {
+                                "A": "3",
+                                "B": "1/3",
+                                "C": "9",
+                                "D": "27"
+                              },
+                              "answer": "A"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "shorts": {
+                      "categories": []
+                    },
+                    "longs": {
+                      "categories": []
+                    }
+                  }
+                }
+              ]
+            },
+            "Vectors",
+            "Linear Programming",
+            "Differentiation",
+            "Integration",
+            "Vectors"
+          ]
+        },
+        {
+          "name": "Urdu",
+          "image": "https://katib.pk/cdn/shop/files/9780190702953_1_664c8130-d8db-464e-ae9e-5970835625f7_1024x1024.jpg?v=1740384171",
+          "color": "bg-emerald-600",
+          "chapters": [
+            {
+              "name": "Ghazals",
+              "topics": [
+                {
+                  "name": "new topic 1",
+                  "questionTypes": {
+                    "mcqs": {
+                      "categories": []
+                    },
+                    "shorts": {
+                      "categories": [
+                        {
+                          "name": "Exercise Questions",
+                          "questions": [
+                            {
+                              "id": 1772659738575,
+                              "question": "اسم کی تعریف لکھیں۔",
+                              "answer": "sks"
+                            },
+                            {
+                              "id": 1772659740225,
+                              "question": "فعل کسے کہتے ہیں؟",
+                              "answer": "answer"
+                            },
+                            {
+                              "id": 1772659741536,
+                              "question": "واحد اور جمع میں فرق بیان کریں۔",
+                              "answer": "answer"
+                            },
+                            {
+                              "id": 1772659742790,
+                              "question": "مرثیہ کسے کہتے ہیں؟",
+                              "answer": "answer"
+                            },
+                            {
+                              "id": 1772659744406,
+                              "question": "غزل کی تعریف کریں۔",
+                              "answer": "answer"
+                            },
+                            {
+                              "id": 1772659745792,
+                              "question": "تشبیہ کیا ہوتی ہے؟",
+                              "answer": "answer"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "longs": {
+                      "categories": []
+                    }
+                  }
+                }
+              ]
+            },
+            "Nazams",
+            "Nasar",
+            "Drama",
+            "Ghazals",
+            "Nazams",
+            "Nasar"
+          ]
+        },
+        {
+          "name": "English",
+          "image": "https://www.shutterstock.com/image-photo/image-studying-english-conversation-260nw-2433632541.jpg",
+          "color": "bg-emerald-600",
+          "chapters": [
+            "Poetry",
+            "Prose",
+            "Grammar",
+            "Composition",
+            "Poetry",
+            "Prose",
+            "Grammar"
+          ]
+        },
+        {
+          "name": "Chemistry",
+          "image": "https://www.priyamstudycentre.com/wp-content/uploads/2020/08/chemistry-inorganic-organic-physical-analytical.png",
+          "color": "bg-emerald-600",
+          "chapters": [
+            "Physical Chemistry",
+            "Organic Chemistry",
+            "Inorganic Chemistry",
+            "Physical Chemistry",
+            "Organic Chemistry",
+            "Inorganic Chemistry"
+          ]
+        },
+        {
+          "name": "Biology",
+          "image": "https://sceptrecollege.edu.pk/wp-content/uploads/2021/04/biology.jpg",
+          "color": "bg-emerald-600",
+          "chapters": [
+            "Cell Biology",
+            "Genetics",
+            "Human Physiology",
+            "Cell Biology",
+            "Genetics",
+            "Human Physiology"
+          ]
+        },
+        {
+          "name": "Islamic Studies",
+          "image": "https://qurantutorsacademy.com/wp-content/uploads/2024/07/Islamic-Studies-Course.jpg",
+          "color": "bg-emerald-600",
+          "chapters": [
+            {
+              "name": "Hadith",
+              "topics": [
+                {
+                  "name": "first topic",
+                  "questionTypes": {
+                    "mcqs": {
+                      "categories": [
+                        {
+                          "name": "Exercise Questions",
+                          "questions": [
+                            {
+                              "id": 1772462477781.7617,
+                              "question": "حضرت محمد صلى الله عليه وسلم تمام انبیاء کے ۔۔۔۔۔ہیں:",
+                              "options": {
+                                "A": "رشتہ دار",
+                                "B": "دوست",
+                                "C": "کزن",
+                                "D": "سردار"
+                              },
+                              "answer": "D"
+                            },
+                            {
+                              "id": 1772462478689.9836,
+                              "question": "جس نے رسول صلى الله عليه وسلم کی اطاعت کی ، اس نے۔۔۔۔۔۔کی اطاعت کی:",
+                              "options": {
+                                "A": "حضرت عمرؓ",
+                                "B": "حضرت عثمانؓ",
+                                "C": "حضرت ابو بکرؓ",
+                                "D": "اللہ تعالیٰ"
+                              },
+                              "answer": "D"
+                            },
+                            {
+                              "id": 1772462479653.7434,
+                              "question": "آنحضور صلى الله عليه وسلم نے طائف کے شہر سے باہر پناہ لی:",
+                              "options": {
+                                "A": "کھجوروں کے باغ میں",
+                                "B": "انگوروں کے باغ میں",
+                                "C": "سیب کے باغ میں",
+                                "D": "آم کے باغ میں"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772462480646.24,
+                              "question": "نبی صلى الله عليه وسلم کی ولادت ہوئی:",
+                              "options": {
+                                "A": "570ء میں",
+                                "B": "571ء میں",
+                                "C": "572ء میں",
+                                "D": "573ء میں"
+                              },
+                              "answer": "B"
+                            },
+                            {
+                              "id": 1772462482224.047,
+                              "question": "آخری نبی ہیں:",
+                              "options": {
+                                "A": "حضرت موسیٰؑ",
+                                "B": "حضرت عیسیٰؑ",
+                                "C": "حضرت یوسفؑ",
+                                "D": "حضرت محمد صلى الله عليه وسلم"
+                              },
+                              "answer": "D"
+                            },
+                            {
+                              "id": 1772462483254.9563,
+                              "question": "رسالت گرائمر کی رو سے ہے:",
+                              "options": {
+                                "A": "فعل",
+                                "B": "اسم",
+                                "C": "مصدر",
+                                "D": "حرف"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772462484563.2183,
+                              "question": "رسالت کے لغوی معنی ہیں:",
+                              "options": {
+                                "A": "بالنا",
+                                "B": "بھیجنا",
+                                "C": "بیٹھنا",
+                                "D": "تلاش کرنا"
+                              },
+                              "answer": "B"
+                            },
+                            {
+                              "id": 1772462485853.062,
+                              "question": "رسالت و نبوت کا رتبہ ۔۔۔۔۔۔۔۔۔ہے:",
+                              "options": {
+                                "A": "محنت کے ذریعے",
+                                "B": "عبادت کے ذریعے",
+                                "C": "بھائی چارے کے ذریعے",
+                                "D": "عطیہ الٰہی سے"
+                              },
+                              "answer": "D"
+                            },
+                            {
+                              "id": 1772462487108.546,
+                              "question": "اللہ بہتر جانتا ہے کہ وہ کس کو عطا کرے:",
+                              "options": {
+                                "A": "دولت",
+                                "B": "کتاب",
+                                "C": "موت",
+                                "D": "نبوت"
+                              },
+                              "answer": "D"
+                            },
+                            {
+                              "id": 1772462488343.8901,
+                              "question": "انسانوں کی ہدایت کے لیے بھیجے ہوئے بندے کہلاتے ہیں:",
+                              "options": {
+                                "A": "فرشتے",
+                                "B": "اولیاء",
+                                "C": "رسول",
+                                "D": "مصحف"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772462489194.5662,
+                              "question": "رسول کے علم و ہدایت کا سرچشمہ ہے:",
+                              "options": {
+                                "A": "اللہ تعالیٰ",
+                                "B": "استاد",
+                                "C": "شریعت",
+                                "D": "کتاب"
+                              },
+                              "answer": "A"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "shorts": {
+                      "categories": []
+                    },
+                    "longs": {
+                      "categories": []
+                    }
+                  }
+                },
+                {
+                  "name": "second topic",
+                  "questionTypes": {
+                    "mcqs": {
+                      "categories": [
+                        {
+                          "name": "Exercise Questions",
+                          "questions": [
+                            {
+                              "id": 1772462750603.1084,
+                              "question": "رسول پاک صلى الله عليه وسلم تمام انسانیت کیلئے بن کر آئے:",
+                              "options": {
+                                "A": "بھائی",
+                                "B": "دوست",
+                                "C": "ہادی",
+                                "D": "باپ"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772462752567.3562,
+                              "question": "حضرت محمد صلى الله عليه وسلم تمام انبیاء کے ۔۔۔۔۔ہیں:",
+                              "options": {
+                                "A": "رشتہ دار",
+                                "B": "دوست",
+                                "C": "کزن",
+                                "D": "سردار"
+                              },
+                              "answer": "D"
+                            },
+                            {
+                              "id": 1772462753898.104,
+                              "question": "جس نے رسول صلى الله عليه وسلم کی اطاعت کی ، اس نے۔۔۔۔۔۔کی اطاعت کی:",
+                              "options": {
+                                "A": "حضرت عمرؓ",
+                                "B": "حضرت عثمانؓ",
+                                "C": "حضرت ابو بکرؓ",
+                                "D": "اللہ تعالیٰ"
+                              },
+                              "answer": "D"
+                            },
+                            {
+                              "id": 1772462755531.4963,
+                              "question": "آنحضور صلى الله عليه وسلم نے طائف کے شہر سے باہر پناہ لی:",
+                              "options": {
+                                "A": "کھجوروں کے باغ میں",
+                                "B": "انگوروں کے باغ میں",
+                                "C": "سیب کے باغ میں",
+                                "D": "آم کے باغ میں"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772462756660.6516,
+                              "question": "نبی صلى الله عليه وسلم کی ولادت ہوئی:",
+                              "options": {
+                                "A": "570ء میں",
+                                "B": "571ء میں",
+                                "C": "572ء میں",
+                                "D": "573ء میں"
+                              },
+                              "answer": "B"
+                            },
+                            {
+                              "id": 1772462758399.1565,
+                              "question": "آخری نبی ہیں:",
+                              "options": {
+                                "A": "حضرت موسیٰؑ",
+                                "B": "حضرت عیسیٰؑ",
+                                "C": "حضرت یوسفؑ",
+                                "D": "حضرت محمد صلى الله عليه وسلم"
+                              },
+                              "answer": "D"
+                            },
+                            {
+                              "id": 1772462759625.584,
+                              "question": "رسالت گرائمر کی رو سے ہے:",
+                              "options": {
+                                "A": "فعل",
+                                "B": "اسم",
+                                "C": "مصدر",
+                                "D": "حرف"
+                              },
+                              "answer": "A"
+                            },
+                            {
+                              "id": 1772462761060.2083,
+                              "question": "رسالت کے لغوی معنی ہیں:",
+                              "options": {
+                                "A": "بالنا",
+                                "B": "بھیجنا",
+                                "C": "بیٹھنا",
+                                "D": "تلاش کرنا"
+                              },
+                              "answer": "B"
+                            },
+                            {
+                              "id": 1772462762473.9387,
+                              "question": "رسالت و نبوت کا رتبہ ۔۔۔۔۔۔۔۔۔ہے:",
+                              "options": {
+                                "A": "محنت کے ذریعے",
+                                "B": "عبادت کے ذریعے",
+                                "C": "بھائی چارے کے ذریعے",
+                                "D": "عطیہ الٰہی سے"
+                              },
+                              "answer": "D"
+                            },
+                            {
+                              "id": 1772462764286.2417,
+                              "question": "اللہ بہتر جانتا ہے کہ وہ کس کو عطا کرے:",
+                              "options": {
+                                "A": "دولت",
+                                "B": "کتاب",
+                                "C": "موت",
+                                "D": "نبوت"
+                              },
+                              "answer": "D"
+                            },
+                            {
+                              "id": 1772462765771.91,
+                              "question": "انسانوں کی ہدایت کے لیے بھیجے ہوئے بندے کہلاتے ہیں:",
+                              "options": {
+                                "A": "فرشتے",
+                                "B": "اولیاء",
+                                "C": "رسول",
+                                "D": "مصحف"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772462767101.2083,
+                              "question": "رسول کے علم و ہدایت کا سرچشمہ ہے:",
+                              "options": {
+                                "A": "اللہ تعالیٰ",
+                                "B": "استاد",
+                                "C": "شریعت",
+                                "D": "کتاب"
+                              },
+                              "answer": "A"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "shorts": {
+                      "categories": []
+                    },
+                    "longs": {
+                      "categories": []
+                    }
+                  }
+                }
+              ]
+            },
+            "Fiqh",
+            "Quranic Studies",
+            "Hadith",
+            "Fiqh"
+          ]
+        },
+        {
+          "name": "Pak-Studies",
+          "image": "https://ccw.vcomsats.edu.pk/images/course-item/ps_cover_image1.jpg",
+          "color": "bg-green-700",
+          "chapters": [
+            "History of Pakistan",
+            "Geography of Pakistan",
+            "Culture of Pakistan"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "11",
+      "title": "11th",
+      "sub": "1st Year",
+      "color": "from-indigo-600 to-indigo-400",
+      "img": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400"
+    },
+    {
+      "id": "10",
+      "title": "10th",
+      "sub": "Matric",
+      "color": "from-cyan-600 to-cyan-400",
+      "img": "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400",
+      "subjects": [
+        {
+          "name": "Chemistry",
+          "image": "https://images.unsplash.com/photo-1532187875605-2fe358511423?w=500",
+          "color": "bg-teal-600",
+          "chapters": [
+            "Chemical Equilibrium",
+            "Acids & Bases",
+            "Organic Chemistry"
+          ]
+        },
+        {
+          "name": "Biology",
+          "image": "https://images.unsplash.com/photo-1530026405186-ed1f1305b3c2?w=500",
+          "color": "bg-rose-600",
+          "chapters": [
+            "Gaseous Exchange",
+            "Homeostasis",
+            "Coordination"
+          ]
+        },
+        {
+          "name": "English",
+          "image": "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500",
+          "color": "bg-pink-600",
+          "chapters": [
+            "The Holy Prophet",
+            "Try Again",
+            "First Aid"
+          ]
+        },
+        {
+          "name": "Islamic Studies",
+          "image": "https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?w=500",
+          "color": "bg-amber-600",
+          "chapters": [
+            "Quran-o-Hadis",
+            "Faith",
+            "Seerat-un-Nabi"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "9",
+      "title": "9th",
+      "sub": "Matric",
+      "color": "from-emerald-600 to-emerald-400",
+      "img": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400"
+    },
+    {
+      "id": "8",
+      "title": "8th",
+      "sub": "Middle",
+      "color": "from-amber-600 to-amber-400",
+      "img": "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400"
+    },
+    {
+      "id": "7",
+      "title": "7th",
+      "sub": "Middle",
+      "color": "from-green-600 to-green-400",
+      "img": "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=400"
+    },
+    {
+      "id": "6",
+      "title": "6th",
+      "sub": "Middle",
+      "color": "from-red-600 to-red-400",
+      "img": "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=400"
+    },
+    {
+      "id": "5",
+      "title": "5th",
+      "sub": "Primary",
+      "color": "from-slate-800 to-slate-600",
+      "img": "https://images.unsplash.com/photo-1543269865-cbf427effbad?w=400"
+    },
+    {
+      "id": "4",
+      "title": "4th",
+      "sub": "Primary",
+      "color": "from-orange-500 to-orange-300",
+      "img": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400"
+    },
+    {
+      "id": "3",
+      "title": "3rd",
+      "sub": "Primary",
+      "color": "from-amber-500 to-amber-300",
+      "img": "https://images.unsplash.com/photo-1491153059943-412f4b00ca1a?w=400"
+    },
+    {
+      "id": "2",
+      "title": "2nd",
+      "sub": "Primary",
+      "color": "from-yellow-500 to-yellow-300",
+      "img": "https://images.unsplash.com/photo-1516627145497-ae6968895b74?w=400"
+    },
+    {
+      "id": "1",
+      "title": "1st",
+      "sub": "Primary",
+      "color": "from-lime-500 to-lime-300",
+      "img": "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400",
+      "subjects": [
+        {
+          "name": "English",
+          "image": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=500",
+          "color": "bg-pink-400",
+          "chapters": [
+            "Alphabets",
+            "Phonics",
+            "Small Sentences"
+          ]
+        },
+        {
+          "name": "Math",
+          "image": "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?w=500",
+          "color": "bg-amber-400",
+          "chapters": [
+            "Counting 1-100",
+            "Basic Addition",
+            "Shapes"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "13",
+      "title": "13th",
+      "sub": "New Academic Year",
+      "color": "from-blue-600 to-blue-400",
+      "subjects": [
+        {
+          "name": "English",
+          "chapters": [
+            {
+              "name": "Prophet Muhammad(S.A.W)",
+              "topics": [
+                {
+                  "name": "Biography",
+                  "questionTypes": {
+                    "mcqs": {
+                      "categories": [
+                        {
+                          "name": "Exercise Questions",
+                          "questions": [
+                            {
+                              "id": 1772692841583,
+                              "question": "اسم کی تعریف لکھیں۔",
+                              "options": {},
+                              "answer": "sks"
+                            },
+                            {
+                              "id": 1772692842758,
+                              "question": "فعل کسے کہتے ہیں؟",
+                              "options": {},
+                              "answer": "answer"
+                            },
+                            {
+                              "id": 1772692843790,
+                              "question": "واحد اور جمع میں فرق بیان کریں۔",
+                              "options": {},
+                              "answer": "answer"
+                            },
+                            {
+                              "id": 1772692845053,
+                              "question": "مرثیہ کسے کہتے ہیں؟",
+                              "options": {},
+                              "answer": "answer"
+                            },
+                            {
+                              "id": 1772692846127,
+                              "question": "غزل کی تعریف کریں۔",
+                              "options": {},
+                              "answer": "answer"
+                            },
+                            {
+                              "id": 1772692847843,
+                              "question": "تشبیہ کیا ہوتی ہے؟",
+                              "options": {},
+                              "answer": "answer"
+                            },
+                            {
+                              "id": 1772692848881,
+                              "question": "اردو کا رسم الخط کیا ہے؟",
+                              "options": {},
+                              "answer": "answer"
+                            },
+                            {
+                              "id": 1772692859803,
+                              "question": "What is the brain of the computer?",
+                              "options": {
+                                "A": "Monitor",
+                                "B": "Keyboard",
+                                "C": " CPU",
+                                "D": "None"
+                              },
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772692860983,
+                              "question": "Instructions given to a computer are called?",
+                              "options": {
+                                "A": "Data",
+                                "B": "Output",
+                                "C": "Program",
+                                "D": "Hardware"
+                              },
+                              "answer": "C"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "shorts": {
+                      "categories": [
+                        {
+                          "name": "Exercise Questions",
+                          "questions": [
+                            {
+                              "id": 1772692789462,
+                              "question": "What is the brain of the computer?",
+                              "answer": "C"
+                            },
+                            {
+                              "id": 1772692790847,
+                              "question": "Instructions given to a computer are called?",
+                              "answer": "C"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "longs": {
+                      "categories": []
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "color": "bg-blue-600"
+        }
+      ]
+    },
+    {
+      "id": "10th",
+      "title": "10thth",
+      "sub": "New Academic Year",
+      "color": "from-blue-600 to-blue-400",
+      "subjects": [
+        {
+          "name": "Math",
+          "chapters": [
+            {
+              "name": "1",
+              "topics": [
+                {
+                  "name": "Numbers",
+                  "questionTypes": {
+                    "mcqs": {
+                      "categories": []
+                    },
+                    "shorts": {
+                      "categories": [
+                        {
+                          "name": "Exercise Questions",
+                          "questions": [
+                            {
+                              "id": 1772772733850,
+                              "question": "What are real numbers?",
+                              "answer": "Digits"
+                            },
+                            {
+                              "id": 1772772811792,
+                              "question": "What are numbers?",
+                              "answer": "Digits"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "longs": {
+                      "categories": []
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "color": "bg-blue-600"
+        }
+      ]
+    }
+  ]
+  },
+  "Federal": {
+    "id": "2",
+    "name": "Federal Board",
+    "classes": [
+       {
+      "id": "11",
+      "title": "11th",
+      "sub": "1st Year",
+      "color": "from-indigo-600 to-indigo-400",
+      "img": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400"
+    },
+    {
+      "id": "10",
+      "title": "10th",
+      "sub": "Matric",
+      "color": "from-cyan-600 to-cyan-400",
+      "img": "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400",
+      "subjects": [
+        {
+          "name": "Chemistry",
+          "image": "https://images.unsplash.com/photo-1532187875605-2fe358511423?w=500",
+          "color": "bg-teal-600",
+          "chapters": [
+            "Chemical Equilibrium",
+            "Acids & Bases",
+            "Organic Chemistry"
+          ]
+        },
+        {
+          "name": "Biology",
+          "image": "https://images.unsplash.com/photo-1530026405186-ed1f1305b3c2?w=500",
+          "color": "bg-rose-600",
+          "chapters": [
+            "Gaseous Exchange",
+            "Homeostasis",
+            "Coordination"
+          ]
+        },
+        {
+          "name": "English",
+          "image": "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500",
+          "color": "bg-pink-600",
+          "chapters": [
+            "The Holy Prophet",
+            "Try Again",
+            "First Aid"
+          ]
+        },
+        {
+          "name": "Islamic Studies",
+          "image": "https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?w=500",
+          "color": "bg-amber-600",
+          "chapters": [
+            "Quran-o-Hadis",
+            "Faith",
+            "Seerat-un-Nabi"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "9",
+      "title": "9th",
+      "sub": "Matric",
+      "color": "from-emerald-600 to-emerald-400",
+      "img": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400"
+    },
+    {
+      "id": "8",
+      "title": "8th",
+      "sub": "Middle",
+      "color": "from-amber-600 to-amber-400",
+      "img": "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400"
+    }
+    ]
+}
+ }
+
+}

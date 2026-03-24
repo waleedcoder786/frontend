@@ -15,13 +15,13 @@ import {
   HiOutlineChevronRight,
   HiOutlineCalendar,
   HiOutlineAcademicCap,
-  HiOutlineUserGroup,
+  HiOutlineUser,
 } from "react-icons/hi";
 import axios from "axios";
 import Link from "next/link";
 import toast from "react-hot-toast";
 
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = "https://backendrepoo-production.up.railway.app/api";
 
 interface Paper {
   id: string;
@@ -60,36 +60,27 @@ function SavedPapersPage() {
   }, []);
 
   const fetchAllData = async (user: any) => {
-    // 1. Check karein ke user aur ID mojud hai
     const currentUserId = user?.id || user?._id;
     
     if (!currentUserId) {
-      console.error("User ID not found in localStorage");
       setLoading(false);
       return;
     }
 
     setLoading(true);
     try {
-      // 2. Sirf tabhi call karein jab data sahi ho
       const papersPromise = axios.get(`${API_BASE}/papers`, {
-        // Agar aapka backend papers ke liye bhi userId maangta hai to yahan add karein
         params: { userId: currentUserId } 
       });
 
-      const teachersPromise = user.role === 'admin' 
-        ? axios.get(`${API_BASE}/teachers`, { params: { userId: currentUserId } }) 
+      // Hamesha teachers fetch karein agar user admin ya superadmin ho
+      const teachersPromise = (user.role === 'admin' || user.role === 'superadmin')
+        ? axios.get(`${API_BASE}/teachers`, { params: { adminId: currentUserId } }) 
         : Promise.resolve({ data: [] });
 
       const [papersRes, teachersRes] = await Promise.all([
-        papersPromise.catch(err => {
-          console.error("Papers Fetch Error:", err);
-          return { data: [] };
-        }),
-        teachersPromise.catch(err => {
-          console.error("Teachers Fetch Error:", err);
-          return { data: [] };
-        })
+        papersPromise.catch(() => ({ data: [] })),
+        teachersPromise.catch(() => ({ data: [] }))
       ]);
 
       const formattedPapers = (papersRes.data || []).map((p: any) => ({
@@ -100,7 +91,6 @@ function SavedPapersPage() {
       setSavedPapers(formattedPapers);
       setMyTeachers(teachersRes.data || []);
     } catch (error) {
-      console.error("General Fetch Error:", error);
       toast.error("An unexpected error occurred");
     } finally {
       setLoading(false);
@@ -110,30 +100,25 @@ function SavedPapersPage() {
   const filteredPapers = useMemo(() => {
     const myId = currentUser?.id || currentUser?._id;
     const role = currentUser?.role;
-    // Get IDs of teachers created by this admin
     const myTeacherIds = myTeachers.map(t => t.id || t._id);
+
     return savedPapers.filter((paper) => {
       const matchesSearch = paper.paperName.toLowerCase().includes(searchQuery.toLowerCase());
-      // 1. TEACHER LOGIC: Only show their own papers
+      
       if (role === 'teacher') {
         return matchesSearch && paper.userId === myId;
       }
-      // 2. ADMIN LOGIC: Show their own + their teachers' papers
+      
       if (role === 'admin') {
         const isMyOwn = paper.userId === myId;
         const isFromMyTeacher = myTeacherIds.includes(paper.userId);
-        
-        // Base access
         if (!(isMyOwn || isFromMyTeacher)) return false;
 
-        // Tab Filtering
         if (filterType === "mine") return matchesSearch && isMyOwn;
         if (filterType === "teachers") return matchesSearch && isFromMyTeacher;
-        
         return matchesSearch;
       }
 
-      // 3. SUPERADMIN: Show everything matching search
       return matchesSearch;
     });
   }, [searchQuery, savedPapers, filterType, currentUser, myTeachers]);
@@ -193,21 +178,20 @@ function SavedPapersPage() {
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
               <div>
                 <h1 className="text-4xl font-black text-slate-900 tracking-tight">Saved Papers</h1>
-                <p className="text-slate-400 mt-1 uppercase text-[10px] font-black tracking-[0.2em] flex items-center gap-2">
+                <p className="text-slate-400 mt-1 uppercase text-sm font-black tracking-[2px] flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-blue-500"></span>
                   {filteredPapers.length} Documents Available
                 </p>
               </div>
 
               <div className="flex flex-wrap gap-4 items-center">
-                {/* Tabs for Admin/Superadmin only */}
                 {currentUser?.role !== 'teacher' && (
-                  <div className="flex bg-slate-200/50 p-1.5 rounded-2xl backdrop-blur-sm">
+                  <div className="flex bg-slate-200/50 p-1.5 rounded-md backdrop-blur-sm">
                     {['all', 'mine', 'teachers'].map((type) => (
                       <button 
                         key={type}
-                        onClick={() => setFilterType(type)}
-                        className={`px-6 py-2 text-[10px] font-black rounded-xl transition-all uppercase tracking-widest ${filterType === type ? 'bg-white text-blue-600 shadow-md' : 'text-slate-500 hover:text-slate-700'}`}
+                        onClick={() => { setFilterType(type); setCurrentPage(1); }}
+                        className={`px-6 py-2 text-[10px] font-black rounded-md transition-all uppercase tracking-widest ${filterType === type ? 'bg-white text-blue-600 shadow-md' : 'text-slate-500 hover:text-slate-700'}`}
                       >
                         {type}
                       </button>
@@ -222,7 +206,7 @@ function SavedPapersPage() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search by paper name..."
-                    className="w-full pl-12 pr-4 py-3.5 text-sm bg-white border-2 border-slate-100 rounded-2xl outline-none focus:border-blue-500/20 focus:ring-4 focus:ring-blue-500/5 transition-all shadow-sm"
+                    className="w-full pl-12 pr-4 py-3.5 text-gray-700 text-sm bg-white border-2 border-slate-100 rounded-md outline-none focus:border-blue-500/20 focus:ring-4 focus:ring-blue-500/5 transition-all shadow-sm"
                   />
                 </div>
               </div>
@@ -250,19 +234,28 @@ function SavedPapersPage() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {paginatedPapers.map((paper) => {
-                  const isTeacherPaper = paper.userId !== (currentUser?.id || currentUser?._id);
+                  const currentId = currentUser?.id || currentUser?._id;
+                  const isTeacherPaper = paper.userId !== currentId;
+                  
+                  // Logic to find teacher name from the list
+                  const teacher = myTeachers.find(t => (t.id || t._id) === paper.userId);
+                  const teacherName = teacher ? (teacher.name || teacher.fullName) : "Other Teacher";
                   
                   return (
-                    <div key={paper.id} className="group relative bg-white border-2 border-slate-50 rounded-[35px] p-6 hover:shadow-2xl hover:shadow-blue-900/5 hover:border-blue-100 transition-all duration-500">
+                    <div key={paper.id} className="group relative bg-white border-2 border-slate-50 rounded-md p-6 hover:shadow-2xl hover:shadow-blue-900/5 hover:border-blue-300 transition-all duration-500">
                       
-                      {isTeacherPaper && (
-                        <div className="absolute -top-3 left-8 bg-amber-500 text-white text-[8px] font-black px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 z-10 tracking-[0.1em]">
-                          <HiOutlineUserGroup size={12}/> TEACHER'S FILE
+                      {/* Teacher's Name Badge (Added) */}
+                      {isTeacherPaper === true ? (
+                        <div className="absolute bottom-18 left-6 bg-blue-500 text-white text-[8px] font-black px-3 py-1.5 rounded-md shadow-lg flex items-center gap-1.5 z-10 tracking-[0.1em]">
+                          <HiOutlineUser size={12}/> {teacherName.toUpperCase()}
                         </div>
-                      )}
+                      ): <div className="absolute bottom-18 left-6 bg-blue-500 text-white text-[8px] font-black px-3 py-1.5 rounded-md shadow-lg flex items-center gap-1.5 z-10 tracking-[0.1em]">
+                          {/* <HiOutlineUser size={12}/> mine */}
+                        </div>
+                      }
 
                       <div className="flex justify-between items-start mb-6">
-                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner transition-transform group-hover:scale-110 duration-500 ${isTeacherPaper ? 'bg-amber-50 text-amber-600' : 'bg-blue-50 text-blue-600'}`}>
+                        <div className={`w-14 h-14 rounded-md flex items-center justify-center shadow-inner transition-transform group-hover:scale-110 duration-500 ${isTeacherPaper ? 'bg-amber-50 text-amber-600' : 'bg-blue-50 text-blue-600'}`}>
                           <HiOutlineDocumentText size={28} />
                         </div>
                         
@@ -280,10 +273,10 @@ function SavedPapersPage() {
                           {openMenuId === paper.id && (
                             <div className="absolute right-0 mt-2 w-48 bg-white border border-slate-100 rounded-[20px] shadow-2xl z-50 py-2 overflow-hidden animate-in fade-in slide-in-from-top-2">
                               <Link href={`/view-paper/${paper.id}`} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors">
-                                <HiOutlineEye className="text-blue-500" size={18} /> View Document
+                                <HiOutlineEye className="text-blue-500" size={18} /> View Paper
                               </Link>
                               <Link href={`/editpaper/${paper.id}`} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors">
-                                <HiOutlinePencil className="text-emerald-500" size={18} /> Edit Metadata
+                                <HiOutlinePencil className="text-emerald-500" size={18} /> Edit Paper
                               </Link>
                               <button 
                                 onClick={() => { setPaperToDelete(paper.id); setIsModalOpen(true); }} 
@@ -316,7 +309,7 @@ function SavedPapersPage() {
                       </div>
 
                       <div className="mt-8 pt-5 border-t border-slate-50 flex items-center justify-between">
-                        <span className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest ${isTeacherPaper ? 'bg-amber-100/50 text-amber-700' : 'bg-emerald-100/50 text-emerald-700'}`}>
+                        <span className={`px-4 py-1.5 rounded-md text-[9px] font-black uppercase tracking-widest ${isTeacherPaper ? 'bg-amber-100/50 text-amber-700' : 'bg-emerald-100/50 text-emerald-700'}`}>
                           {paper.subject || "General"}
                         </span>
                         <button className="w-9 h-9 rounded-full flex items-center justify-center text-slate-300 hover:text-blue-600 hover:bg-blue-50 transition-all">
@@ -335,7 +328,7 @@ function SavedPapersPage() {
                   <button 
                     onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                     disabled={currentPage === 1}
-                    className="group w-12 h-12 flex items-center justify-center bg-white border-2 border-slate-50 rounded-2xl disabled:opacity-20 hover:border-blue-500 hover:text-blue-600 transition-all shadow-sm"
+                    className="group w-12 h-12 flex items-center justify-center bg-white border-2 border-slate-50 rounded-2xl disabled:opacity-50 hover:border-blue-500 hover:text-blue-600 transition-all shadow-sm"
                   >
                     <HiOutlineChevronLeft size={24} className="group-hover:-translate-x-1 transition-transform"/>
                   </button>
@@ -348,7 +341,7 @@ function SavedPapersPage() {
                   <button 
                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                     disabled={currentPage === totalPages}
-                    className="group w-12 h-12 flex items-center justify-center bg-white border-2 border-slate-50 rounded-2xl disabled:opacity-20 hover:border-blue-500 hover:text-blue-600 transition-all shadow-sm"
+                    className="group w-12 h-12 flex items-center justify-center bg-white border-2 border-slate-50 rounded-2xl disabled:opacity-50 hover:border-blue-500 hover:text-blue-600 transition-all shadow-sm"
                   >
                     <HiOutlineChevronRight size={24} className="group-hover:translate-x-1 transition-transform"/>
                   </button>
